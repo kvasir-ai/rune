@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schemas/frontmatter-map.schema.json
+# OpenCode frontmatter transformation map.
+# Defines how to convert Claude agent frontmatter to OpenCode format.
+# The resource-manager reads this when configuring OpenCode.
+
+# All OpenCode agents run as subagents
+mode: subagent
+
+# Color name → hex mapping
+colors:
+  red: '#ef4444'
+  orange: '#f97316'
+  yellow: '#eab308'
+  green: '#22c55e'
+  teal: '#14b8a6'
+  cyan: '#06b6d4'
+  blue: '#3b82f6'
+  indigo: '#6366f1'
+  violet: '#8b5cf6'
+  purple: '#a855f7'
+  pink: '#ec4899'
+  gray: '#6b7280'
+  white: '#f8fafc'
+
+# Claude model name → OpenCode model ID
+models:
+  haiku: copilot/claude-haiku-4-5
+  sonnet: copilot/claude-sonnet-4-5
+  opus: copilot/claude-opus-4-6
+
+# Tool derivation rules:
+# Claude tools string is parsed for these keywords to set OpenCode booleans.
+# Absent tools default to false.
+# e.g. "Read, Write, Edit, Bash, Glob" → {bash: true, edit: true, write: true}
+tool_keywords:
+  bash: Bash
+  edit: Edit
+  write: Write

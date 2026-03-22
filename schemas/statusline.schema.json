@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "statusline.schema.json",
+  "title": "Statusline Configuration",
+  "description": "Feature toggles for the Claude Code status line script.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "directory": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show current directory name."
+    },
+    "git_branch": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show git branch (cached, 5s TTL)."
+    },
+    "gcloud_config": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active gcloud configuration name."
+    },
+    "model": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show model display name."
+    },
+    "context_bar": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show context window usage bar (line 2)."
+    },
+    "cost": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show session cost in USD (line 2)."
+    },
+    "duration": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show session duration (line 2)."
+    },
+    "session_id": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show truncated session ID."
+    },
+    "vim_mode": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show vim mode indicator ([N] / [I])."
+    },
+    "agent_name": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active agent name."
+    },
+    "worktree": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active worktree name/branch."
+    }
+  }
+}

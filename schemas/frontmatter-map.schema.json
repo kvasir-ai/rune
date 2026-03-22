@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "frontmatter-map.schema.json",
+  "title": "OpenCode Frontmatter Map",
+  "description": "Defines how to transform Claude agent frontmatter to OpenCode format.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["subagent"],
+      "description": "Agent execution mode applied to all OpenCode agents."
+    },
+    "colors": {
+      "type": "object",
+      "description": "Named color → hex color mapping.",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+      }
+    },
+    "models": {
+      "type": "object",
+      "description": "Claude model name → OpenCode model ID mapping.",
+      "additionalProperties": { "type": "string" }
+    },
+    "tool_keywords": {
+      "type": "object",
+      "description": "OpenCode boolean flag → Claude tool keyword. If keyword is found in tools string, flag is true.",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+# Tool registry — adding a tool here auto-generates install/uninstall/verify targets.
+# Each entry's key matches a directory under tools/ containing install-<key>.sh and uninstall-<key>.sh.
+
+fd:
+  binary: fd
+  description: fast file finder
+  url: https://github.com/sharkdp/fd
+
+rg:
+  binary: rg
+  description: fast recursive search (ripgrep)
+  url: https://github.com/BurntSushi/ripgrep
+
+rtk:
+  binary: rtk
+  description: Rust Token Killer (token savings)
+  url: https://github.com/rtk-ai/rtk
+
+peon-ping:
+  binary: peon.sh
+  check: test -f "$HOME/.claude/hooks/peon-ping/peon.sh"
+  description: model pack rotation
+  url: https://github.com/PeonPing/peon-ping
+
+uv:
+  binary: uv
+  description: Python package manager (required)
+  url: https://github.com/astral-sh/uv
+
+yq:
+  binary: yq
+  description: YAML processor (used by Makefile)
+  url: https://github.com/mikefarah/yq
+
+starship:
+  binary: starship
+  description: cross-shell prompt with git/language info
+  url: https://github.com/starship/starship
+
+zoxide:
+  binary: zoxide
+  description: smarter cd that learns your habits
+  url: https://github.com/ajeetdsouza/zoxide
+
+fzf:
+  binary: fzf
+  description: fuzzy finder for history, files, branches
+  url: https://github.com/junegunn/fzf
+
+bat:
+  binary: bat
+  description: cat with syntax highlighting and line numbers
+  url: https://github.com/sharkdp/bat
+
+eza:
+  binary: eza
+  description: modern ls with git status and icons
+  url: https://github.com/eza-community/eza

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schemas/statusline.schema.json
+# Statusline configuration — controls which segments appear.
+# All features are optional. Remove or set to false to disable.
+# The statusline script reads this file on each invocation.
+
+# Line 1: location and identity
+directory: true
+git_branch: true
+gcloud_config: false
+model: true
+
+# Line 2: metrics (set any to true to enable a second line)
+context_bar: true
+cost: true
+duration: true
+
+# Optional segments (appended to line 1 when present in session data)
+session_id: false
+vim_mode: true
+agent_name: true
+worktree: true

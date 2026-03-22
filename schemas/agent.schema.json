@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agent.schema.json",
+  "title": "Agent Frontmatter",
+  "description": "YAML frontmatter for agent .md files. Claude Code native format with optional opencode_description for OpenCode transformation.",
+  "type": "object",
+  "required": ["name", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9 /.&_-]*$",
+      "description": "Agent display name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Tells the orchestrator when to invoke this agent."
+    },
+    "model": {
+      "type": "string",
+      "enum": ["haiku", "sonnet", "opus"],
+      "description": "Model tier for this agent."
+    },
+    "tools": {
+      "type": "string",
+      "description": "Comma-separated tool list (e.g. 'Read, Write, Bash, mcp:linear')."
+    },
+    "color": {
+      "type": "string",
+      "enum": ["red", "orange", "yellow", "green", "teal", "cyan", "blue", "indigo", "violet", "purple", "pink", "gray", "white"],
+      "description": "Display color (named CSS color)."
+    },
+    "emoji": {
+      "type": "string",
+      "description": "Display emoji in the UI."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version."
+    },
+    "opencode_description": {
+      "type": "string",
+      "description": "Shorter description used for OpenCode. Falls back to description if absent."
+    }
+  }
+}

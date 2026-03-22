@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=schemas/profiles.schema.json
+
+# Agents and skills are auto-discovered — ALL deploy to every profile regardless of what is listed here.
+# This file controls which RULES deploy to each profile.
+# Rules under global_rules deploy to every profile. Profile-specific rules add on top.
+
+global_rules: {}
+# To add global rules (deployed to every profile), change {} above to:
+# global_rules:
+#   collaboration:
+#     - my-rule-name
+
+default:
+  description: Default profile with DAG execution and project management support
+  rules:
+    collaboration:
+      - dag-execution-format
+      - knowledge-management
+      - ai-toolkit-operations
+      - project-planning
+      - architectural-decision-records
+      - design-patterns
+  hooks:
+    - safety-check
+
+# Example: a more complete profile showing all supported sections.
+# Copy, rename, and customize.
+#
+# my-profile:
+#   description: What this profile is for — shown in make list-profiles
+#   rules:
+#     collaboration:
+#       - operational-constraints
+#       - git-conventions
+#     my-domain:
+#       - my-rule-one
+#       - my-rule-two
+#   hooks:
+#     - safety-check
+#     - auto-lint
+#   mcps:
+#     - context7

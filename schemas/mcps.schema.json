@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mcps.schema.json",
+  "title": "MCP Server Definitions",
+  "description": "Model Context Protocol server configs for Claude Code and OpenCode.",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/$defs/mcp"
+  },
+  "$defs": {
+    "mcp": {
+      "type": "object",
+      "required": ["description"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable MCP description."
+        },
+        "claude": {
+          "$ref": "#/$defs/claude_mcp",
+          "description": "Claude Code MCP config (written to settings.json mcpServers)."
+        },
+        "opencode": {
+          "$ref": "#/$defs/opencode_mcp",
+          "description": "OpenCode MCP config (written to opencode.json mcp)."
+        }
+      }
+    },
+    "claude_mcp": {
+      "type": "object",
+      "oneOf": [
+        {
+          "description": "Local command MCP (stdio transport).",
+          "required": ["command"],
+          "properties": {
+            "command": { "type": "string" },
+            "args": { "type": "array", "items": { "type": "string" } },
+            "env": { "type": "object", "additionalProperties": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        {
+          "description": "Remote HTTP MCP.",
+          "required": ["type", "url"],
+          "properties": {
+            "type": { "const": "http" },
+            "url": { "type": "string", "format": "uri" },
+            "headers": { "type": "object", "additionalProperties": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "opencode_mcp": {
+      "type": "object",
+      "oneOf": [
+        {
+          "description": "Local command MCP.",
+          "required": ["type", "command"],
+          "properties": {
+            "type": { "const": "local" },
+            "command": { "type": "array", "items": { "type": "string" } },
+            "environment": { "type": "object", "additionalProperties": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        {
+          "description": "Remote HTTP MCP.",
+          "required": ["type", "url"],
+          "properties": {
+            "type": { "const": "remote" },
+            "url": { "type": "string", "format": "uri" },
+            "headers": { "type": "object", "additionalProperties": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

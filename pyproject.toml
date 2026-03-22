@@ -1,0 +1,20 @@
+[project]
+name = "rune"
+version = "0.1.0"
+description = "Knowledge absorption toolkit for AI coding agents — feed rules, shape profiles, grow your agents."
+requires-python = ">=3.12"
+dependencies = []
+license = {text = "MIT"}
+readme = "README.md"
+keywords = ["ai", "agents", "claude", "coding-assistant", "knowledge-management"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+
+[project.urls]
+Homepage = "https://github.com/rune-agents/rune"
+Repository = "https://github.com/rune-agents/rune"
+Issues = "https://github.com/rune-agents/rune/issues"

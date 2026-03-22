@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../schemas/mcps.schema.json
+# MCP server definitions — single source of truth
+# Each entry defines the config for both claude (settings.json mcpServers)
+# and opencode (opencode.json mcp section).
+#
+# Claude local format:  command (str), args (list), env (dict)
+# Claude remote format: type: http, url, headers (optional)
+# OpenCode local:       type: local, command (list), environment (dict)
+# OpenCode remote:      type: remote, url, headers (optional)
+#
+# Env values containing ${VAR} are left as-is — resolved at runtime by the shell.
+
+# Example MCP server definition:
+# my_mcp_server:
+#   description: "Example MCP server"
+#   claude:
+#     type: http
+#     url: "https://mcp.example.com/mcp"
+#   opencode:
+#     type: remote
+#     url: "https://mcp.example.com/mcp"
+
+{}

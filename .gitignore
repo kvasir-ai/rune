@@ -1,0 +1,36 @@
+# Local state — not committed
+.current-profile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.bak
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# uv / virtual environments
+.venv/
+.python-version
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Claude
+.claude/
+.DS_Store
+.ai-toolkit-managed-mcps.json
+
+# Build artifacts
+dist/
+*.egg-info/
+build/
+.current-profile

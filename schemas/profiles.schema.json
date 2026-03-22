@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "profiles.schema.json",
+  "title": "AI Toolkit Profiles",
+  "description": "Role-based profiles that select agents, rules, skills, hooks, and MCPs.",
+  "type": "object",
+  "properties": {
+    "global_rules": {
+      "type": "object",
+      "description": "Rules deployed to every profile automatically. Same structure as profile-level rules: grouped by arbitrary label.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true
+      }
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/profile"
+  },
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "required": ["description"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable profile description."
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true
+          },
+          "description": "Rules grouped by logical label (e.g. 'data', 'collaboration'). Keys are arbitrary — they do not need to match src/rules/ subdirectory names. Rule filenames must be unique repo-wide; the deploy script resolves them by recursive search regardless of the key used."
+        },
+        "hooks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true,
+          "description": "Hook names (match filenames in src/hooks/ without extension)."
+        },
+        "mcps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true,
+          "description": "MCP names (match top-level keys in src/mcps.yaml)."
+        }
+      }
+    }
+  }
+}
