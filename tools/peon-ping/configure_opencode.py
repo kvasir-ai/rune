@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["pyyaml>=6.0"]
+# ///
 """
 Peon-Ping Configuration for OpenCode
 
 Configures peon-ping for model-based random pack rotation on OpenCode.
 Installs packs and writes configuration. Model-switching hooks are
 pending OpenCode's hook API investigation.
+
+Profiles are defined in tools/peon-ping/profiles.yaml.
 """
 
 import json
@@ -13,33 +19,61 @@ import sys
 import os
 from pathlib import Path
 
+try:
+    import yaml
+except ImportError:
+    print("ERROR: PyYAML is required. Run: uv add pyyaml")
+    sys.exit(1)
 
-# Pack assignments by model tier
-HAIKU_PACKS = [
-    "peon",
-    "peasant",
-    "warcraft-peon",
-    "wc2_peasant",
-    "ra2_soviet_engineer",
-    "murloc",
-]
-SONNET_PACKS = [
-    "wc3_grunt",
-    "wc3_knight",
-    "ra_soviet",
-    "ra2_kirov",
-    "ra2_peon",
-    "wow-tauren",
-]
-OPUS_PACKS = [
-    "wc3_corrupted_arthas",
-    "wc3_brewmaster",
-    "wc3_farseer",
-    "wc3_jaina",
-    "ra2_eva_commander",
-    "ra2_yuri",
-    "red-alert-1-eva",
-]
+
+PROFILES_YAML = Path(__file__).parent / "profiles.yaml"
+DEFAULT_PROFILES = ["warcraft", "redalert"]
+
+
+def _load_profiles() -> dict[str, dict[str, list[str]]]:
+    """Load profiles from YAML file."""
+    if not PROFILES_YAML.is_file():
+        print(f"ERROR: {PROFILES_YAML} not found")
+        sys.exit(1)
+    with open(PROFILES_YAML) as f:
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict):
+        print(f"ERROR: {PROFILES_YAML} must be a YAML mapping")
+        sys.exit(1)
+    return data
+
+
+def _resolve_profiles() -> list[str]:
+    """Resolve which profiles to use from PEON_PROFILES env var."""
+    profiles = _load_profiles()
+    raw = os.environ.get("PEON_PROFILES", "").strip()
+    if not raw:
+        return list(DEFAULT_PROFILES)
+    names = [p.strip() for p in raw.split(",") if p.strip()]
+    invalid = [n for n in names if n not in profiles]
+    if invalid:
+        print(f"ERROR: Unknown profile(s): {', '.join(invalid)}")
+        print(f"Available: {', '.join(sorted(profiles))}")
+        sys.exit(1)
+    return names
+
+
+def _build_tier_lists(profile_names: list[str]) -> tuple[list[str], list[str], list[str]]:
+    """Merge selected profiles into haiku/sonnet/opus pack lists."""
+    profiles = _load_profiles()
+    haiku: list[str] = []
+    sonnet: list[str] = []
+    opus: list[str] = []
+    for name in profile_names:
+        profile = profiles[name]
+        haiku.extend(p for p in profile.get("haiku", []) if p not in haiku)
+        sonnet.extend(p for p in profile.get("sonnet", []) if p not in sonnet)
+        opus.extend(p for p in profile.get("opus", []) if p not in opus)
+    return haiku, sonnet, opus
+
+
+_selected = _resolve_profiles()
+HAIKU_PACKS, SONNET_PACKS, OPUS_PACKS = _build_tier_lists(_selected)
 ALL_PACKS = HAIKU_PACKS + SONNET_PACKS + OPUS_PACKS
 
 # Paths (OpenCode uses ~/.openpeon/ instead of Claude Code's .claude/hooks/peon-ping/)

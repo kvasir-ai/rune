@@ -1,37 +1,48 @@
 # rune
 
+> **Early preview — friends & family testing.** This is pre-release software shared for feedback. Expect rough edges. If something breaks or confuses, that's the feedback I need.
+
 > *The wisest of all shared his knowledge through runes.*
 
-A knowledge absorption toolkit for AI coding agents. Grow your team's expertise, orchestrate their work, and keep everyone aligned.
+An agent system for AI-assisted development. Knowledge management, team coordination, and parallel execution — embedded in your coding workflow.
+
+Built by a team trained on the same principles rune provides.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Linux / WSL2 / macOS](https://img.shields.io/badge/platform-Linux%20%7C%20WSL2%20%7C%20macOS-lightgrey)](README.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
 [![OpenCode](https://img.shields.io/badge/OpenCode-compatible-green)](https://opencode.ai)
 
-## Your starting team
+```bash
+git clone https://github.com/rune-agents/rune.git && cd rune && make use-profile PROFILE=default
+```
 
-Eleven specialists, ready to absorb your knowledge and get to work.
+## Starter team
 
-| Agent | Role | Emoji |
-|---|---|---|
-| Architect | System design, API contracts, architectural decisions | 🏗 |
-| Developer | Implementation, features, bug fixes | 🔧 |
-| Planner | Implementation plans, project breakdown, risk assessment | 🗺 |
-| Reviewer | Code review, quality gates, final approval | 🔍 |
-| Tester | Test plans, test suites, coverage | 🧪 |
-| Security | Vulnerability assessment, threat modeling | 🔒 |
-| Technical Writer | Documentation, ADRs, READMEs, API docs | ✍ |
-| Writer | Guides, release notes, user-facing content | ✍ |
-| Designer | UI/UX, component design, interface planning | 🎨 |
-| DevOps | Deployment, CI/CD, releases, infrastructure | 🚀 |
-| Knowledge Manager | Rule CRUD, audits, profile optimization | 📚 |
+rune ships with a ready-made team. Replace any agent, add your own, delete what you don't need.
+
+| Agent | Role |
+|---|---|
+| 🏗 Architect | System design, API contracts, architectural decisions |
+| 🔧 Developer | Implementation, features, bug fixes |
+| 🗺 Planner | Implementation plans, project breakdown, risk assessment |
+| 🔍 Reviewer | Code review, quality gates, final approval |
+| ⚖️ Judge | Cross-domain validation, correctness, safety verdicts |
+| 🧪 Tester | Test plans, test suites, coverage |
+| 🔒 Security | Vulnerability assessment, threat modeling |
+| ✍️ Technical Writer | Documentation, ADRs, READMEs, API docs |
+| ✍️ Writer | Guides, release notes, user-facing content |
+| 🎨 Designer | UI/UX, component design, interface planning |
+| 🚀 DevOps | Deployment, CI/CD, releases, infrastructure |
+| 📚 Knowledge Manager | Rule audits, profile optimization, knowledge lifecycle |
 
 Add your own specialists in `src/agents/`.
 
 ## How knowledge absorption works
 
-**Feed** — Drop reference documents into `src/rules/`. These are structured knowledge that agents load as context when they work. Cover your coding conventions, API standards, compliance requirements, domain expertise, architectural decisions — anything your team needs to know to do the job right.
+**Ingest** — Drop raw material into `src/knowledge/`. PDFs, research summaries, extracted docs — anything that is not yet structured for agent consumption. This is the inbox.
+
+**Distill** — The Knowledge Manager reads the inbox and distills raw material into focused, actionable rules in `src/rules/`. Tables, checklists, code blocks — structured knowledge that agents load as context. Never skip the inbox by dumping raw content directly into rules.
 
 **Shape** — Group rules into profiles. A security auditor gets different knowledge than a frontend developer. Profiles control which rules load for which role, keeping context focused and costs low. Switch with one command.
 
@@ -45,62 +56,54 @@ rune ships with PMBOK-grounded project planning, ADR templates, testing strategy
 
 ## Quick start
 
-```bash
-git clone https://github.com/rune-agents/rune.git
-cd rune
-make use-profile PROFILE=default   # deploy to Claude Code + OpenCode
-make verify                        # confirm what was installed
-make list-agents                   # browse available agents
-```
+Install `uv` if you don't have it, then run the one-liner above.
 
-**Prerequisites:** `make` and `uv` (`pip install uv` or see [uv docs](https://docs.astral.sh/uv/)).
+| OS | Install uv |
+|---|---|
+| macOS | `brew install uv` |
+| Linux / WSL | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 
-Try it: say `"run rune example 1"` (or 2, 3) to dispatch a showcase DAG immediately.
+Once installed, say `"run rune example 1"` to dispatch a showcase DAG.
 
 ## DAG dispatch
 
 Define tasks with dependencies. rune computes waves via topological sort and dispatches each wave in parallel:
 
 ```
-  Wave 0  ─── 4 parallel ────────────────
-  🏗️  architect       Design API contract
-  🎨  designer        Design UI components
-  🔧  developer       Set up database schema
-  ✍️  writer          Draft documentation
+───────────────────────────────────────────
+  DAG DISPATCH PLAN
+  Tasks: 7  |  Waves: 3  |  Benefit: 1.8x
+───────────────────────────────────────────
 
-  Wave 1  ─── 2 parallel ────────────────
-  🔧  developer       Implement API and UI        ↳ t1, t2, t3
-  🧪  tester          Write tests                 ↳ t1, t3
+  Wave 0  ─── 4 parallel ──────────────────
+  🏗️  t1  architect         Design API contract
+  🎨  t2  designer          Design UI components
+  🔧  t3  developer         Set up database schema
+  ✍️  t4  writer            Draft documentation
+
+  Wave 1  ─── 2 parallel ──────────────────
+  🔧  t5  developer         Implement API and UI
+                              ↳ depends on: t1, t2, t3
+  🧪  t6  tester            Write tests
+                              ↳ depends on: t1, t3
 
   Wave 2  ────────────────────────────────
-  🔍  reviewer        Final review                ↳ t4, t5, t6
+  🔍  t7  reviewer          Final review
+                              ↳ depends on: t4, t5, t6
+
+───────────────────────────────────────────
+  Critical path: t1 → t5 → t7
+  Path length: 3 of 7 tasks (43%)
+───────────────────────────────────────────
 ```
 
-Say `"Execute this DAG plan"` to run it. `"Test this DAG"` for a zero-cost dry run.
+Say `/rune` to dispatch. `"Test this DAG"` for a zero-cost dry run.
 
 See [EXAMPLES.md](EXAMPLES.md) for three full scenarios (1.8x to 3.0x speedup).
 
-## Project structure
-
-```
-rune/
-├── src/
-│   ├── agents/              # Agent .md files — add your own
-│   ├── rules/               # Reference documents — add your own
-│   ├── skills/              # Task templates (6 included)
-│   ├── hooks/               # Safety hooks (3 included)
-│   ├── hooks-meta.yaml      # Hook event bindings
-│   └── mcps.yaml            # MCP server definitions
-├── tools/                   # 11 dev tool install/uninstall scripts
-├── schemas/                 # JSON schemas for all config files
-├── platforms/               # Claude Code + OpenCode platform config
-├── profiles.yaml            # Which rules deploy to each profile
-└── Makefile
-```
-
 ## Profiles
 
-A profile controls which rules deploy. All agents and skills deploy to every profile — only the knowledge set changes.
+A profile controls which rules deploy. All agents and skills deploy to every profile — only the knowledge set changes. The default profile ships lean — run `make context-budget` to measure your footprint. Skills load on demand.
 
 ```yaml
 # profiles.yaml
@@ -122,32 +125,6 @@ make list-profiles                             # see all profiles
 make show-profile PROFILE=my-backend-profile   # preview before applying
 make use-profile PROFILE=my-backend-profile    # deploy it
 ```
-
-## Adding your content
-
-| What | Where |
-|---|---|
-| New agent | `src/agents/{domain}/my-agent.md` |
-| New rule document | `src/rules/{category}/my-rule.md` |
-| New skill | `src/skills/my-skill/SKILL.md` |
-| New hook | `src/hooks/my-hook.py` + register in `src/hooks-meta.yaml` |
-| New MCP | entry in `src/mcps.yaml` |
-
-Register rules in `profiles.yaml` to deploy them. Agents and skills are auto-discovered. Run `make validate` before committing.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
-
-## Tools
-
-11 dev tools with idempotent install/uninstall scripts. Separate from profiles — install once, they stay.
-
-```bash
-make list-tools               # see available tools and install status
-make install-tool-rg          # install ripgrep
-make install-tool-uv          # install uv
-```
-
-Available: `rg`, `fd`, `fzf`, `bat`, `eza`, `starship`, `zoxide`, `uv`, `yq`, `rtk` (token-optimized CLI proxy for Claude Code), `peon-ping` (model-pack rotation with audio cues).
 
 ## Safety hooks
 
@@ -171,4 +148,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add agents, rules, skills, hoo
 
 ---
 
-**rune** is the open-source foundation. Something bigger is coming.
+*The team is yours. Teach it everything you know.*

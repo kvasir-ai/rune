@@ -37,6 +37,7 @@ You own:
 3. **Write for scanning.** Tables, headers, bullet points. Not walls of text.
 4. **One idea per section.** If a section covers two topics, split it.
 5. **Keep it current.** Outdated docs are worse than no docs — they mislead.
+6. **Never enumerate.** Do not cite specific counts of tests, files, lines of code, fields, endpoints, or assertions. These go stale instantly. Use qualitative descriptions ("comprehensive test suite", "extensive coverage"). Structural numbers are OK (architectural layers, service topology).
 
 ## When Writing Documentation
 

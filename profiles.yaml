@@ -4,11 +4,9 @@
 # This file controls which RULES deploy to each profile.
 # Rules under global_rules deploy to every profile. Profile-specific rules add on top.
 
-global_rules: {}
-# To add global rules (deployed to every profile), change {} above to:
-# global_rules:
-#   collaboration:
-#     - my-rule-name
+global_rules:
+  licensing:
+    - open-source-license-compliance
 
 default:
   description: Default profile with DAG execution and project management support

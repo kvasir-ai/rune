@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["pyyaml>=6.0"]
+# ///
 """
 Peon-Ping Configuration for Claude Code
 
@@ -6,16 +10,10 @@ Configures peon-ping for model-based random pack rotation.
 Sets up SessionStart/UserPromptSubmit hooks to automatically
 pick and switch packs based on the active Claude model tier (haiku/sonnet/opus).
 
-Profiles control which sound packs are included. Select one or more:
+Profiles are defined in tools/peon-ping/profiles.yaml. Select one or more:
     make configure-peon PEON_PROFILES=warcraft,redalert
 
-Available profiles:
-    warcraft       Warcraft series (EN)
-    warcraft-ru    Warcraft series (RU)
-    redalert       Red Alert / C&C series (EN)
-    starcraft      StarCraft series (EN)
-    shooter        FPS mix (CS, TF2, Halo, Duke Nukem, Helldivers 2)
-    sci-fi         Sci-fi AI voices (GLaDOS, Cortana, HAL 9000)
+Run `make list-peon-profiles` to see available profiles.
 """
 
 import json
@@ -23,6 +21,8 @@ import subprocess
 import sys
 import os
 from pathlib import Path
+
+import yaml
 
 
 def _is_wsl() -> bool:
@@ -34,122 +34,42 @@ def _is_wsl() -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Profile definitions — each profile maps packs to model tiers.
-#
-#   haiku:  workers, grunts, low-tier units
-#   sonnet: mid-tier units, soldiers, vehicles
-#   opus:   heroes, commanders, bosses
+# Profile definitions — loaded from profiles.yaml
 # ---------------------------------------------------------------------------
 
-PROFILES: dict[str, dict[str, list[str]]] = {
-    "warcraft": {
-        "haiku": [
-            "peon",
-            "peasant",
-            "warcraft-peon",
-            "wc2_peasant",
-            "murloc",
-        ],
-        "sonnet": [
-            "wc3_grunt",
-            "wc3_knight",
-            "wc3_brewmaster",
-            "wc3_farseer",
-            "wow-tauren",
-        ],
-        "opus": [
-            "wc3_corrupted_arthas",
-            "wc3_jaina",
-        ],
-    },
-    "warcraft-ru": {
-        "haiku": [
-            "peon_ru",
-            "peasant_ru",
-            "wc2_peon_ru",
-        ],
-        "sonnet": [
-            "acolyte_ru",
-            "high_elf_builder_ru",
-        ],
-        "opus": [
-            "arthas_ru",
-            "brewmaster_ru",
-        ],
-    },
-    "redalert": {
-        "haiku": [
-            "ra2_soviet_engineer",
-        ],
-        "sonnet": [
-            "ra_soviet",
-            "ra2_kirov",
-            "ra2_peon",
-        ],
-        "opus": [
-            "ra2_eva_commander",
-            "ra2_yuri",
-            "red-alert-1-eva",
-        ],
-    },
-    "starcraft": {
-        "haiku": [
-            "sc_scv",
-            "sc_marine",
-            "sc_firebat",
-            "sc_medic",
-        ],
-        "sonnet": [
-            "sc_ghost",
-            "sc_goliath",
-            "sc_dropship",
-            "sc_tank",
-            "sc_battlecruiser",
-            "protoss",
-        ],
-        "opus": [
-            "sc_kerrigan",
-            "sc_raynor",
-            "sc2_abathur",
-            "sc2_alarak",
-            "sc2_carrier",
-            "sc2_stalker",
-            "sc2_stetmann",
-        ],
-    },
-    "shooter": {
-        "haiku": [
-            "counterstrike",
-            "worms-armageddon",
-        ],
-        "sonnet": [
-            "tf2_engineer",
-            "tf2_heavy",
-            "tf2_demoman",
-            "tf2_pyro",
-            "tf2_sniper",
-            "tf2_spy",
-        ],
-        "opus": [
-            "duke_nukem",
-            "halo3_announcer",
-            "hd2_helldiver",
-        ],
-    },
-    "sci-fi": {
-        "haiku": [
-            "cortana",
-        ],
-        "sonnet": [
-            "hal_2001",
-        ],
-        "opus": [
-            "glados",
-        ],
-    },
-}
-
+PROFILES_YAML = Path(__file__).parent / "profiles.yaml"
+TIERS = ("low", "mid", "high")
 DEFAULT_PROFILES = ["warcraft", "redalert"]
+
+
+def _load_yaml() -> dict:
+    """Load the full YAML config."""
+    if not PROFILES_YAML.is_file():
+        print(f"ERROR: {PROFILES_YAML} not found")
+        sys.exit(1)
+    with open(PROFILES_YAML) as f:
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict):
+        print(f"ERROR: {PROFILES_YAML} must be a YAML mapping")
+        sys.exit(1)
+    return data
+
+
+def _load_model_tiers() -> dict[str, list[str]]:
+    """Load model-to-tier mapping from YAML."""
+    data = _load_yaml()
+    return data.get("model_tiers", {})
+
+
+def _load_profiles() -> dict[str, dict[str, list[str]]]:
+    """Load sound pack profiles (excluding model_tiers config)."""
+    data = _load_yaml()
+    return {k: v for k, v in data.items() if k != "model_tiers" and isinstance(v, dict)}
+
+
+PROFILES = _load_profiles()
+MODEL_TIERS = _load_model_tiers()
+DEFAULT_TIER = MODEL_TIERS.get("default", "mid")
 
 # Paths
 PEON_DIR = (
@@ -182,16 +102,27 @@ def resolve_profiles() -> list[str]:
 def build_tier_lists(
     profile_names: list[str],
 ) -> tuple[list[str], list[str], list[str]]:
-    """Merge selected profiles into haiku/sonnet/opus pack lists."""
-    haiku: list[str] = []
-    sonnet: list[str] = []
-    opus: list[str] = []
+    """Merge selected profiles into low/mid/high pack lists."""
+    low: list[str] = []
+    mid: list[str] = []
+    high: list[str] = []
     for name in profile_names:
         profile = PROFILES[name]
-        haiku.extend(p for p in profile.get("haiku", []) if p not in haiku)
-        sonnet.extend(p for p in profile.get("sonnet", []) if p not in sonnet)
-        opus.extend(p for p in profile.get("opus", []) if p not in opus)
-    return haiku, sonnet, opus
+        low.extend(p for p in profile.get("low", []) if p not in low)
+        mid.extend(p for p in profile.get("mid", []) if p not in mid)
+        high.extend(p for p in profile.get("high", []) if p not in high)
+    return low, mid, high
+
+
+def resolve_model_tier(model_id: str) -> str:
+    """Resolve a model ID to a tier (low/mid/high) using substring matching."""
+    model_lower = model_id.lower()
+    for tier in TIERS:
+        patterns = MODEL_TIERS.get(tier, [])
+        for pattern in patterns:
+            if pattern.lower() in model_lower:
+                return tier
+    return DEFAULT_TIER
 
 
 def preflight_check() -> bool:
@@ -226,13 +157,30 @@ def install_missing_packs(all_packs: list[str]):
     print()
 
 
+def _mk_normalize_tier() -> str:
+    """Generate a bash normalize_tier function from MODEL_TIERS config."""
+    lines = ['normalize_tier() {', '  local m', '  m=$(echo "$1" | tr \'[:upper:]\' \'[:lower:]\')']
+    first = True
+    for tier in TIERS:
+        patterns = MODEL_TIERS.get(tier, [])
+        for pattern in patterns:
+            keyword = "if" if first else "elif"
+            lines.append(f'  {keyword} echo "$m" | grep -q "{pattern.lower()}"; then echo "{tier}"')
+            first = False
+    lines.append(f'  else echo "{DEFAULT_TIER}"')
+    lines.append('  fi')
+    lines.append('}')
+    return "\n".join(lines)
+
+
 def _mk_hook_model_pack(
-    haiku_packs: list[str], sonnet_packs: list[str], opus_packs: list[str]
+    low_packs: list[str], mid_packs: list[str], high_packs: list[str]
 ) -> str:
     """Generate the hook-model-pack.sh script content."""
-    haiku_str = " ".join(haiku_packs)
-    sonnet_str = " ".join(sonnet_packs)
-    opus_str = " ".join(opus_packs)
+    low_str = " ".join(low_packs)
+    mid_str = " ".join(mid_packs)
+    high_str = " ".join(high_packs)
+    normalize_fn = _mk_normalize_tier()
 
     return f"""#!/bin/bash
 # hook-model-pack.sh — SessionStart: pick random pack for the active model tier
@@ -243,9 +191,11 @@ PEON_DIR="${{CLAUDE_CONFIG_DIR:-$HOME/.claude}}/hooks/peon-ping"
 STATE="$PEON_DIR/.state.json"
 SETTINGS="${{CLAUDE_CONFIG_DIR:-$HOME/.claude}}/settings.json"
 
-HAIKU_PACKS=({haiku_str})
-SONNET_PACKS=({sonnet_str})
-OPUS_PACKS=({opus_str})
+LOW_PACKS=({low_str})
+MID_PACKS=({mid_str})
+HIGH_PACKS=({high_str})
+
+{normalize_fn}
 
 INPUT=$(cat)
 
@@ -274,20 +224,18 @@ import json
 try:
     with open('$SETTINGS') as f:
         d = json.load(f)
-    print(d.get('model', 'sonnet'))
+    print(d.get('model', ''))
 except:
-    print('sonnet')
-" 2>/dev/null || echo "sonnet")
+    print('')
+" 2>/dev/null || echo "")
 fi
 
-MODEL_LOWER=$(echo "$MODEL" | tr '[:upper:]' '[:lower:]')
-if echo "$MODEL_LOWER" | grep -q "haiku"; then
-  POOL=("${{HAIKU_PACKS[@]}}")
-elif echo "$MODEL_LOWER" | grep -q "opus"; then
-  POOL=("${{OPUS_PACKS[@]}}")
-else
-  POOL=("${{SONNET_PACKS[@]}}")
-fi
+TIER=$(normalize_tier "$MODEL")
+case "$TIER" in
+  low)   POOL=("${{LOW_PACKS[@]}}")  ;;
+  high)  POOL=("${{HIGH_PACKS[@]}}") ;;
+  *)     POOL=("${{MID_PACKS[@]}}")  ;;
+esac
 
 # Filter to installed packs only
 INSTALLED=()
@@ -322,12 +270,13 @@ exit 0
 
 
 def _mk_hook_model_switch(
-    haiku_packs: list[str], sonnet_packs: list[str], opus_packs: list[str]
+    low_packs: list[str], mid_packs: list[str], high_packs: list[str]
 ) -> str:
     """Generate the hook-model-switch.sh script content."""
-    haiku_str = " ".join(haiku_packs)
-    sonnet_str = " ".join(sonnet_packs)
-    opus_str = " ".join(opus_packs)
+    low_str = " ".join(low_packs)
+    mid_str = " ".join(mid_packs)
+    high_str = " ".join(high_packs)
+    normalize_fn = _mk_normalize_tier()
 
     return f"""#!/bin/bash
 # hook-model-switch.sh — UserPromptSubmit: detect model change and switch pack
@@ -338,9 +287,11 @@ PEON_DIR="${{CLAUDE_CONFIG_DIR:-$HOME/.claude}}/hooks/peon-ping"
 STATE="$PEON_DIR/.state.json"
 SETTINGS="${{CLAUDE_CONFIG_DIR:-$HOME/.claude}}/settings.json"
 
-HAIKU_PACKS=({haiku_str})
-SONNET_PACKS=({sonnet_str})
-OPUS_PACKS=({opus_str})
+LOW_PACKS=({low_str})
+MID_PACKS=({mid_str})
+HIGH_PACKS=({high_str})
+
+{normalize_fn}
 
 INPUT=$(cat)
 
@@ -359,10 +310,10 @@ import json
 try:
     with open('$SETTINGS') as f:
         d = json.load(f)
-    print(d.get('model', 'sonnet'))
+    print(d.get('model', ''))
 except:
-    print('sonnet')
-" 2>/dev/null || echo "sonnet")
+    print('')
+" 2>/dev/null || echo "")
 
 # Read last-known model from .state.json
 LAST_MODEL=$(python3 -c "
@@ -375,16 +326,6 @@ except:
     print('')
 " 2>/dev/null || echo "")
 
-# Normalize both to tier
-normalize_tier() {{
-  local m
-  m=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-  if echo "$m" | grep -q "haiku"; then echo "haiku"
-  elif echo "$m" | grep -q "opus"; then echo "opus"
-  else echo "sonnet"
-  fi
-}}
-
 CURRENT_TIER=$(normalize_tier "$CURRENT_MODEL")
 LAST_TIER=$(normalize_tier "$LAST_MODEL")
 
@@ -396,9 +337,9 @@ fi
 
 # Model changed — pick a new pack from the right pool
 case "$CURRENT_TIER" in
-  haiku)  POOL=("${{HAIKU_PACKS[@]}}") ;;
-  opus)   POOL=("${{OPUS_PACKS[@]}}") ;;
-  *)      POOL=("${{SONNET_PACKS[@]}}") ;;
+  low)   POOL=("${{LOW_PACKS[@]}}") ;;
+  high)  POOL=("${{HIGH_PACKS[@]}}") ;;
+  *)     POOL=("${{MID_PACKS[@]}}") ;;
 esac
 
 INSTALLED=()
@@ -447,14 +388,14 @@ exit 0
 
 
 def create_hook_model_pack(
-    haiku_packs: list[str], sonnet_packs: list[str], opus_packs: list[str]
+    low_packs: list[str], mid_packs: list[str], high_packs: list[str]
 ):
     """Create hook-model-pack.sh for SessionStart event."""
     print("--- Step 2: Creating hook-model-pack.sh ---")
 
     SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
     hook_path = SCRIPTS_DIR / "hook-model-pack.sh"
-    content = _mk_hook_model_pack(haiku_packs, sonnet_packs, opus_packs)
+    content = _mk_hook_model_pack(low_packs, mid_packs, high_packs)
     if hook_path.is_file() and hook_path.read_text() == content:
         print(f"  [skip] {hook_path} already up to date")
     else:
@@ -465,13 +406,13 @@ def create_hook_model_pack(
 
 
 def create_hook_model_switch(
-    haiku_packs: list[str], sonnet_packs: list[str], opus_packs: list[str]
+    low_packs: list[str], mid_packs: list[str], high_packs: list[str]
 ):
     """Create hook-model-switch.sh for UserPromptSubmit event."""
     print("--- Step 3: Creating hook-model-switch.sh ---")
 
     hook_path = SCRIPTS_DIR / "hook-model-switch.sh"
-    content = _mk_hook_model_switch(haiku_packs, sonnet_packs, opus_packs)
+    content = _mk_hook_model_switch(low_packs, mid_packs, high_packs)
     if hook_path.is_file() and hook_path.read_text() == content:
         print(f"  [skip] {hook_path} already up to date")
     else:
@@ -594,19 +535,20 @@ def patch_settings_json():
 
 def print_summary(
     profile_names: list[str],
-    haiku_packs: list[str],
-    sonnet_packs: list[str],
-    opus_packs: list[str],
+    low_packs: list[str],
+    mid_packs: list[str],
+    high_packs: list[str],
 ):
     """Print configuration summary."""
     print("=== Done ===")
     print()
     print(f"  profiles: {', '.join(profile_names)}")
-    print(f"  haiku  ({len(haiku_packs)} packs): {' '.join(haiku_packs)}")
-    print(f"  sonnet ({len(sonnet_packs)} packs): {' '.join(sonnet_packs)}")
-    print(f"  opus   ({len(opus_packs)} packs):  {' '.join(opus_packs)}")
+    print(f"  low  ({len(low_packs)} packs):  {' '.join(low_packs)}")
+    print(f"  mid  ({len(mid_packs)} packs):  {' '.join(mid_packs)}")
+    print(f"  high ({len(high_packs)} packs): {' '.join(high_packs)}")
     print()
-    print("Restart Claude Code to activate.")
+    print("  Model tier mapping from: tools/peon-ping/profiles.yaml")
+    print("  Restart Claude Code to activate.")
 
 
 def main():
@@ -614,7 +556,7 @@ def main():
     if "--list-profiles" in sys.argv:
         print("Available peon-ping profiles:")
         for name, profile in sorted(PROFILES.items()):
-            total = sum(len(profile.get(t, [])) for t in ("haiku", "sonnet", "opus"))
+            total = sum(len(profile.get(t, [])) for t in TIERS)
             print(f"  {name:<16s} {total:>3d} packs")
         return
 
@@ -628,15 +570,15 @@ def main():
     if not preflight_check():
         sys.exit(1)
 
-    haiku_packs, sonnet_packs, opus_packs = build_tier_lists(profile_names)
-    all_packs = haiku_packs + sonnet_packs + opus_packs
+    low_packs, mid_packs, high_packs = build_tier_lists(profile_names)
+    all_packs = low_packs + mid_packs + high_packs
 
     install_missing_packs(all_packs)
-    create_hook_model_pack(haiku_packs, sonnet_packs, opus_packs)
-    create_hook_model_switch(haiku_packs, sonnet_packs, opus_packs)
+    create_hook_model_pack(low_packs, mid_packs, high_packs)
+    create_hook_model_switch(low_packs, mid_packs, high_packs)
     patch_config_json()
     patch_settings_json()
-    print_summary(profile_names, haiku_packs, sonnet_packs, opus_packs)
+    print_summary(profile_names, low_packs, mid_packs, high_packs)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,133 @@
+# Peon-ping sound pack profiles
+#
+# Three tiers: low, mid, high. Each tier maps to sound packs.
+# Model IDs are matched to tiers via the model_tiers section below.
+#
+# Add your own profiles or modify existing ones.
+# Apply with: make configure-peon PEON_PROFILES=warcraft,redalert
+
+# ── Model-to-tier mapping ──────────────────────────────────────────
+# Each entry is a substring matched case-insensitively against the model ID.
+# First match wins. Unknown models fall back to the default tier.
+#
+# Examples:
+#   "claude-sonnet-4" matches "sonnet" → mid
+#   "gpt-4o-mini" matches "mini" → low
+#   "deepseek-r1" matches "deepseek" → mid (if added below)
+
+model_tiers:
+  low:
+    - haiku
+    - mini
+    - flash
+    - small
+    - nano
+  mid:
+    - sonnet
+    - gpt-4o
+    - gemini-pro
+    - deepseek
+    - medium
+    - mistral
+    - llama
+    - command-r
+  high:
+    - opus
+    - o1
+    - o3
+    - gpt-4-turbo
+    - gemini-ultra
+    - large
+  default: mid
+
+# ── Sound pack profiles ────────────────────────────────────────────
+# low:  workers, grunts, low-tier units
+# mid:  mid-tier units, soldiers, vehicles
+# high: heroes, commanders, bosses
+
+warcraft:
+  low:
+    - peon
+    - peasant
+    - warcraft-peon
+    - wc2_peasant
+    - murloc
+  mid:
+    - wc3_grunt
+    - wc3_knight
+    - wc3_brewmaster
+    - wc3_farseer
+    - wow-tauren
+  high:
+    - wc3_corrupted_arthas
+    - wc3_jaina
+
+warcraft-ru:
+  low:
+    - peon_ru
+    - peasant_ru
+    - wc2_peon_ru
+  mid:
+    - acolyte_ru
+    - high_elf_builder_ru
+  high:
+    - arthas_ru
+    - brewmaster_ru
+
+redalert:
+  low:
+    - ra2_soviet_engineer
+  mid:
+    - ra_soviet
+    - ra2_kirov
+    - ra2_peon
+  high:
+    - ra2_eva_commander
+    - ra2_yuri
+    - red-alert-1-eva
+
+starcraft:
+  low:
+    - sc_scv
+    - sc_marine
+    - sc_firebat
+    - sc_medic
+  mid:
+    - sc_ghost
+    - sc_goliath
+    - sc_dropship
+    - sc_tank
+    - sc_battlecruiser
+    - protoss
+  high:
+    - sc_kerrigan
+    - sc_raynor
+    - sc2_abathur
+    - sc2_alarak
+    - sc2_carrier
+    - sc2_stalker
+    - sc2_stetmann
+
+shooter:
+  low:
+    - counterstrike
+    - worms-armageddon
+  mid:
+    - tf2_engineer
+    - tf2_heavy
+    - tf2_demoman
+    - tf2_pyro
+    - tf2_sniper
+    - tf2_spy
+  high:
+    - duke_nukem
+    - halo3_announcer
+    - hd2_helldiver
+
+sci-fi:
+  low:
+    - cortana
+  mid:
+    - hal_2001
+  high:
+    - glados

@@ -1,6 +1,6 @@
 ---
-name: executing-dag-plans
-description: Execute DAG-annotated plans with parallel wave dispatch. Use when a plan has tasks with depends_on fields and agent assignments. Computes waves via topological sort, dispatches independent tasks in parallel, collects results, and injects context into dependent tasks.
+name: rune
+description: Execute DAG-annotated plans OR ad-hoc parallel dispatches with wave-based visualization. Use when dispatching 2+ agents — whether from a formal plan with depends_on fields, or an improvised research/opinion fan-out. Always shows the dispatch diagram before execution. Computes waves via topological sort, dispatches independent tasks in parallel, collects results, and injects context into dependent tasks.
 ---
 
 # Executing DAG Plans
@@ -9,7 +9,14 @@ description: Execute DAG-annotated plans with parallel wave dispatch. Use when a
 
 Execute a DAG-annotated plan by dispatching agents in parallel waves. Each wave contains tasks whose dependencies are all satisfied. Tasks within a wave run simultaneously via multiple Agent calls in a single response.
 
-**Announce at start:** "I'm using the executing-dag-plans skill. Validating DAG before execution."
+**Announce at start:** "I'm using the rune skill. Validating DAG before execution."
+
+**Plan source identification:** Determine where the plan came from:
+- If executing a plan from a file (e.g., `PLAN.md`, `docs/plans/feature-x.md`), record the file path as the plan source
+- If executing a plan produced by the `writing-plans` skill in this session, record `writing-plans (session)`
+- If constructing an ad-hoc DAG from a user prompt, record `ad-hoc`
+
+Include the plan source in the dispatch header and history file.
 
 **Prerequisites:**
 - Plan must have tasks with `id`, `agent`, `depends_on`, `output`, and `files` fields
@@ -73,6 +80,7 @@ Display the wave plan as a **visually formatted dispatch report**. Use the emoji
 ───────────────────────────────────────────
   DAG DISPATCH PLAN
   Tasks: 6  |  Waves: 4  |  Benefit: 1.5x
+  Plan: docs/plans/api-feature.md
 ───────────────────────────────────────────
 
   Wave 0  ─── parallel ───────────────────
@@ -255,7 +263,7 @@ When the user says "test the DAG", "dry run", or "simulate dispatch", run the fu
   Bottlenecks:    None found
   Warnings:       0
 
-  Ready to execute? Use executing-dag-plans
+  Ready to execute? Use rune
   without "test" to run for real.
 ───────────────────────────────────────────
 ```
@@ -264,6 +272,110 @@ Test mode is zero-cost — no agents are invoked, no files are modified, no toke
 
 ---
 
+## Dispatch History
+
+Every dispatch is persisted to `.rune/` in the project root for audit, recall, and session recovery. This directory is gitignored by default — users who want audit trails can remove the gitignore entry.
+
+### When to write
+
+After Step 4 (Final Report), write a YAML file to `.rune/`. Create the directory if it does not exist.
+
+### File naming
+
+```
+.rune/{ISO-timestamp}-{slug}.yaml
+```
+
+Example: `.rune/2026-03-23T14-32-00-api-migration.yaml`
+
+The slug is derived from the user's prompt — lowercase, hyphens, max 40 characters. Use the first few meaningful words.
+
+### File format
+
+The history file separates **plan** (intent) from **results** (outcome). This enables replay, audit, and session recovery from the file alone.
+
+```yaml
+schema_version: 1
+id: "2026-03-23T14-32-00-api-migration"
+started: "2026-03-23T14:32:00Z"
+completed: "2026-03-23T14:47:12Z"
+status: completed               # completed | failed | partial | aborted
+trigger: ad-hoc                 # ad-hoc | slash-command | retry | resume
+plan_source: ad-hoc             # ad-hoc | writing-plans (session) | path/to/PLAN.md
+prompt: "implement gRPC user service with database migration"
+
+plan:
+  - id: t1
+    agent: developer
+    title: "Define API schemas"
+    depends_on: []
+    files: [api/schemas/]
+    output: "Protobuf schema files for user service"
+  - id: t2
+    agent: architect
+    title: "Create database migration"
+    depends_on: []
+    files: [migrations/]
+    output: "SQL migration for user tables"
+  - id: t3
+    agent: developer
+    title: "Implement API handlers"
+    depends_on: [t1, t2]
+    files: [src/api/]
+    output: "gRPC handlers wired to database"
+
+dispatch:
+  waves:
+    0: [t1, t2]
+    1: [t3]
+  critical_path: [t1, t3]
+  parallelism_benefit: "1.5x"
+
+results:
+  - id: t1
+    wave: 0
+    status: completed
+    summary: "Created user.proto with CRUD operations"
+  - id: t2
+    wave: 0
+    status: completed
+    summary: "Created 001_create_users.sql migration"
+  - id: t3
+    wave: 1
+    status: completed
+    summary: "Implemented handlers with input validation"
+
+metrics:
+  total_tasks: 3
+  completed: 3
+  failed: 0
+  waves_executed: 2
+```
+
+### Format notes
+
+- **`plan`** is the full DAG definition — replayable as input to a future dispatch
+- **`dispatch`** records computed wave assignments and critical path (planning metadata)
+- **`results`** records execution outcomes only — status, summaries, errors
+- **`schema_version`** enables future format evolution without breaking old files
+- Task `id` is the join key between `plan` and `results` — the only intentional duplication
+
+### Rules for history files
+
+- **Summaries only in results** — store the 2-3 sentence context summary per task, never raw agent output
+- **Create `.rune/` lazily** — only when the first dispatch completes, not at validation time
+- **Add `.rune/` to `.gitignore`** if a `.gitignore` exists and `.rune/` is not already listed. Do NOT create a `.gitignore` if one does not exist.
+- **Never fail the dispatch** because history could not be written — history is best-effort, not blocking
+
+### Session recovery
+
+If a session is lost mid-dispatch, the user can inspect `.rune/` to see which tasks completed:
+
+1. Read `plan` — full task definitions with file scopes and expected outputs
+2. Read `results` — identify tasks with `status: failed` or missing entries (not yet dispatched)
+3. Re-dispatch failed/missing tasks using the plan definitions
+4. Respect `depends_on` — only re-dispatch if prerequisites are `completed`
+
 ## Rules
 
 1. **Never skip validation.** Run all 6 safety checks before any dispatch.
@@ -271,16 +383,15 @@ Test mode is zero-cost — no agents are invoked, no files are modified, no toke
 3. **Summarize, don't dump.** Context injection between waves is 2-3 sentences per predecessor, not raw output.
 4. **File scoping is mandatory.** Every agent prompt includes "Do NOT modify files outside [scope]."
 5. **User is the authority.** On any failure or conflict, present options and ask.
+6. **Always persist history.** After every dispatch (including failed/partial), write to `.rune/`.
 
 ## Integration
 
-**Produces:** Executed plan with per-task status, suitable for `verification-before-completion`.
+**Produces:** Executed plan with per-task status (persisted to `.rune/`), suitable for `verification-before-completion`.
 
 **Consumes:** DAG-annotated plan from `writing-plans` skill.
 
 **Fallback:** If the plan has no DAG annotations (no `depends_on` fields), tell the user: "This plan is not DAG-annotated. Use executing-plans for sequential execution, or ask the Planner to add dependency annotations."
-
-**Session loss recovery:** DAG state is not persisted. To minimize rework after a crash, commit completed work after each wave: `git add -A && git commit -m "DAG wave N complete"`. If the session is lost, review `git log` to see which waves completed, then re-run the DAG — skip already-committed waves by marking their tasks as pre-completed.
 
 **Works with:**
 - `verification-before-completion` — after DAG execution completes

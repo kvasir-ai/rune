@@ -12,7 +12,7 @@ Load plan, review critically, execute all tasks, report when complete.
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**DAG plans:** If the plan has tasks with `depends_on` fields (DAG annotations), use `executing-dag-plans` instead — it dispatches independent tasks in parallel waves for faster execution.
+**DAG plans:** If the plan has tasks with `depends_on` fields (DAG annotations), use `rune` instead — it dispatches independent tasks in parallel waves for faster execution.
 
 ## The Process
 

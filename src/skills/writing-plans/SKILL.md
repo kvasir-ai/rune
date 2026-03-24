@@ -49,7 +49,7 @@ This structure informs the task decomposition. Each task should produce self-con
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** If this plan has DAG annotations (depends_on fields), use executing-dag-plans. Otherwise use executing-plans. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** If this plan has DAG annotations (depends_on fields), use rune. Otherwise use executing-plans. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -62,7 +62,7 @@ This structure informs the task decomposition. Each task should produce self-con
 
 ## DAG Annotation (for plans with 5+ tasks and 3+ agents)
 
-When a plan has 5 or more tasks involving 3 or more different agents, annotate each task with dependency metadata. This enables parallel dispatch via the `executing-dag-plans` skill. See `rules/dag-execution-format.md` for the full format specification.
+When a plan has 5 or more tasks involving 3 or more different agents, annotate each task with dependency metadata. This enables parallel dispatch via the `rune` skill. See `rules/dag-execution-format.md` for the full format specification.
 
 **Add to each task:**
 ```yaml
@@ -180,7 +180,7 @@ After saving the plan:
 **Execution path depends on plan structure and harness capabilities:**
 
 **If plan has DAG annotations (depends_on fields):**
-- **REQUIRED:** Use executing-dag-plans
+- **REQUIRED:** Use rune
 - Parallel wave dispatch for maximum throughput
 - Test mode available: "test the DAG" to validate without executing
 

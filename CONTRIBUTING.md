@@ -37,7 +37,7 @@ You are a specialist in X. Your job is to Y.
 | `version` | No | Semantic version |
 | `opencode_description` | No | Shorter description for OpenCode |
 
-**Suggested agent contributions** — rune ships with 11 core agents. These are natural extensions:
+**Suggested agent contributions** — these are natural extensions to the shipped team:
 
 | Agent idea | Domain | What it would do |
 |---|---|---|
@@ -83,7 +83,7 @@ Do the thing described in `$ARGUMENTS`.
 2. Second step
 ```
 
-**Suggested skill contributions** — rune ships with 8 skills. These would complement the existing orchestration:
+**Suggested skill contributions** — these would complement the existing orchestration:
 
 | Skill idea | What it would do |
 |---|---|
@@ -267,3 +267,9 @@ make show-profile PROFILE=<name>    # preview before deploying
 make use-profile PROFILE=<name>     # deploy
 make verify                         # check deployed state
 ```
+
+## Further reading
+
+- [The Edit Distance of Understanding](docs/the-edit-distance-of-understanding.md) — How rune transforms ignorance into insight using the same structural principles as Levenshtein Distance.
+- [The Knowledge Creation Cycle](docs/the-knowledge-creation-cycle.md) — How rune's Feed, Shape, Grow lifecycle is grounded in organizational knowledge theory (SECI model + machine dimension).
+- [The Context Budget](docs/the-context-budget.md) — Why context management matters, how profiles keep it lean, and how to measure your footprint.

@@ -7,7 +7,7 @@
   list-mcps mcp-status enable-mcp disable-mcp \
   list-agents list-rules list-skills \
   verify validate reset list-tools \
-  list-peon-profiles \
+  list-peon-profiles context-budget \
   _configure
 
 RUN := uv run
@@ -213,6 +213,38 @@ verify: ## Check installed resources
 validate: ## Validate YAML files against JSON schemas
 	@echo "==> Validating YAML against schemas"
 	@$(RUN) $(CURDIR)/scripts/validate-schemas.py
+
+context-budget: ## Show token footprint for the active profile   [PROFILE=<name>]
+	$(resolve_profile)
+	@echo "==> Context budget for profile: $(PROFILE)"
+	@echo ""
+	@agent_chars=$$(find $(SRC)/agents -name "*.md" -exec grep -l '^---' {} \; | while read f; do \
+		sed -n '/^---/,/^---/p' "$$f" | wc -c; \
+	done | paste -sd+ | bc); \
+	agent_tokens=$$((agent_chars / 4)); \
+	rule_chars=0; rule_count=0; \
+	for rule in $$($(RUN) $(CURDIR)/scripts/resource-manager.py profile show $(PROFILE) $(CURDIR) 2>/dev/null | grep '✓' | sed 's/.*✓ //'); do \
+		f=$$(find $(SRC)/rules -name "$${rule}.md" 2>/dev/null | head -1); \
+		if [ -n "$$f" ]; then \
+			chars=$$(wc -c < "$$f"); \
+			rule_chars=$$((rule_chars + chars)); \
+			rule_count=$$((rule_count + 1)); \
+		fi; \
+	done; \
+	rule_tokens=$$((rule_chars / 4)); \
+	hook_chars=$$(find $(SRC)/hooks -name "*.py" -exec cat {} + 2>/dev/null | wc -c); \
+	hook_tokens=$$((hook_chars / 4)); \
+	skill_chars=$$(find $(SRC)/skills -name "*.md" -exec cat {} + 2>/dev/null | wc -c); \
+	skill_tokens=$$((skill_chars / 4)); \
+	at_rest=$$((agent_tokens + rule_tokens + hook_tokens)); \
+	pct_200k=$$((at_rest * 100 / 200000)); \
+	echo "  Agents (frontmatter):       ~$$agent_tokens tokens  [session start]"; \
+	echo "  Rules ($$rule_count deployed):       ~$$rule_tokens tokens  [session start]"; \
+	echo "  Hooks:                      ~$$hook_tokens tokens  [session start]"; \
+	echo "  Skills:                     ~$$skill_tokens tokens  [on demand]"; \
+	echo ""; \
+	echo "  At rest (no skills):        ~$$at_rest tokens"; \
+	echo "  Context usage (200K):       ~$$pct_200k%"
 
 ##@ System Tools (optional, not managed by profiles)
 

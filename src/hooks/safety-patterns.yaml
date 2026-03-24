@@ -1,0 +1,117 @@
+# Safety check patterns — loaded by safety-check.py
+#
+# Each pattern blocks or warns before a command executes.
+# Add your own patterns or remove ones you don't need.
+#
+# Fields:
+#   name:     Identifier (for logs and messages)
+#   match:    Python regex matched against the bash command
+#   flags:    Optional regex flags — "i" for case-insensitive (default: none)
+#   message:  Shown to the user when blocked
+#   severity: "block" (prevent execution) or "warn" (allow with warning)
+#
+# The special entry "rm_recursive_force" uses built-in compound flag detection
+# instead of a simple regex — it catches all flag orderings (rm -rf, rm -fr,
+# rm -r -f, rm --recursive --force, etc.).
+
+# ── Destructive file operations ────────────────────────────────────
+
+- name: rm-recursive-force
+  builtin: rm_recursive_force
+  message: "Destructive delete blocked: rm with recursive+force"
+  severity: block
+
+# ── Destructive SQL ────────────────────────────────────────────────
+
+- name: drop-table
+  match: '\bDROP\s+TABLE\b'
+  flags: i
+  message: "Destructive SQL blocked: DROP TABLE"
+  severity: block
+
+- name: drop-database
+  match: '\bDROP\s+DATABASE\b'
+  flags: i
+  message: "Destructive SQL blocked: DROP DATABASE"
+  severity: block
+
+- name: delete-from
+  match: '\bDELETE\s+FROM\b'
+  flags: i
+  message: "Destructive SQL blocked: DELETE FROM"
+  severity: block
+
+- name: truncate
+  match: '\bTRUNCATE\b'
+  flags: i
+  message: "Destructive SQL blocked: TRUNCATE"
+  severity: block
+
+# ── Destructive git ────────────────────────────────────────────────
+
+- name: git-force-push
+  match: '\bgit\s+push\b.*(?:--force(?!-with-lease)\b|-(?=[a-zA-Z]*f)[a-zA-Z]*f\b)'
+  message: "Destructive git blocked: force push. Use --force-with-lease if needed."
+  severity: block
+
+- name: git-reset-hard
+  match: '\bgit\s+reset\s+--hard\b'
+  message: "Destructive git blocked: hard reset discards uncommitted changes"
+  severity: block
+
+- name: git-clean
+  match: '\bgit\s+clean\b.*-[a-zA-Z]*f'
+  message: "Destructive git blocked: git clean -f removes untracked files"
+  severity: block
+
+- name: git-checkout-dot
+  match: '\bgit\s+checkout\s+\.'
+  message: "Destructive git blocked: git checkout . discards all uncommitted changes"
+  severity: block
+
+- name: git-restore-dot
+  match: '\bgit\s+restore\s+\.'
+  message: "Destructive git blocked: git restore . discards all uncommitted changes"
+  severity: block
+
+- name: git-branch-force-delete
+  match: '\bgit\s+branch\s+-D\b'
+  message: "Destructive git blocked: git branch -D force-deletes a branch"
+  severity: block
+
+# ── Infrastructure ─────────────────────────────────────────────────
+
+- name: terraform-production-apply
+  match: '(terragrunt|terraform)\s+apply'
+  flags: i
+  requires: '(live|production|prod)'
+  requires_flags: i
+  message: "Production apply blocked. CI/CD is the only path to production."
+  severity: block
+
+# ── Authentication ─────────────────────────────────────────────────
+
+- name: gcloud-auth
+  match: '\bgcloud\s+auth\b'
+  flags: i
+  message: "Authentication blocked. Ask the user to authenticate manually."
+  severity: block
+
+- name: gh-auth
+  match: '\bgh\s+auth\b'
+  flags: i
+  message: "Authentication blocked. Ask the user to authenticate manually."
+  severity: block
+
+# ── Add your own patterns below ────────────────────────────────────
+# Examples:
+#
+# - name: kubectl-delete
+#   match: '\bkubectl\s+delete\b'
+#   message: "Kubernetes resource deletion blocked"
+#   severity: block
+#
+# - name: docker-system-prune
+#   match: '\bdocker\s+system\s+prune\b'
+#   message: "Docker system prune blocked — removes all unused data"
+#   severity: warn

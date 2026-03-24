@@ -1,6 +1,6 @@
 # DAG Dispatch Examples
 
-Three showcase DAGs demonstrating parallel wave dispatch — from simple to maximum parallelism.
+Three showcase DAGs demonstrating parallel wave dispatch — from simple to maximum parallelism. Each shows the full lifecycle: dispatch diagram, wave execution, final report, and history persistence.
 
 Run any example by saying: **"run rune example 1"** (or 2, 3). Dry-run with **"test rune example 1"**.
 
@@ -10,22 +10,88 @@ Run any example by saying: **"run rune example 1"** (or 2, 3). Dry-run with **"t
 
 **Pattern:** Fan-out diamond. 4 independent tasks start together, converge through implementation, single review gate.
 
-```
-  Wave 0  ─── 4 parallel ────────────────
-  🏗️  architect       Design API contract
-  🎨  designer        Design UI components
-  🔧  developer       Set up database schema
-  ✍️  writer          Draft user documentation
+### Dispatch Diagram
 
-  Wave 1  ─── 2 parallel ────────────────
-  🔧  developer       Implement API and UI
-  🧪  tester          Write test plan and tests
+```
+───────────────────────────────────────────
+  DAG DISPATCH PLAN
+  Tasks: 7  |  Waves: 3  |  Benefit: 1.8x
+───────────────────────────────────────────
+
+  Wave 0  ─── 4 parallel ──────────────────
+  🏗️  t1  architect         Design API contract
+  🎨  t2  designer          Design UI components
+  🔧  t3  developer         Set up database schema
+  ✍️  t4  writer            Draft user documentation
+
+  Wave 1  ─── 2 parallel ──────────────────
+  🔧  t5  developer         Implement API and UI
+                              ↳ depends on: t1, t2, t3
+  🧪  t6  tester            Write test plan and tests
+                              ↳ depends on: t1, t3
 
   Wave 2  ────────────────────────────────
-  🔍  reviewer        Final code review
+  🔍  t7  reviewer          Final code review
+                              ↳ depends on: t4, t5, t6
+
+───────────────────────────────────────────
+  Critical path: t1 → t5 → t7
+  Path length: 3 of 7 tasks (43%)
+───────────────────────────────────────────
 ```
 
-**Tasks:** 7 | **Waves:** 3 | **Speedup:** 1.8x (13 min vs 24 min sequential)
+### Wave Execution
+
+```
+═══ Wave 0: Dispatching 4 agents ══════════
+  🏗️  t1 → architect         Design API contract
+  🎨  t2 → designer          Design UI components
+  🔧  t3 → developer         Set up database schema
+  ✍️  t4 → writer            Draft user documentation
+═══════════════════════════════════════════
+```
+
+```
+═══ Wave 1: Dispatching 2 agents ══════════
+  🔧  t5 → developer         Implement API and UI
+  🧪  t6 → tester            Write test plan and tests
+═══════════════════════════════════════════
+```
+
+```
+═══ Wave 2: Dispatching 1 agent ═══════════
+  🔍  t7 → reviewer          Final code review
+═══════════════════════════════════════════
+```
+
+### Final Report
+
+```
+───────────────────────────────────────────
+  DAG EXECUTION COMPLETE
+───────────────────────────────────────────
+
+  Wave 0  ─── 4 agents ──────────────────
+  🏗️  t1  architect       ✅ API contract defined
+  🎨  t2  designer        ✅ Components designed
+  🔧  t3  developer       ✅ Schema migrated
+  ✍️  t4  writer          ✅ Docs drafted
+
+  Wave 1  ─── 2 agents ──────────────────
+  🔧  t5  developer       ✅ API + UI implemented
+  🧪  t6  tester          ✅ Tests written
+
+  Wave 2  ────────────────────────────────
+  🔍  t7  reviewer        ✅ Approved
+
+───────────────────────────────────────────
+  Tasks:  7/7 completed  |  0 failed
+  Waves:  3 executed     |  2 had parallelism
+  Saved:  ~44% vs sequential
+───────────────────────────────────────────
+  📋 Saved to .rune/2026-03-23T10-00-00-full-stack-feature.yaml
+───────────────────────────────────────────
+```
 
 <details>
 <summary>Full YAML</summary>
@@ -89,23 +155,70 @@ tasks:
 
 **Pattern:** Wide fan-out. One setup task, then 5 independent migrations in parallel, then validation.
 
+### Dispatch Diagram
+
 ```
+───────────────────────────────────────────
+  DAG DISPATCH PLAN
+  Tasks: 8  |  Waves: 3  |  Benefit: 2.7x
+───────────────────────────────────────────
+
   Wave 0  ────────────────────────────────
-  🏗️  architect       Define shared types and interfaces
+  🏗️  t1  architect         Define shared types
 
-  Wave 1  ─── 5 parallel (the money wave)
-  🔧  developer       Migrate auth service
-  🔧  developer       Migrate billing service
-  🔧  developer       Migrate notifications service
-  🔧  developer       Migrate analytics service
-  🔧  developer       Migrate user service
+  Wave 1  ─── 5 parallel ──────────────────
+  🔧  t2  developer         Migrate auth service
+                              ↳ depends on: t1
+  🔧  t3  developer         Migrate billing service
+                              ↳ depends on: t1
+  🔧  t4  developer         Migrate notifications
+                              ↳ depends on: t1
+  🔧  t5  developer         Migrate analytics
+                              ↳ depends on: t1
+  🔧  t6  developer         Migrate user service
+                              ↳ depends on: t1
 
-  Wave 2  ─── 2 parallel ────────────────
-  🧪  tester          Integration tests (all services)
-  🔒  security        Security audit (all services)
+  Wave 2  ─── 2 parallel ──────────────────
+  🧪  t7  tester            Integration tests
+                              ↳ depends on: t2, t3, t4, t5, t6
+  🔒  t8  security          Security audit
+                              ↳ depends on: t2, t3, t4, t5, t6
+
+───────────────────────────────────────────
+  Critical path: t1 → t2 → t7
+  Path length: 3 of 8 tasks (38%)
+───────────────────────────────────────────
 ```
 
-**Tasks:** 8 | **Waves:** 3 | **Speedup:** 2.7x (18 min vs 48 min sequential)
+### Final Report
+
+```
+───────────────────────────────────────────
+  DAG EXECUTION COMPLETE
+───────────────────────────────────────────
+
+  Wave 0  ────────────────────────────────
+  🏗️  t1  architect       ✅ Shared types defined
+
+  Wave 1  ─── 5 agents ──────────────────
+  🔧  t2  developer       ✅ Auth migrated
+  🔧  t3  developer       ✅ Billing migrated
+  🔧  t4  developer       ✅ Notifications migrated
+  🔧  t5  developer       ✅ Analytics migrated
+  🔧  t6  developer       ✅ Users migrated
+
+  Wave 2  ─── 2 agents ──────────────────
+  🧪  t7  tester          ✅ All integration tests pass
+  🔒  t8  security        ✅ No vulnerabilities found
+
+───────────────────────────────────────────
+  Tasks:  8/8 completed  |  0 failed
+  Waves:  3 executed     |  2 had parallelism
+  Saved:  ~63% vs sequential
+───────────────────────────────────────────
+  📋 Saved to .rune/2026-03-23T11-00-00-microservice-migration.yaml
+───────────────────────────────────────────
+```
 
 <details>
 <summary>Full YAML</summary>
@@ -172,31 +285,111 @@ tasks:
 
 ---
 
-## Example 3: Cross-Cloud Deployment
+## Example 3: Cross-Cloud Deployment (with partial failure)
 
-**Pattern:** Maximum parallelism. Shared IaC modules, then 3 cloud configs + docs + security in parallel, per-cloud validation, single publish.
+**Pattern:** Maximum parallelism. Shared IaC modules, then 3 cloud configs + docs + security in parallel, per-cloud validation, single publish. Demonstrates failure handling.
+
+### Dispatch Diagram
 
 ```
+───────────────────────────────────────────
+  DAG DISPATCH PLAN
+  Tasks: 10  |  Waves: 4  |  Benefit: 3.0x
+───────────────────────────────────────────
+
   Wave 0  ────────────────────────────────
-  🏗️  architect       Define IaC modules
+  🏗️  t1  architect         Define IaC modules
 
-  Wave 1  ─── 5 parallel (the money wave)
-  🔧  developer       Configure AWS deployment
-  🔧  developer       Configure GCP deployment
-  🔧  developer       Configure Azure deployment
-  ✍️  writer          Write deployment runbook
-  🔒  security        Threat model all three clouds
+  Wave 1  ─── 5 parallel ──────────────────
+  🔧  t2  developer         Configure AWS deployment
+                              ↳ depends on: t1
+  🔧  t3  developer         Configure GCP deployment
+                              ↳ depends on: t1
+  🔧  t4  developer         Configure Azure deployment
+                              ↳ depends on: t1
+  ✍️  t5  writer            Write deployment runbook
+                              ↳ depends on: t1
+  🔒  t6  security          Threat model all clouds
+                              ↳ depends on: t1
 
-  Wave 2  ─── 3 parallel ────────────────
-  🧪  tester          Validate AWS deployment
-  🧪  tester          Validate GCP deployment
-  🧪  tester          Validate Azure deployment
+  Wave 2  ─── 3 parallel ──────────────────
+  🧪  t7  tester            Validate AWS
+                              ↳ depends on: t2
+  🧪  t8  tester            Validate GCP
+                              ↳ depends on: t3
+  🧪  t9  tester            Validate Azure
+                              ↳ depends on: t4
 
   Wave 3  ────────────────────────────────
-  🚀  devops          Publish multi-cloud release
+  🚀  t10 devops            Publish multi-cloud release
+                              ↳ depends on: t5, t6, t7, t8, t9
+
+───────────────────────────────────────────
+  Critical path: t1 → t2 → t7 → t10
+  Path length: 4 of 10 tasks (40%)
+───────────────────────────────────────────
 ```
 
-**Tasks:** 10 | **Waves:** 4 | **Speedup:** 3.0x (15 min vs 45 min sequential)
+### Wave 2: Azure Validation Fails
+
+```
+═══ Wave 2: Dispatching 3 agents ══════════
+  🧪  t7 → tester            Validate AWS
+  🧪  t8 → tester            Validate GCP
+  🧪  t9 → tester            Validate Azure
+═══════════════════════════════════════════
+```
+
+```
+───────────────────────────────────────────
+  ❌ Task t9 FAILED
+───────────────────────────────────────────
+  Agent:   tester
+  Error:   Azure Container Apps quota
+           exceeded in westeurope region
+
+  Blocked: t10 (devops)
+  Still OK: t7 (completed), t8 (completed)
+
+  Options:
+    1. Retry t9
+    2. Skip t9, continue with unblocked
+    3. Halt execution
+───────────────────────────────────────────
+```
+
+### Final Report (Partial)
+
+```
+───────────────────────────────────────────
+  DAG EXECUTION COMPLETE
+───────────────────────────────────────────
+
+  Wave 0  ────────────────────────────────
+  🏗️  t1  architect       ✅ IaC modules defined
+
+  Wave 1  ─── 5 agents ──────────────────
+  🔧  t2  developer       ✅ AWS configured
+  🔧  t3  developer       ✅ GCP configured
+  🔧  t4  developer       ✅ Azure configured
+  ✍️  t5  writer          ✅ Runbook written
+  🔒  t6  security        ✅ Threat model complete
+
+  Wave 2  ─── 3 agents ──────────────────
+  🧪  t7  tester          ✅ AWS validated
+  🧪  t8  tester          ✅ GCP validated
+  🧪  t9  tester          ❌ Azure quota exceeded
+
+  Wave 3  ────────────────────────────────
+  🚀  t10 devops          ⛔ BLOCKED (t9 failed)
+
+───────────────────────────────────────────
+  Tasks:  8/10 completed  |  1 failed  |  1 blocked
+  Waves:  3 of 4 executed
+───────────────────────────────────────────
+  📋 Saved to .rune/2026-03-23T14-00-00-cross-cloud-deploy.yaml
+───────────────────────────────────────────
+```
 
 <details>
 <summary>Full YAML</summary>
@@ -279,10 +472,53 @@ tasks:
 
 ## Comparison
 
-| Example | Scenario | Tasks | Waves | Speedup | Best for |
+| Example | Scenario | Tasks | Waves | Speedup | Shows |
 |---|---|---|---|---|---|
-| 1 | Full-Stack Feature | 7 | 3 | **1.8x** | Everyday feature work |
-| 2 | Microservice Migration | 8 | 3 | **2.7x** | Refactoring at scale |
-| 3 | Cross-Cloud Deployment | 10 | 4 | **3.0x** | Infrastructure teams |
+| 1 | Full-Stack Feature | 7 | 3 | **1.8x** | Fan-out diamond, full success |
+| 2 | Microservice Migration | 8 | 3 | **2.7x** | Wide fan-out (5 parallel) |
+| 3 | Cross-Cloud Deployment | 10 | 4 | **3.0x** | Maximum parallelism, partial failure |
 
 The wider the wave, the bigger the savings. Write your own DAGs in the same YAML format — see [DAG Execution Format](src/rules/collaboration/dag-execution-format.md) for the full spec.
+
+---
+
+## Formatting Reference
+
+### Frame Styles
+
+| Context | Character | Width | Purpose |
+|---|---|---|---|
+| Planning (dispatch diagram, final report) | `───` (light) | 43 chars | Static — showing structure |
+| Execution (wave banners) | `═══` (double) | 43 chars | Active — action happening now |
+
+### Task Row Formats
+
+| Context | Format |
+|---|---|
+| Pre-dispatch | `{emoji}  {id}  {agent}  {description}` |
+| Execution | `{emoji}  {id} → {agent}  {description}` |
+| Final report | `{emoji}  {id}  {agent}  {status} {summary}` |
+
+The `→` arrow appears ONLY in execution banners — it signals "action happening now."
+
+### Status Indicators
+
+| Emoji | Meaning |
+|---|---|
+| ✅ | Task completed successfully |
+| ❌ | Task failed |
+| ⛔ | Blocked — dependency failed |
+| ⏭️ | Skipped by user |
+
+### History Persistence
+
+Every dispatch writes to `.rune/` in the project root (gitignored by default):
+
+```
+.rune/
+  2026-03-23T10-00-00-full-stack-feature.yaml
+  2026-03-23T11-00-00-microservice-migration.yaml
+  2026-03-23T14-00-00-cross-cloud-deploy.yaml
+```
+
+Summaries only — never raw agent output.

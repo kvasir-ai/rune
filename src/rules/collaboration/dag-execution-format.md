@@ -149,7 +149,7 @@ The dispatcher (main session) does the summarization. This prevents context wind
 | Skill/Agent | Relationship |
 |---|---|
 | `writing-plans` | Produces DAG-annotated plans (when 5+ tasks) |
-| `executing-dag-plans` | Consumes DAG plans, dispatches wave-by-wave |
+| `rune` | Consumes DAG plans, dispatches wave-by-wave |
 | `executing-plans` | Fallback for non-DAG plans (sequential execution) |
 | `dispatching-parallel-agents` | Degenerate case — DAG with no edges (all tasks in Wave 0) |
 | Safety review agent | Pre-gate — validates plan BEFORE DAG execution |
@@ -159,4 +159,4 @@ The dispatcher (main session) does the summarization. This prevents context wind
 ## Cross-References
 
 - See `CONTRIBUTING.md` for how to add agents, rules, and skills
-- See `executing-dag-plans` skill for the runtime dispatcher
+- See `rune` skill for the runtime dispatcher

@@ -1,19 +1,68 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: auto-lint after file writes
+PostToolUse hook: auto-lint after file writes using configurable rules.
 
-Detects file type and runs the appropriate linter:
-- Python: ruff check + ruff format
-- SQL: sqlfluff fix (if in dbt project)
-- Go: goimports
-- Terraform: terraform fmt
+Rules are loaded from auto-lint-rules.yaml (same directory as this script).
+Add, remove, or modify rules in that file — no Python changes needed.
 """
 
 import json
 import os
-import sys
+import shlex
 import subprocess
+import sys
 from pathlib import Path
+
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
+RULES_FILE = Path(__file__).parent / "auto-lint-rules.yaml"
+
+
+def load_rules() -> list[dict]:
+    """Load lint rules from YAML file."""
+    if not RULES_FILE.is_file():
+        return []
+
+    text = RULES_FILE.read_text()
+
+    if yaml is not None:
+        return yaml.safe_load(text) or []
+
+    # Minimal YAML parser for list-of-dicts with a commands list.
+    rules: list[dict] = []
+    current: dict = {}
+    in_commands = False
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped.startswith("- extension:"):
+            if current:
+                rules.append(current)
+            current = {"commands": []}
+            _, _, val = stripped.partition(":")
+            current["extension"] = val.strip().strip("'\"")
+            in_commands = False
+            continue
+        if stripped == "commands:":
+            in_commands = True
+            continue
+        if in_commands and stripped.startswith("- "):
+            current.setdefault("commands", []).append(
+                stripped[2:].strip().strip("'\"")
+            )
+            continue
+        if ":" in stripped and not stripped.startswith("-"):
+            in_commands = False
+            key, _, val = stripped.partition(":")
+            val = val.strip().strip("'\"")
+            current[key.strip()] = val
+    if current:
+        rules.append(current)
+    return rules
 
 
 def read_json_input() -> dict:
@@ -29,76 +78,51 @@ def get_file_path(data: dict) -> str:
     return data.get("tool_input", {}).get("file_path", "")
 
 
-def lint_python(file_path: str):
-    """Lint Python file with ruff."""
+def run_command(cmd_template: str, file_path: str, timeout: int):
+    """Run a single lint command, substituting {file} with the file path."""
+    cmd_str = cmd_template.replace("{file}", file_path)
     try:
         subprocess.run(
-            ["ruff", "check", "--fix", file_path], capture_output=True, timeout=10
-        )
-        subprocess.run(["ruff", "format", file_path], capture_output=True, timeout=10)
-    except FileNotFoundError:
-        pass
-    except subprocess.TimeoutExpired:
-        print(f"Warning: ruff timed out on {file_path}", file=sys.stderr)
-
-
-def lint_sql(file_path: str):
-    """Lint SQL file with sqlfluff (if in dbt project)."""
-    # Only run if dbt/dbt_project.yml exists
-    project_dir = Path(os.environ.get("CLAUDE_PROJECT_DIR", Path.cwd()))
-    dbt_project = project_dir / "dbt" / "dbt_project.yml"
-    if not dbt_project.is_file():
-        return
-
-    try:
-        subprocess.run(
-            ["sqlfluff", "fix", "--force", file_path],
-            cwd=project_dir / "dbt",
+            shlex.split(cmd_str),
             capture_output=True,
-            timeout=10,
+            timeout=timeout,
         )
     except FileNotFoundError:
-        pass
+        pass  # Tool not installed — skip silently
     except subprocess.TimeoutExpired:
-        print(f"Warning: sqlfluff timed out on {file_path}", file=sys.stderr)
+        print(f"Warning: timed out: {cmd_str}", file=sys.stderr)
 
 
-def lint_go(file_path: str):
-    """Lint Go file with goimports."""
-    try:
-        subprocess.run(["goimports", "-w", file_path], capture_output=True, timeout=10)
-    except FileNotFoundError:
-        pass
-    except subprocess.TimeoutExpired:
-        print(f"Warning: goimports timed out on {file_path}", file=sys.stderr)
-
-
-def lint_terraform(file_path: str):
-    """Format Terraform file."""
-    try:
-        subprocess.run(["terraform", "fmt", file_path], capture_output=True, timeout=10)
-    except FileNotFoundError:
-        pass
-    except subprocess.TimeoutExpired:
-        print(f"Warning: terraform timed out on {file_path}", file=sys.stderr)
+def check_condition(condition: str) -> bool:
+    """Check if a condition file exists relative to the project root."""
+    project_dir = Path(os.environ.get("CLAUDE_PROJECT_DIR", Path.cwd()))
+    return (project_dir / condition).is_file()
 
 
 def lint_file(file_path: str):
-    """Dispatch to appropriate linter based on file extension."""
+    """Find matching rules for the file extension and run their commands."""
     if not file_path or not Path(file_path).is_file():
         return
 
     ext = Path(file_path).suffix.lstrip(".")
+    if not ext:
+        return
 
-    linters = {
-        "py": lint_python,
-        "sql": lint_sql,
-        "go": lint_go,
-        "tf": lint_terraform,
-    }
+    rules = load_rules()
 
-    if ext in linters:
-        linters[ext](file_path)
+    for rule in rules:
+        if rule.get("extension", "") != ext:
+            continue
+
+        condition = rule.get("condition", "")
+        if condition and not check_condition(condition):
+            continue
+
+        timeout = int(rule.get("timeout", 10))
+        commands = rule.get("commands", [])
+
+        for cmd in commands:
+            run_command(cmd, file_path, timeout)
 
 
 def main():

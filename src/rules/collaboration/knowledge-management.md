@@ -9,34 +9,9 @@
 
 ## Knowledge Creation Model
 
-The ai-toolkit implements a knowledge creation cycle adapted from the GRAI framework (Böhm & Durst, 2025), which revises Nonaka & Takeuchi's SECI model for AI-augmented organizations.
+rune's knowledge lifecycle is grounded in the SECI model (Nonaka & Takeuchi, 1995) extended with a machine dimension for AI agents. The four phases — Socialization, Externalization, Combination, Internalization — map directly to how knowledge flows through `src/knowledge/` → `src/rules/` → `profiles.yaml` → agent context.
 
-| Phase | Process | ai-toolkit Implementation | Owner |
-|---|---|---|---|
-| **Socialization** (tacit→tacit) | Knowledge surfaces in conversations between user and agents | Conversation mining: identify topics where agents lacked rules | User + any agent |
-| **Externalization** (tacit→explicit) | Unstructured knowledge is codified into structured rules | Knowledge Manager (or any research-capable agent): source material → rule files | Knowledge Manager |
-| **Combination** (explicit→explicit) | Existing rules are audited, merged, split, cross-referenced | Knowledge Manager: audit, merge, split, profile hygiene | Knowledge Manager agent |
-| **Internalization** (explicit→tacit) | Rules are loaded into agent context and shape behavior | Profile deployment: `make use-profile` loads rules into agent working memory | Deploy system |
-
-### The Machine Dimension
-
-Cerchione, Liccardo & Passaro (2026, Journal of Innovation & Knowledge, Vol. 11) extend the SECI model with a **machine dimension** — AI agents are not just tools that process knowledge, they are epistemic actors that generate it.
-
-Two implications for the ai-toolkit:
-
-1. **DIKW inversion**: Humans create knowledge bottom-up (data→information→knowledge→wisdom). AI agents work top-down — they are trained on structured knowledge (rules) and produce novel outputs (analysis, code, recommendations) that function as new data. When an agent synthesizes a report from rules and data sources, it is creating **artificial knowledge** — structured output that didn't exist before. This output should be evaluated for re-ingestion as a new rule when it represents reusable insight.
-
-2. **Data as machine tacit knowledge**: An agent's training data and loaded rules function as its "tacit knowledge" — shaping behavior without being explicitly articulated in outputs. This means **profile selection is the primary lever for shaping agent cognition**. Loading the wrong rules (or too many) is equivalent to giving a human the wrong training.
-
-### Measuring the Cycle
-
-Each phase can degrade. Monitor for:
-
-- **Socialization gap**: agents repeatedly ask users for information that should be in a rule → gap analysis needed
-- **Externalization gap**: source materials are known but not yet ingested → check source material tracking list
-- **Combination gap**: rules exist but are poorly cross-referenced, duplicated, or bloated → run audit
-- **Internalization gap**: rules exist but aren't in the right profiles → check profile coverage matrix
-- **Generation gap** (machine dimension): agents produce valuable outputs that are not captured back as rules → set up feedback loop to identify reusable insights
+[Read the deep dive →](../../docs/the-knowledge-creation-cycle.md)
 
 ---
 

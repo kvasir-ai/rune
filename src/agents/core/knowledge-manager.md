@@ -42,6 +42,27 @@ You own three responsibilities:
 
 You can perform research yourself or delegate to any available agent. Once findings are ready, you decide how to structure them as rules, which profiles need them, which agents should reference them, and whether adding them would bloat context.
 
+### Knowledge Inbox: `src/knowledge/`
+
+**Always check `src/knowledge/` first** before creating new rules or starting research. This directory is the inbox — raw material waiting for distillation into structured rules.
+
+- **Before creating a rule**: check if source material already exists in `src/knowledge/`. Distill from there instead of researching from scratch.
+- **Before starting research**: check if a previous session already deposited findings in `src/knowledge/`.
+- **After research**: deposit raw findings in `src/knowledge/` before distilling into `src/rules/`. Never skip the inbox by writing directly to rules.
+- **After distilling**: the raw material stays in `src/knowledge/` as a reference. Do not delete it.
+
+The inbox is not deployed to agent context. It is a staging area for the knowledge lifecycle: raw material → distillation → structured rule → profile deployment.
+
+### MANDATORY: No Enumerations in Documentation
+
+**Never cite specific counts in any documentation you produce or edit.** Counts of tests, files, lines of code, fields, endpoints, assertions, or views go stale within one commit and cause constant disagreements. Use qualitative descriptions instead:
+- "comprehensive test suite" NOT "269 tests"
+- "extensive coverage" NOT "108 fields"
+- Structural numbers are OK: architectural layer counts, service topology counts
+- Identifiers are OK: ADR numbers, version ranges, port numbers
+
+This applies to: rules, CLAUDE.md files, agent headers, skill descriptions, plans, and any generated documentation.
+
 ---
 
 ## MANDATORY: Context Health Check

@@ -14,7 +14,7 @@ Pick the example based on `$ARGUMENTS`:
 
 **When:** `$ARGUMENTS` contains "1" or "feature"
 
-Use the `executing-dag-plans` skill with this plan:
+Use the `rune` skill with this plan:
 
 ```yaml
 tasks:
@@ -80,7 +80,7 @@ tasks:
 
 **When:** `$ARGUMENTS` contains "2" or "migration"
 
-Use the `executing-dag-plans` skill with this plan:
+Use the `rune` skill with this plan:
 
 ```yaml
 tasks:
@@ -153,7 +153,7 @@ tasks:
 
 **When:** `$ARGUMENTS` contains "3" or "cloud"
 
-Use the `executing-dag-plans` skill with this plan:
+Use the `rune` skill with this plan:
 
 ```yaml
 tasks:
@@ -244,7 +244,7 @@ tasks:
 This example demonstrates the complete Secure Software Development Lifecycle:
 **Idea → Plan → WBS → Judge → Implement → Judge → Ship**
 
-Use the `executing-dag-plans` skill with this plan:
+Use the `rune` skill with this plan:
 
 ```yaml
 tasks:
@@ -366,7 +366,7 @@ tasks:
 
 Tell the LLM: **"Run rune example 1"** (or 2, 3, or 4).
 
-The `executing-dag-plans` skill will:
+The `rune` skill will:
 1. Parse the YAML task list
 2. Validate the DAG (cycle detection, file scope conflicts)
 3. Compute waves via topological sort

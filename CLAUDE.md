@@ -4,7 +4,7 @@ A knowledge absorption toolkit for AI coding agents. Feed your team structured k
 
 ## Your team
 
-12 agents ship out of the box. Add your own in `src/agents/`.
+Agents ship in `src/agents/core/`. Add your own alongside them.
 
 | Agent | What they do |
 |---|---|
@@ -29,20 +29,20 @@ A knowledge absorption toolkit for AI coding agents. Feed your team structured k
 
 ## What ships
 
-| Type | Count | Location |
-|---|---|---|
-| Agents | 12 | `src/agents/core/` |
-| Rules | 6 | `src/rules/collaboration/` |
-| Skills | 13 | `src/skills/` |
-| Hooks | 3 | `src/hooks/` (safety-check, auto-lint, on-stage-complete) |
-| Profiles | 1 | `profiles.yaml` (`default`) |
+| Type | Location |
+|---|---|
+| Agents | `src/agents/core/` |
+| Rules | `src/rules/collaboration/` |
+| Skills | `src/skills/` |
+| Hooks | `src/hooks/` (safety-check, auto-lint, on-stage-complete) |
+| Profiles | `profiles.yaml` |
 
-**Rules:** dag-execution-format, knowledge-management, ai-toolkit-operations, project-planning, architectural-decision-records, design-patterns
+Use `make list-agents`, `make list-rules`, `make list-skills` to see what is available.
 
 **Skills (SSDLC cycle):**
 - Idea: brainstorming
 - Plan: writing-plans, writing-clearly-and-concisely
-- Execute: executing-dag-plans, executing-plans, dispatching-parallel-agents, subagent-driven-development
+- Execute: rune, executing-plans, dispatching-parallel-agents, subagent-driven-development
 - Judge: verification-before-completion, requesting-code-review
 - Ship: finishing-development-branch, pr-description
 - Meta: rune-examples, skill-creator
@@ -61,10 +61,11 @@ make help                          # all targets
 
 ## Key conventions
 
+- Never enumerate counts in documentation — use qualitative descriptions and `make list-*` commands instead.
 - Rules go in `profiles.yaml` to deploy. Agents and skills auto-discover.
 - Filenames must be unique repo-wide — deploy resolves by recursive search.
 - Run `make validate` before committing.
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 - See [EXAMPLES.md](EXAMPLES.md) for DAG dispatch showcases.
 
-**Try it:** Say "run rune example 4" to see the full SSDLC cycle (Idea → Plan → Judge → Implement → Judge → Ship).
+**Try it:** Say "run rune example 1" to see a full-stack feature dispatched across the team.

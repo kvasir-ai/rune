@@ -219,7 +219,7 @@
 > Applies to both Go and Python containers.
 
 ### Multi-Stage Builds
-- **Go**: build stage with `golang:1.21-alpine`, final stage from `scratch` or `distroless/static` — copy only the binary and CA certs
+- **Go**: build stage with `golang:<version>-alpine`, final stage from `distroless/static-debian12:nonroot` — copy only the static binary
 - **Python**: base stage installs system deps, dependency stage installs pip packages, production stage copies only installed packages and app code
 - Copy dependency files (`go.mod`/`go.sum`, `requirements.txt`) before source code to maximize Docker layer caching
 
