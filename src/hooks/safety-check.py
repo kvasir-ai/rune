@@ -104,8 +104,12 @@ def resolve_flags(flag_str: str) -> int:
     return flags
 
 
-def check_pattern(pattern: dict, cmd: str) -> str | None:
-    """Check a single pattern against a command. Returns message if matched."""
+def check_pattern(pattern: dict, cmd: str) -> tuple[str, str] | None:
+    """Check a single pattern against a command.
+
+    Returns (message, severity) if matched, None otherwise.
+    severity is 'block' (deny the command) or 'warn' (print warning, allow).
+    """
     severity = pattern.get("severity", "block")
     if severity not in ("block", "warn"):
         return None
@@ -114,7 +118,7 @@ def check_pattern(pattern: dict, cmd: str) -> str | None:
     builtin = pattern.get("builtin", "")
     if builtin == "rm_recursive_force":
         if is_rm_recursive_force(cmd):
-            return pattern.get("message", "Blocked by safety check")
+            return (pattern.get("message", "Blocked by safety check"), severity)
         return None
 
     # Regex match
@@ -134,7 +138,7 @@ def check_pattern(pattern: dict, cmd: str) -> str | None:
         if not re.search(requires, cmd, req_flags):
             return None
 
-    return pattern.get("message", "Blocked by safety check")
+    return (pattern.get("message", "Blocked by safety check"), severity)
 
 
 def main():
@@ -147,10 +151,15 @@ def main():
     patterns = load_patterns()
 
     for pattern in patterns:
-        reason = check_pattern(pattern, cmd)
-        if reason:
-            print(json.dumps(make_deny_response(reason)))
-            return
+        result = check_pattern(pattern, cmd)
+        if result:
+            message, severity = result
+            if severity == "block":
+                print(json.dumps(make_deny_response(message)))
+                return
+            # severity == "warn": print warning to stderr, allow command
+            print(f"⚠️  Safety warning: {message}", file=sys.stderr)
+            # Continue checking — a later block pattern may still deny
 
     sys.exit(0)
 

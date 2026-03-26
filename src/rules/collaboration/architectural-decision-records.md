@@ -1,7 +1,7 @@
 # Architectural Decision Records (ADRs)
 
 > Enshrining design decisions as immutable, version-controlled records.
-> Sources: Michael Nygard (2011), MADR 4.0, EDPB WP248, Spotify Engineering, AWS Prescriptive Guidance, Azure Well-Architected Framework, ThoughtWorks Radar, Ozimmer (2023).
+> Sources: Michael Nygard (2011), MADR 4.0, EDPB WP248, Spotify Engineering, AWS Prescriptive Guidance, Azure Well-Architected Framework, ThoughtWorks Radar, Zimmermann (2023).
 > Use when making, reviewing, or discovering architectural decisions.
 
 ---

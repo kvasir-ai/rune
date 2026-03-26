@@ -1,150 +1,124 @@
 # rune
 
-> **Early preview — friends & family testing.** This is pre-release software shared for feedback. Expect rough edges. If something breaks or confuses, that's the feedback I need.
+**Agent orchestration for AI coding tools.**
+
+AI coding agents are powerful but chaotic. Without coordination, they duplicate work, lose context, trash each other's files, and run destructive commands. rune fixes this: **explore** the problem, **plan** the work, **execute** in parallel.
 
 > *The wisest of all shared his knowledge through runes.*
 
-An agent system for AI-assisted development. Knowledge management, team coordination, and parallel execution — embedded in your coding workflow.
-
-Built by a team trained on the same principles rune provides.
+Works with [Claude Code](https://claude.ai/code), [OpenCode](https://github.com/opencode-ai/opencode), and any AI coding tool that reads agent files from a config directory.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform: Linux / WSL2 / macOS](https://img.shields.io/badge/platform-Linux%20%7C%20WSL2%20%7C%20macOS-lightgrey)](README.md)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
-[![OpenCode](https://img.shields.io/badge/OpenCode-compatible-green)](https://opencode.ai)
+[![Docs](https://img.shields.io/badge/docs-kvasir--ai.github.io%2Frune-blue)](https://kvasir-ai.github.io/rune/)
 
-```bash
-git clone https://github.com/rune-agents/rune.git && cd rune && make use-profile PROFILE=default
-```
+> **Developer Preview.** Feedback welcome — [open an issue](https://github.com/kvasir-ai/rune/issues).
 
-## Starter team
-
-rune ships with a ready-made team. Replace any agent, add your own, delete what you don't need.
-
-| Agent | Role |
-|---|---|
-| 🏗 Architect | System design, API contracts, architectural decisions |
-| 🔧 Developer | Implementation, features, bug fixes |
-| 🗺 Planner | Implementation plans, project breakdown, risk assessment |
-| 🔍 Reviewer | Code review, quality gates, final approval |
-| ⚖️ Judge | Cross-domain validation, correctness, safety verdicts |
-| 🧪 Tester | Test plans, test suites, coverage |
-| 🔒 Security | Vulnerability assessment, threat modeling |
-| ✍️ Technical Writer | Documentation, ADRs, READMEs, API docs |
-| ✍️ Writer | Guides, release notes, user-facing content |
-| 🎨 Designer | UI/UX, component design, interface planning |
-| 🚀 DevOps | Deployment, CI/CD, releases, infrastructure |
-| 📚 Knowledge Manager | Rule audits, profile optimization, knowledge lifecycle |
-
-Add your own specialists in `src/agents/`.
-
-## How knowledge absorption works
-
-**Ingest** — Drop raw material into `src/knowledge/`. PDFs, research summaries, extracted docs — anything that is not yet structured for agent consumption. This is the inbox.
-
-**Distill** — The Knowledge Manager reads the inbox and distills raw material into focused, actionable rules in `src/rules/`. Tables, checklists, code blocks — structured knowledge that agents load as context. Never skip the inbox by dumping raw content directly into rules.
-
-**Shape** — Group rules into profiles. A security auditor gets different knowledge than a frontend developer. Profiles control which rules load for which role, keeping context focused and costs low. Switch with one command.
-
-**Grow** — The Knowledge Manager agent audits your knowledge base, detects gaps, flags stale content, splits oversized rules, and integrates new findings from research. Your team's knowledge compounds over time.
-
-Think of it as a second brain for your engineering org — agents absorb your rules and apply them consistently across every task, every time.
-
-## Project management built in
-
-rune ships with PMBOK-grounded project planning, ADR templates, testing strategy, and design patterns baked into the included skills. The `writing-plans` skill breaks down complex features into atomic tasks. The DAG dispatcher executes them in dependency order, running independent tasks in parallel waves. The Architect, Developer, Tester, and Reviewer can work simultaneously on different parts of a feature — coordinated, not sequential.
+---
 
 ## Quick start
 
-Install `uv` if you don't have it, then run the one-liner above.
-
-| OS | Install uv |
-|---|---|
-| macOS | `brew install uv` |
-| Linux / WSL | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-
-Once installed, say `"run rune example 1"` to dispatch a showcase DAG.
-
-## DAG dispatch
-
-Define tasks with dependencies. rune computes waves via topological sort and dispatches each wave in parallel:
-
-```
-───────────────────────────────────────────
-  DAG DISPATCH PLAN
-  Tasks: 7  |  Waves: 3  |  Benefit: 1.8x
-───────────────────────────────────────────
-
-  Wave 0  ─── 4 parallel ──────────────────
-  🏗️  t1  architect         Design API contract
-  🎨  t2  designer          Design UI components
-  🔧  t3  developer         Set up database schema
-  ✍️  t4  writer            Draft documentation
-
-  Wave 1  ─── 2 parallel ──────────────────
-  🔧  t5  developer         Implement API and UI
-                              ↳ depends on: t1, t2, t3
-  🧪  t6  tester            Write tests
-                              ↳ depends on: t1, t3
-
-  Wave 2  ────────────────────────────────
-  🔍  t7  reviewer          Final review
-                              ↳ depends on: t4, t5, t6
-
-───────────────────────────────────────────
-  Critical path: t1 → t5 → t7
-  Path length: 3 of 7 tasks (43%)
-───────────────────────────────────────────
-```
-
-Say `/rune` to dispatch. `"Test this DAG"` for a zero-cost dry run.
-
-See [EXAMPLES.md](EXAMPLES.md) for three full scenarios (1.8x to 3.0x speedup).
-
-## Profiles
-
-A profile controls which rules deploy. All agents and skills deploy to every profile — only the knowledge set changes. The default profile ships lean — run `make context-budget` to measure your footprint. Skills load on demand.
-
-```yaml
-# profiles.yaml
-my-backend-profile:
-  description: Go backend development
-  rules:
-    collaboration:
-      - git-conventions
-      - operational-constraints
-    engineering:
-      - openapi-documentation
-  hooks:
-    - safety-check
-    - auto-lint
-```
+> Requires: [uv](https://docs.astral.sh/uv/), make, Python 3.12+
 
 ```bash
-make list-profiles                             # see all profiles
-make show-profile PROFILE=my-backend-profile   # preview before applying
-make use-profile PROFILE=my-backend-profile    # deploy it
+git clone https://github.com/kvasir-ai/rune.git && cd rune && make use-profile PROFILE=default
 ```
 
-## Safety hooks
+Open your AI coding tool in any project. Try:
 
-The `safety-check` hook (PreToolUse) blocks before execution:
+```
+You:      "plan a REST API for user management"
+Planner:  [decomposes into tasks with dependencies]
+You:      /rune
+rune:     Wave 0 — developer + tester in parallel
+          Wave 1 — developer wires components
+          Wave 2 — reviewer checks everything
+          Done. 57% time saved via parallelism.
+```
 
-- `rm -rf` variants (any flag ordering, long-form)
-- `DROP TABLE`, `DELETE FROM`, `TRUNCATE`
-- Destructive git commands (`--force` push, `reset --hard`, `clean -f`)
-- `terraform apply` / `terragrunt apply` targeting production environments
-- Authentication commands
+Describe the work. Approve the plan. Type `/rune`.
 
-The `auto-lint` hook (PostToolUse) runs formatters automatically after file writes.
+---
+
+## How it works
+
+Every non-trivial task follows three phases:
+
+```
+EXPLORE          →    PLAN             →    EXECUTE
+read-only agents      Planner decomposes    independent tasks
+gather context        into a dependency     run in parallel waves
+in parallel           graph                 with cost tracking
+```
+
+**Explore.** Dispatch read-only agents to gather context from different angles. They return summaries — they never write code yet.
+
+**Plan.** The Planner decomposes work into tasks with explicit dependencies. The graph reveals what can run in parallel.
+
+**Execute.** Independent tasks dispatch simultaneously in waves. Each wave's results are summarized into the next wave's prompts. A Judge verifies at the end.
+
+What makes agents "knowledgeable" is not conversation history — it is **pre-loaded rule files**. Each agent starts with domain-specific conventions in its context window. The label alone does nothing; the rules do everything.
+
+Deep dive: **[The Three-Phase Model](docs/the-three-phase-model.md)**
+
+---
+
+## Skills
+
+Slash commands — the primary way you interact with rune.
+
+| Command | What it does |
+|---|---|
+| `/rune` | Dispatch agents in parallel waves |
+| `/rune-demo` | Run showcase DAG examples |
+| `/write-plan` | Generate an implementation plan |
+| `/judge` | Code review workflow |
+| `/judge-audit` | Deep adversarial audit of any output |
+| `/judge-panel N` | Multi-perspective review panel |
+| `/tw-draft-pr` | Draft a PR description |
+| `/tw-release` | Prepare a release — changelog, notes, version, tag |
+| `/km-audit` | Audit knowledge base health |
+| `/km-onboard` | Analyze repo architecture for onboarding |
+
+---
+
+## The team
+
+rune ships with orchestration agents. You build domain specialists on top.
+
+| Agent | Role |
+|---|---|
+| **Planner** | Decomposes tasks into dependency graphs |
+| **Judge** | Validates correctness and safety across domains |
+| **Technical Writer** | Writes docs, ADRs, release notes, agent definitions |
+| **Knowledge Manager** | Feeds, shapes, and grows the rule base |
+
+Add your own specialists — developer, tester, security, architect — by duplicating an agent file and loading domain-specific rules. See [AGENTS.md](AGENTS.md).
+
+---
+
+## How it fits together
+
+**Rules** are domain knowledge files that load into agent context windows — coding conventions, infrastructure patterns, compliance requirements. Agents reference the rules relevant to their specialty.
+
+**Profiles** bundle rules for a workflow. `make use-profile PROFILE=security-review` loads compliance rules. Switch profiles in seconds. Deep dive: [The Knowledge Toolkit](docs/the-knowledge-toolkit.md)
+
+**Safety hooks** intercept destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`) before they reach the shell. Configurable via YAML. Deep dive: [The Safety Architecture](docs/the-safety-architecture.md)
+
+---
+
+## Going deeper
+
+| Topic | What you will learn |
+|---|---|
+| [The Three-Phase Model](docs/the-three-phase-model.md) | Collaboration patterns, DAG format, context management, cost economics |
+| [The Knowledge Toolkit](docs/the-knowledge-toolkit.md) | Rules, profiles, the Knowledge Manager, context budget |
+| [The Safety Architecture](docs/the-safety-architecture.md) | How hooks block destructive commands |
+| [Examples](EXAMPLES.md) | Worked examples with dispatch output |
+| [Contributing](CONTRIBUTING.md) | How to add agents, rules, skills, and hooks |
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add agents, rules, skills, hooks, MCPs, and tools.
 
 ---
 

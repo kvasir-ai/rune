@@ -1,8 +1,8 @@
 # Contributing
 
-Welcome to rune. We're glad you're here. Whether you're adding a new agent, writing a rule, or improving a hook, contributions of any size are welcome.
+Contributions of any size are welcome. Add an agent, write a rule, build a hook —all good.
 
-All configuration lives in `src/`. Agents, rules, skills, and hooks are plain files — add yours, register it in a profile, validate, and deploy.
+All content lives in `src/`. Agents, rules, skills, and hooks are plain files. Add yours, register it in a profile, validate, and deploy.
 
 ## Adding content
 
@@ -30,40 +30,40 @@ You are a specialist in X. Your job is to Y.
 |---|---|---|
 | `name` | Yes | Display name (e.g. `My Agent`, `Code Formatter`) |
 | `description` | Yes | Tells the orchestrator when to invoke this agent |
-| `model` | No | `haiku`, `sonnet`, or `opus` — defaults to session model |
-| `tools` | No | Comma-separated list — omit to inherit all |
+| `model` | No | `haiku`, `sonnet`, or `opus`. Defaults to session model |
+| `tools` | No | Comma-separated list. Omit to inherit all |
 | `color` | No | Named color: `red`, `blue`, `green`, `purple`, etc. |
 | `emoji` | No | Display emoji |
 | `version` | No | Semantic version |
 | `opencode_description` | No | Shorter description for OpenCode |
 
-**Suggested agent contributions** — these are natural extensions to the shipped team:
+**Suggested agents** —natural extensions to the shipped team:
 
-| Agent idea | Domain | What it would do |
+| Agent idea | Domain | What it does |
 |---|---|---|
-| `go-developer` | `engineering/` | Go-specific patterns, idioms, module conventions |
-| `python-developer` | `engineering/` | Python-specific patterns, typing, packaging |
+| `go-developer` | `engineering/` | Go patterns, idioms, module conventions |
+| `python-developer` | `engineering/` | Python patterns, typing, packaging |
 | `data-engineer` | `data/` | Pipeline design, ETL patterns, schema evolution |
 | `platform-engineer` | `infra/` | Cloud infrastructure, Terraform, Kubernetes |
 | `compliance-reporter` | `regulatory/` | Regulatory checklists, audit trail generation |
 
-Create a new domain directory (`src/agents/data/`, `src/agents/engineering/`) as needed. Agents auto-discover — no registration required.
+Create new domain directories (`src/agents/data/`, `src/agents/engineering/`) as needed. Agents auto-discover. No registration required.
 
 ### Rules
 
-Create `src/rules/<category>/<name>.md` — a plain markdown document. No frontmatter needed.
+Create `src/rules/<category>/<name>.md`. Plain markdown. No frontmatter.
 
 Rules are reference documents that agents use as context. Organize by topic.
 
-**Suggested rule categories** — each has a README with topic ideas:
+**Suggested categories** —each has a README with topic ideas:
 
 | Category | Directory | What goes here |
 |---|---|---|
 | `collaboration/` | Shipped | Git, planning, ADRs, knowledge management |
-| `engineering/` | Empty — needs you | Language conventions, API design, testing strategy, CI/CD |
-| `infra/` | Empty — needs you | Cloud services, Terraform, Kubernetes, containers |
-| `data/` | Empty — needs you | SQL, data modeling, dbt, streaming, public data sources |
-| `regulatory/` | Empty — needs you | GDPR, DORA, AI Act, licensing (see criteria below) |
+| `engineering/` | Empty | Language conventions, API design, testing, CI/CD |
+| `infra/` | Empty | Cloud services, Terraform, Kubernetes, containers |
+| `data/` | Empty | SQL, data modeling, dbt, streaming, public data sources |
+| `regulatory/` | Empty | GDPR, DORA, AI Act, licensing (see criteria below) |
 
 ### Skills
 
@@ -83,20 +83,20 @@ Do the thing described in `$ARGUMENTS`.
 2. Second step
 ```
 
-**Suggested skill contributions** — these would complement the existing orchestration:
+**Suggested skills:**
 
-| Skill idea | What it would do |
+| Skill idea | What it does |
 |---|---|
 | `test-driven-development` | Enforce Red-Green-Refactor cycle before implementation |
 | `code-review` | Structured review checklist with severity levels |
 | `incident-investigation` | Step-by-step runbook for debugging production issues |
-| `git-worktrees` | Safely set up isolated worktrees for parallel feature work |
+| `git-worktrees` | Set up isolated worktrees for parallel feature work |
 | `pr-description` | Generate structured pull request descriptions from diffs |
 | `compliance-check` | Run regulatory checklists against a codebase or feature |
 
 ### Hooks
 
-1. Create `src/hooks/<name>.py` — reads JSON from stdin, optionally prints a response
+1. Create `src/hooks/<name>.py`. It reads JSON from stdin and optionally prints a response.
 2. Add event bindings in `src/hooks-meta.yaml`:
 
 ```yaml
@@ -108,7 +108,7 @@ my-hook:
       timeout: 10
 ```
 
-3. Add `my-hook` to a profile's `hooks` list in `profiles.yaml`
+3. Add `my-hook` to a profile's `hooks` list in `profiles.yaml`.
 
 ### MCPs
 
@@ -129,11 +129,11 @@ my-mcp:
       API_KEY: "${MY_API_KEY}"
 ```
 
-Then enable: `make enable-mcp MCP=my-mcp`
+Then enable it: `make enable-mcp MCP=my-mcp`
 
 ## Registering in profiles
 
-**Agents and skills** are auto-discovered — they deploy to every profile automatically.
+**Agents and skills** auto-discover. They deploy to every profile automatically.
 
 **Rules** must be registered in `profiles.yaml`:
 
@@ -154,11 +154,11 @@ my-profile:
     - auto-lint
 ```
 
-Rule group labels (e.g. `collaboration`) are arbitrary — they don't need to match directory names. Filenames must be unique repo-wide.
+Rule group labels (e.g. `collaboration`) are arbitrary. They do not need to match directory names. Filenames must be unique repo-wide.
 
 ## Adding regulatory and legal rules
 
-rune ships with collaboration rules, but the framework is designed to absorb domain knowledge — including laws, regulations, standards, and compliance frameworks that help teams build software that is not just great, but also compliant.
+rune ships with collaboration rules. The framework is built to absorb domain knowledge —including laws, regulations, standards, and compliance frameworks.
 
 ### What belongs
 
@@ -167,7 +167,7 @@ rune ships with collaboration rules, but the framework is designed to absorb dom
 | Laws and regulations that affect software | GDPR, DORA, PSD2, AI Act, SOX IT controls |
 | Industry standards with public text | ISO 27001 controls, OWASP Top 10, PCI-DSS requirements |
 | Accounting and reporting standards | IFRS summaries, GAAP principles |
-| Open data catalogs and public APIs | Eurostat, FRED, ECB SDW, SEC EDGAR, national statistics offices |
+| Open data catalogs and public APIs | Eurostat, FRED, ECB SDW, SEC EDGAR |
 | Tax rules relevant to software products | VAT digital services, transfer pricing safe harbors |
 | Licensing and IP frameworks | OSI-approved licenses, software patent landscapes |
 
@@ -177,11 +177,11 @@ Every regulatory or legal rule must satisfy ALL of these:
 
 | Criterion | Why |
 |---|---|
-| **Publicly available source** | The underlying text must be freely accessible — official gazettes, government websites, standards bodies with public summaries. No paywalled content. |
-| **Permissive for commercial use** | Laws and regulations are not copyrightable in most jurisdictions, but standards bodies sometimes restrict reproduction. Confirm the source permits derivative use, or summarize in your own words with attribution. |
-| **Broadly applicable** | The rule should help more than one team or project. A regulation affecting all EU software companies — yes. A single company's internal compliance checklist — no. |
-| **Actionable for engineers** | Don't just quote the law. Translate it into what engineers must do: checklists, constraints, patterns to follow, patterns to avoid. An agent reading this rule should change its behavior. |
-| **Sourced and dated** | Cite the official source with title, article/section numbers, publication date, and a URL. Regulations change — the date tells future readers whether the content is current. |
+| **Publicly available source** | The underlying text must be freely accessible. Official gazettes, government websites, standards bodies with public summaries. No paywalled content. |
+| **Permissive for commercial use** | Laws are not copyrightable in most jurisdictions. Standards bodies sometimes restrict reproduction. Confirm the source permits derivative use, or summarize in your own words with attribution. |
+| **Broadly applicable** | The rule should help more than one team or project. A regulation affecting all EU software companies —yes. A single company's internal checklist —no. |
+| **Actionable for engineers** | Do not quote the law. Translate it into what engineers must do: checklists, constraints, patterns to follow, patterns to avoid. An agent reading this rule should change its behavior. |
+| **Sourced and dated** | Cite the official source with title, article/section numbers, publication date, and a URL. Regulations change. The date tells future readers whether the content is current. |
 
 ### Structure template
 
@@ -217,22 +217,22 @@ Every regulatory or legal rule must satisfy ALL of these:
 
 ### What does NOT belong
 
-- **Internal company policies** — those are private rules, not FOSS contributions
-- **Legal advice or interpretation** — rules state what the law says, not what you should do in a specific case. Add a disclaimer: "This is not legal advice."
-- **Paywalled standards reproduced verbatim** — summarize in your own words, cite the source, link to the official purchase page
-- **Jurisdiction-specific edge cases** with no general applicability — a tax ruling for one municipality helps nobody
-- **Outdated regulations** without marking them as superseded — if you add a rule for a regulation that was amended, note the current version
+- **Internal company policies** —those are private rules, not FOSS contributions
+- **Legal advice or interpretation** —rules state what the law says, not what you should do in a specific case. Add a disclaimer: "This is not legal advice."
+- **Paywalled standards reproduced verbatim** —summarize in your own words, cite the source, link to the official purchase page
+- **Jurisdiction-specific edge cases** with no general applicability
+- **Outdated regulations** without marking them as superseded
 
 ### Open data sources
 
 Rules that catalog freely available public data are welcome. These help agents find and fetch real data instead of hallucinating it. Criteria:
 
 - The data must be **free to access** (no API key required, or free-tier key available)
-- The data must be **legal to use commercially** (check the license — most government statistical data is open)
+- The data must be **legal to use commercially** (check the license)
 - The rule should document: **what data is available, API endpoints, update frequency, data format, and known limitations**
 - Prefer official sources (Eurostat, FRED, national statistics offices) over third-party aggregators
 
-## Before Submitting
+## Before submitting
 
 Run `make validate` before opening a PR. It checks:
 
@@ -251,12 +251,6 @@ make use-profile PROFILE=default
 make verify
 ```
 
-## Validation
-
-```bash
-make validate    # checks all YAML and agent frontmatter against JSON schemas
-```
-
 ## Useful targets
 
 ```bash
@@ -268,8 +262,51 @@ make use-profile PROFILE=<name>     # deploy
 make verify                         # check deployed state
 ```
 
+## Formatting Reference
+
+How the dispatch output is styled. Useful if you want to customize the look or contribute new display formats.
+
+### Frame Styles
+
+| Where used | Character | Width | Meaning |
+|---|---|---|---|
+| Plans and reports | `───` (light line) | 43 chars | Structure and results. Nothing is running. |
+| Wave banners | `═══` (double line) | 43 chars | Work is happening right now. |
+
+### Task Row Formats
+
+| Where used | Format |
+|---|---|
+| Before dispatch | `{emoji}  {id}  {agent}  {description}` |
+| During dispatch | `{emoji}  {id} → {agent}  {description}` |
+| Final report | `{emoji}  {id}  {agent}  {status} {summary}` |
+
+The `→` arrow only appears during execution. It means "this agent is working on this task right now."
+
+### Status Icons
+
+| Icon | Meaning |
+|---|---|
+| ✅ | Task finished successfully |
+| ❌ | Task failed |
+| ⛔ | Blocked because a dependency failed |
+| ⏭️ | Skipped by the user |
+
+### History
+
+Every dispatch saves a record to `.rune/` in the project root. This folder is gitignored by default.
+
+```
+.rune/
+  2026-03-23T10-00-00-full-stack-feature.yaml
+  2026-03-23T11-00-00-microservice-migration.yaml
+  2026-03-23T14-00-00-cross-cloud-deploy.yaml
+```
+
+These files contain summaries only. No raw agent output is saved.
+
 ## Further reading
 
-- [The Edit Distance of Understanding](docs/the-edit-distance-of-understanding.md) — How rune transforms ignorance into insight using the same structural principles as Levenshtein Distance.
-- [The Knowledge Creation Cycle](docs/the-knowledge-creation-cycle.md) — How rune's Feed, Shape, Grow lifecycle is grounded in organizational knowledge theory (SECI model + machine dimension).
-- [The Context Budget](docs/the-context-budget.md) — Why context management matters, how profiles keep it lean, and how to measure your footprint.
+- [The Three-Phase Model](docs/the-three-phase-model.md) — The core idea: how agents explore, plan, and execute in parallel. Includes DAG dispatch, context injection, and token economics.
+- [The Knowledge Toolkit](docs/the-knowledge-toolkit.md) — Rules, profiles, the Knowledge Manager, and context budgets.
+- [The Safety Architecture](docs/the-safety-architecture.md) — How safety hooks block destructive commands and defense-in-depth positioning.

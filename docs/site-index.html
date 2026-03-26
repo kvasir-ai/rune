@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rune — documentation</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@15/lib/marked.umd.min.js"></script>
+<style>
+/* ── Theme ────────────────────────────────────────── */
+:root {
+  --bg: #ffffff; --fg: #1a1a2e; --fg2: #555; --accent: #5b21b6;
+  --accent2: #7c3aed; --card: #f8f7ff; --border: #e5e5f0;
+  --nav-bg: #fafafa; --nav-active: #ede9fe; --search-bg: #fff;
+  --code-bg: #f3f0ff; --tag: #ddd6fe; --tag-fg: #4c1d95;
+  --green: #059669; --red: #dc2626; --yellow: #d97706;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0e17; --fg: #e0def4; --fg2: #908caa; --accent: #c4b5fd;
+    --accent2: #a78bfa; --card: #1a1930; --border: #2a2940;
+    --nav-bg: #16152a; --nav-active: #2d2b55; --search-bg: #1a1930;
+    --code-bg: #1e1d35; --tag: #3b3766; --tag-fg: #c4b5fd;
+    --green: #34d399; --red: #f87171; --yellow: #fbbf24;
+  }
+}
+
+/* ── Reset + Layout ───────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: 'Inter', -apple-system, system-ui, sans-serif; line-height: 1.7; overflow-x: hidden; }
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+/* ── Mobile hamburger ─────────────────────────────── */
+.mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; background: var(--nav-bg); border-bottom: 1px solid var(--border); padding: 0.75rem 1rem; z-index: 200; }
+.hamburger { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--fg); font-size: 1.3rem; padding: 0.3rem 0.6rem; cursor: pointer; }
+.mobile-nav .title { font-weight: 700; color: var(--accent); margin-left: 0.75rem; font-size: 1rem; }
+.sidebar.open { display: block; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 300; overflow-y: auto; }
+.sidebar .close-btn { display: none; text-align: right; padding: 0.75rem 1rem; }
+.sidebar.open .close-btn { display: block; }
+.close-btn button { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--fg); font-size: 1.2rem; padding: 0.3rem 0.6rem; cursor: pointer; }
+
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .mobile-nav { display: flex; align-items: center; }
+  .content { padding: 4rem 1.25rem 3rem; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+  .content { max-width: 100vw; overflow-x: hidden; }
+  .nav-item { padding: 0.6rem 1.25rem 0.6rem 1.5rem; }
+  .copy-btn { opacity: 1; }
+  table { font-size: 0.78rem; display: block; overflow-x: auto; white-space: nowrap; }
+  td, th { padding: 0.4rem 0.5rem; }
+  pre { max-width: calc(100vw - 2.5rem); }
+  code { word-break: break-all; }
+  .card-grid { grid-template-columns: 1fr; }
+  .theme-toggle { bottom: 1rem; right: 1rem; width: 36px; height: 36px; }
+}
+
+/* ── Sidebar ──────────────────────────────────────── */
+.sidebar { background: var(--nav-bg); border-right: 1px solid var(--border); padding: 1.5rem 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.sidebar h2 { font-size: 1.1rem; padding: 0 1.25rem; margin-bottom: 1rem; color: var(--accent); letter-spacing: 0.02em; }
+.sidebar .search { margin: 0 1rem 1rem; }
+.sidebar input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--search-bg); color: var(--fg); font-size: 0.85rem; }
+.sidebar input:focus { outline: 2px solid var(--accent2); border-color: transparent; }
+.nav-section { margin-bottom: 0.75rem; }
+.nav-section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg2); padding: 0.5rem 1.25rem 0.25rem; font-weight: 600; }
+.nav-item { display: block; padding: 0.35rem 1.25rem 0.35rem 1.5rem; font-size: 0.85rem; color: var(--fg2); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+.nav-item:hover { background: var(--nav-active); color: var(--fg); text-decoration: none; }
+.nav-item.active { background: var(--nav-active); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+.nav-item .emoji { margin-right: 0.4rem; }
+
+/* ── Content ──────────────────────────────────────── */
+.content { max-width: 780px; padding: 2rem 3rem 4rem; }
+.breadcrumb { font-size: 0.8rem; color: var(--fg2); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--fg2); }
+.breadcrumb span { margin: 0 0.4rem; }
+
+h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 700; margin: 2.5rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 1.75rem 0 0.5rem; }
+p { margin-bottom: 1rem; color: var(--fg); }
+.subtitle { font-size: 1.05rem; color: var(--fg2); margin-bottom: 2rem; font-style: italic; }
+
+/* ── Cards ────────────────────────────────────────── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; cursor: pointer; transition: all 0.2s; }
+.card:hover { border-color: var(--accent2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(91,33,182,0.1); }
+.card .emoji { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+.card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+.card p { font-size: 0.8rem; color: var(--fg2); margin: 0; line-height: 1.4; }
+
+/* ── Tags ─────────────────────────────────────────── */
+.tag { display: inline-block; background: var(--tag); color: var(--tag-fg); font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 99px; margin-right: 0.3rem; font-weight: 500; }
+
+/* ── Tables ───────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+th { background: var(--card); color: var(--accent); text-align: left; padding: 0.6rem 0.75rem; border: 1px solid var(--border); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); }
+tr:nth-child(even) td { background: var(--card); }
+
+/* ── Code ─────────────────────────────────────────── */
+code { background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+pre { background: var(--code-bg); padding: 1rem 1.25rem; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border); margin: 1rem 0; line-height: 1.5; }
+pre code { background: none; padding: 0; }
+
+/* ── Status ───────────────────────────────────────── */
+.pass { color: var(--green); font-weight: 600; }
+.warn { color: var(--yellow); font-weight: 600; }
+.fail { color: var(--red); font-weight: 600; }
+
+/* ── Sections ─────────────────────────────────────── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── Mermaid ──────────────────────────────────────── */
+.mermaid { margin: 1.5rem 0; }
+
+/* ── Copy button ──────────────────────────────────── */
+.copy-wrap { position: relative; }
+.copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: var(--border); border: none; color: var(--fg2); font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; opacity: 0; transition: opacity 0.15s; }
+.copy-wrap:hover .copy-btn { opacity: 1; }
+.copy-btn.copied { background: var(--green); color: #fff; }
+
+/* ── Search highlight ─────────────────────────────── */
+mark { background: var(--tag); color: var(--tag-fg); padding: 0.1rem 0.2rem; border-radius: 3px; }
+
+/* ── Theme toggle ─────────────────────────────────── */
+.theme-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; z-index: 100; }
+</style>
+</head>
+<body>
+<div class="mobile-nav">
+  <button class="hamburger" id="menu-open">&#x2630;</button>
+  <span class="title">&#x16B1; rune</span>
+</div>
+
+<div class="layout">
+
+<!-- ── Sidebar ──────────────────────────── -->
+<nav class="sidebar" id="sidebar">
+  <div class="close-btn"><button id="menu-close">&#x2715;</button></div>
+  <h2>&#x16B1; rune</h2>
+  <div class="search"><input type="text" id="search" placeholder="Search concepts..." autocomplete="off"></div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Getting Started</div>
+    <a class="nav-item active" data-section="home"><span class="emoji">&#x1F3E0;</span> Home</a>
+    <a class="nav-item" data-section="quick-start"><span class="emoji">&#x26A1;</span> Quick Start</a>
+    <a class="nav-item" data-section="team"><span class="emoji">&#x1F465;</span> Agent Team</a>
+    <a class="nav-item" data-section="talk"><span class="emoji">&#x1F4AC;</span> Talk to Your Team</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Core</div>
+    <a class="nav-item" data-section="dag-dispatch"><span class="emoji">&#x1F500;</span> DAG Dispatch</a>
+    <a class="nav-item" data-section="rules"><span class="emoji">&#x1F4D6;</span> Rules &amp; Profiles</a>
+    <a class="nav-item" data-section="knowledge-inbox"><span class="emoji">&#x1F4E5;</span> Knowledge Pipeline</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Advanced</div>
+    <a class="nav-item" data-section="agents"><span class="emoji">&#x1F916;</span> Agents</a>
+    <a class="nav-item" data-section="skills"><span class="emoji">&#x2328;</span> Skills</a>
+    <a class="nav-item" data-section="safety"><span class="emoji">&#x1F6E1;</span> Safety &amp; Hooks</a>
+    <a class="nav-item" data-section="judge"><span class="emoji">&#x2696;</span> The Judge</a>
+    <a class="nav-item" data-section="context-budget"><span class="emoji">&#x1F4CA;</span> Context Budget</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Deep Dives</div>
+    <a class="nav-item" data-section="deep-edit-distance"><span class="emoji">&#x1F4D0;</span> Edit Distance</a>
+    <a class="nav-item" data-section="deep-knowledge-cycle"><span class="emoji">&#x1F504;</span> Knowledge Cycle</a>
+    <a class="nav-item" data-section="deep-context"><span class="emoji">&#x1F9EE;</span> Context Theory</a>
+    <a class="nav-item" data-section="deep-safety"><span class="emoji">&#x1F50D;</span> Safety Assessment</a>
+    <a class="nav-item" data-section="deep-km"><span class="emoji">&#x1F4DA;</span> Knowledge Manager</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Reference</div>
+    <a class="nav-item" data-section="ref-safety-patterns"><span class="emoji">&#x1F6E1;</span> Safety Patterns</a>
+    <a class="nav-item" data-section="ref-lint-rules"><span class="emoji">&#x1F9F9;</span> Auto-Lint Rules</a>
+    <a class="nav-item" data-section="ref-peon-ping"><span class="emoji">&#x1F50A;</span> Peon-Ping</a>
+    <a class="nav-item" data-section="ref-make-targets"><span class="emoji">&#x1F528;</span> Make Targets</a>
+  </div>
+</nav>
+
+<!-- ── Content ─────────────────────────── -->
+<main class="content" id="content">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a></div>
+  <h1>&#x16B1; rune</h1>
+  <p class="subtitle">The wisest of all shared his knowledge through runes.</p>
+  <p>An LLM-native agent system for AI-assisted development. Knowledge management, team coordination, and parallel execution — talk to your team in natural language.</p>
+
+  <h2>Install uv</h2>
+  <h3>macOS</h3>
+  <pre><code>brew install uv</code></pre>
+  <h3>Linux / WSL</h3>
+  <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+  <h2>Use rune</h2>
+  <pre><code>git clone https://github.com/kvasir-ai/rune.git
+cd rune
+make use-profile PROFILE=default</code></pre>
+  <p>Then start a coding session. Talk to your team:</p>
+  <pre><code>"switch to the security profile"
+"plan this feature for me"
+"audit the knowledge base"</code></pre>
+  <p>If you're unsure about something, ask rune — the agents know their own system.</p>
+
+  <h2>Start here</h2>
+  <div class="card-grid">
+    <div class="card" data-section="quick-start"><span class="emoji">&#x26A1;</span><h4>Quick Start</h4><p>Install and deploy in one command</p></div>
+    <div class="card" data-section="talk"><span class="emoji">&#x1F4AC;</span><h4>Talk to Your Team</h4><p>Natural language interaction examples</p></div>
+    <div class="card" data-section="team"><span class="emoji">&#x1F465;</span><h4>Agent Team</h4><p>The starter roster and what each agent does</p></div>
+    <div class="card" data-section="dag-dispatch"><span class="emoji">&#x1F500;</span><h4>DAG Dispatch</h4><p>Parallel wave execution with /rune</p></div>
+    <div class="card" data-section="profiles"><span class="emoji">&#x1F504;</span><h4>Profiles</h4><p>Switch knowledge sets with one command</p></div>
+  </div>
+
+  <h2>How it works</h2>
+  <div class="mermaid">
+  graph LR
+    A["&#x1F4E5; Ingest"] --> B["&#x1F4D6; Distill"]
+    B --> C["&#x1F504; Shape"]
+    C --> D["&#x1F331; Grow"]
+    D --> A
+  </div>
+  <p><strong>Ingest</strong> raw material into <code>src/knowledge/</code>. <strong>Distill</strong> into structured rules. <strong>Shape</strong> rules into role-specific profiles. <strong>Grow</strong> through audits, gap detection, and research. The cycle compounds over time.</p>
+
+  <h2>Deep dives</h2>
+  <div class="card-grid">
+    <div class="card" data-section="deep-edit-distance"><span class="emoji">&#x1F4D0;</span><h4>Edit Distance of Understanding</h4><p>How DAG dispatch mirrors Levenshtein Distance</p></div>
+    <div class="card" data-section="deep-knowledge-cycle"><span class="emoji">&#x1F504;</span><h4>Knowledge Creation Cycle</h4><p>SECI model adapted for AI agents</p></div>
+    <div class="card" data-section="deep-context"><span class="emoji">&#x1F9EE;</span><h4>Context Budget</h4><p>Why token management matters and how to measure it</p></div>
+    <div class="card" data-section="deep-safety"><span class="emoji">&#x1F50D;</span><h4>Safety Assessment</h4><p>What the hooks catch, what they can't, and why</p></div>
+    <div class="card" data-section="deep-km"><span class="emoji">&#x1F4DA;</span><h4>Knowledge Manager</h4><p>How one agent feeds and grows your team's knowledge</p></div>
+  </div>
+</div>
+
+<!-- QUICK START -->
+<div class="section" id="quick-start">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Quick Start</div>
+  <h1>&#x26A1; Quick Start</h1>
+  <p>Install <code>uv</code>, clone, deploy.</p>
+
+  <table>
+  <tr><th>OS</th><th>Install uv</th></tr>
+  <tr><td>macOS</td><td><code>brew install uv</code></td></tr>
+  <tr><td>Linux / WSL</td><td><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></td></tr>
+  </table>
+
+  <pre><code>git clone https://github.com/kvasir-ai/rune.git && cd rune && make use-profile PROFILE=default</code></pre>
+
+  <p>Verify the installation:</p>
+  <pre><code>make verify          # check deployed state
+make list-agents     # browse the team
+make list-rules      # browse the knowledge
+make list-skills     # browse the workflows</code></pre>
+
+  <p>Try it: say <code>"run rune example 1"</code> to dispatch a showcase DAG.</p>
+</div>
+
+<!-- AGENT TEAM -->
+<div class="section" id="team">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Agent Team</div>
+  <h1>&#x1F465; Agent Team</h1>
+  <p>rune ships with a ready-made team. Replace any agent, add your own, delete what you don't need. Each agent is a markdown file in <code>src/agents/core/</code>.</p>
+
+  <table>
+  <tr><th>Agent</th><th>Role</th></tr>
+  <tr><td>&#x1F3D7; Architect</td><td>System design, API contracts, architectural decisions</td></tr>
+  <tr><td>&#x1F527; Developer</td><td>Implementation, features, bug fixes</td></tr>
+  <tr><td>&#x1F5FA; Planner</td><td>Implementation plans, project breakdown, risk assessment</td></tr>
+  <tr><td>&#x1F50D; Reviewer</td><td>Code review, quality gates, final approval</td></tr>
+  <tr><td>&#x2696; Judge</td><td>Cross-domain validation, correctness, safety verdicts</td></tr>
+  <tr><td>&#x1F9EA; Tester</td><td>Test plans, test suites, coverage</td></tr>
+  <tr><td>&#x1F512; Security</td><td>Vulnerability assessment, threat modeling</td></tr>
+  <tr><td>&#x270D; Technical Writer</td><td>Documentation, ADRs, READMEs, API docs</td></tr>
+  <tr><td>&#x270D; Writer</td><td>Guides, release notes, user-facing content</td></tr>
+  <tr><td>&#x1F3A8; Designer</td><td>UI/UX, component design, interface planning</td></tr>
+  <tr><td>&#x1F680; DevOps</td><td>Deployment, CI/CD, releases, infrastructure</td></tr>
+  <tr><td>&#x1F4DA; Knowledge Manager</td><td>Rule audits, profile optimization, knowledge lifecycle</td></tr>
+  </table>
+
+  <p>Add your own: create <code>src/agents/core/my-agent.md</code> with YAML frontmatter and a system prompt. Agents auto-discover — no registration needed.</p>
+</div>
+
+<!-- TALK TO YOUR TEAM -->
+<div class="section" id="talk">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Talk to Your Team</div>
+  <h1>&#x1F4AC; Talk to Your Team</h1>
+  <p>rune is LLM-native. There are no CLI commands to learn for interacting with agents. You talk to them in natural language inside your coding session.</p>
+
+  <table>
+  <tr><th>Say this</th><th>What happens</th></tr>
+  <tr><td><code>"plan this feature for me"</code></td><td>Planner breaks it into atomic tasks with dependencies</td></tr>
+  <tr><td><code>/rune</code></td><td>DAG dispatcher executes the plan in parallel waves</td></tr>
+  <tr><td><code>"hey judge, review this"</code></td><td>Judge validates correctness, safety, and completeness</td></tr>
+  <tr><td><code>"switch to the security profile"</code></td><td>Knowledge Manager swaps the active rule set</td></tr>
+  <tr><td><code>"audit the knowledge base"</code></td><td>Knowledge Manager checks for stale, oversized, or orphaned rules</td></tr>
+  <tr><td><code>"run rune example 1"</code></td><td>Dispatches a showcase DAG with simulated agents</td></tr>
+  <tr><td><code>"test this DAG"</code></td><td>Zero-cost dry run — validates without dispatching</td></tr>
+  <tr><td><code>"brainstorm this feature"</code></td><td>Brainstorming skill explores requirements before implementation</td></tr>
+  </table>
+
+  <p>No CLI commands, no API calls. You talk. The agents act. The <code>make</code> targets are for setup only — once installed, rune lives inside your agentic coding session.</p>
+</div>
+
+<!-- AGENTS -->
+<div class="section" id="agents">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Agents</div>
+  <h1>&#x1F916; Agents</h1>
+  <p>An agent is a markdown file with YAML frontmatter (name, description, model, tools, emoji) and a system prompt body. When dispatched as a sub-agent, the full prompt loads into its own context window.</p>
+  <p>At session start, only the frontmatter descriptions load — lightweight summaries that tell the orchestrator when to invoke each agent. The full prompt loads on demand.</p>
+
+  <h3>Frontmatter fields</h3>
+  <table>
+  <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>Yes</td><td>Display name</td></tr>
+  <tr><td><code>description</code></td><td>Yes</td><td>Tells the orchestrator when to invoke</td></tr>
+  <tr><td><code>model</code></td><td>No</td><td><code>haiku</code>, <code>sonnet</code>, or <code>opus</code></td></tr>
+  <tr><td><code>tools</code></td><td>No</td><td>Comma-separated tool list</td></tr>
+  <tr><td><code>emoji</code></td><td>No</td><td>Display emoji in dispatch diagrams</td></tr>
+  </table>
+</div>
+
+<!-- RULES -->
+<div class="section" id="rules">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Rules</div>
+  <h1>&#x1F4D6; Rules</h1>
+  <p>Rules are plain markdown files in <code>src/rules/</code> that agents load as context. They encode conventions, standards, patterns, and domain knowledge. A rule about SQL formatting shapes how every agent writes SQL. A rule about git conventions shapes how every agent commits.</p>
+  <p>Rules are not code. They are structured knowledge — tables, checklists, code blocks — that agents read and follow.</p>
+
+  <h3>Quality criteria</h3>
+  <table>
+  <tr><th>Criterion</th><th>Test</th></tr>
+  <tr><td><strong>Actionable</strong></td><td>Tells agents what to do, not just what to know</td></tr>
+  <tr><td><strong>Structured</strong></td><td>Tables, checklists, code blocks over prose</td></tr>
+  <tr><td><strong>Sourced</strong></td><td>Claims attributed to a specific source</td></tr>
+  <tr><td><strong>Scoped</strong></td><td>One coherent topic, not sprawling</td></tr>
+  <tr><td><strong>Current</strong></td><td>Version numbers, APIs, pricing are accurate</td></tr>
+  </table>
+</div>
+
+<!-- PROFILES -->
+<div class="section" id="profiles">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Profiles</div>
+  <h1>&#x1F504; Profiles</h1>
+  <p>A profile controls which rules load into context. All agents and skills deploy to every profile — only the knowledge set changes.</p>
+  <p>A platform engineer and a financial analyst need different rules. Profiles enforce this separation. Switch with one command.</p>
+
+  <pre><code>make use-profile PROFILE=my-profile    # deploy
+make context-budget                    # measure footprint</code></pre>
+
+  <div class="mermaid">
+  graph TB
+    P["profiles.yaml"] --> R1["collaboration rules"]
+    P --> R2["engineering rules"]
+    P --> R3["infra rules"]
+    R1 --> D["~/.claude/rules/"]
+    R2 --> D
+    R3 --> D
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="section" id="skills">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Skills</div>
+  <h1>&#x2328; Skills</h1>
+  <p>Skills are slash commands that trigger structured workflows. Each skill belongs to one of the four core agents — or to <code>/rune</code> (the dispatch engine the user operates directly).</p>
+  <p>Skills load on demand — they consume zero tokens until invoked.</p>
+
+  <h3>Skill catalog</h3>
+  <table>
+  <tr><th>Command</th><th>Owner</th><th>Action</th></tr>
+  <tr><td><code>/rune</code></td><td>User</td><td>Dispatch agents in parallel waves</td></tr>
+  <tr><td><code>/rune-demo</code></td><td>User</td><td>Run showcase DAG examples</td></tr>
+  <tr><td><code>/write-plan</code></td><td>Planner</td><td>Generate an implementation plan</td></tr>
+  <tr><td><code>/judge</code></td><td>Judge</td><td>Code review workflow</td></tr>
+  <tr><td><code>/judge-audit</code></td><td>Judge</td><td>Deep adversarial audit of any output</td></tr>
+  <tr><td><code>/judge-panel N</code></td><td>Judge</td><td>Summon N judges for multi-perspective review</td></tr>
+  <tr><td><code>/tw-draft-pr</code></td><td>Technical Writer</td><td>Draft a PR description</td></tr>
+  <tr><td><code>/tw-release</code></td><td>Technical Writer</td><td>Prepare a release (changelog, notes, version, tag)</td></tr>
+  <tr><td><code>/km-audit</code></td><td>Knowledge Manager</td><td>Audit knowledge base health</td></tr>
+  <tr><td><code>/km-onboard</code></td><td>Knowledge Manager</td><td>Analyze repo architecture for onboarding</td></tr>
+  </table>
+
+  <h3>SSDLC cycle</h3>
+  <table>
+  <tr><th>Phase</th><th>Skills</th></tr>
+  <tr><td>&#x1F4DD; Plan</td><td>/write-plan</td></tr>
+  <tr><td>&#x2699; Execute</td><td>/rune</td></tr>
+  <tr><td>&#x2696; Review</td><td>/judge, /judge-audit, /judge-panel</td></tr>
+  <tr><td>&#x1F680; Ship</td><td>/tw-draft-pr, /tw-release</td></tr>
+  <tr><td>&#x1F4DA; Maintain</td><td>/km-audit, /km-onboard</td></tr>
+  </table>
+</div>
+
+<!-- HOOKS -->
+<div class="section" id="hooks">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Hooks</div>
+  <h1>&#x1F6A7; Hooks</h1>
+  <p>Hooks are Python scripts that fire on Claude Code/OpenCode lifecycle events. They run automatically — no opt-in required.</p>
+
+  <table>
+  <tr><th>Hook</th><th>Event</th><th>What It Does</th></tr>
+  <tr><td><code>safety-check</code></td><td>PreToolUse</td><td>Blocks destructive commands before execution</td></tr>
+  <tr><td><code>auto-lint</code></td><td>PostToolUse</td><td>Runs formatters after file writes</td></tr>
+  <tr><td><code>on-stage-complete</code></td><td>Notification</td><td>Plays a sound when agent tasks complete</td></tr>
+  </table>
+
+  <p>Both safety-check and auto-lint are configurable via YAML — add patterns or lint rules without touching Python.</p>
+</div>
+
+<!-- KNOWLEDGE INBOX -->
+<div class="section" id="knowledge-inbox">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Knowledge Inbox</div>
+  <h1>&#x1F4E5; Knowledge Inbox</h1>
+  <p><code>src/knowledge/</code> is the staging area. Raw material goes in — PDFs, research summaries, extracted docs. The Knowledge Manager distills it into structured rules in <code>src/rules/</code>.</p>
+  <p>Never skip the inbox by writing directly to rules. Raw material stays in the inbox after distillation — it serves as the source reference.</p>
+
+  <div class="mermaid">
+  graph LR
+    R["Raw material"] --> I["src/knowledge/"]
+    I --> D["Knowledge Manager distills"]
+    D --> S["src/rules/"]
+    S --> P["profiles.yaml"]
+    P --> C["Agent context"]
+  </div>
+</div>
+
+<!-- DAG DISPATCH -->
+<div class="section" id="dag-dispatch">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> DAG Dispatch</div>
+  <h1>&#x1F500; DAG Dispatch</h1>
+  <p>Define tasks with dependencies. <code>/rune</code> computes waves via topological sort and dispatches each wave in parallel. Independent tasks run simultaneously. Dependent tasks wait.</p>
+
+  <pre><code>───────────────────────────────────────────
+  DAG DISPATCH PLAN
+  Tasks: 7  |  Waves: 3  |  Benefit: 1.8x
+───────────────────────────────────────────
+
+  Wave 0  ─── 4 parallel ──────────────────
+  &#x1F3D7;  t1  architect         Design API contract
+  &#x1F3A8;  t2  designer          Design UI components
+  &#x1F527;  t3  developer         Set up database schema
+  &#x270D;  t4  writer            Draft documentation
+
+  Wave 1  ─── 2 parallel ──────────────────
+  &#x1F527;  t5  developer         Implement API and UI
+                              ↳ depends on: t1, t2, t3
+  &#x1F9EA;  t6  tester            Write tests
+                              ↳ depends on: t1, t3
+
+  Wave 2  ────────────────────────────────
+  &#x1F50D;  t7  reviewer          Final review
+                              ↳ depends on: t4, t5, t6
+───────────────────────────────────────────</code></pre>
+
+  <p>Say <code>/rune</code> to dispatch. <code>"Test this DAG"</code> for a zero-cost dry run. Dispatch history is saved to <code>.rune/</code> for audit and session recovery.</p>
+
+  <h3>Token economics</h3>
+  <p>Every dispatch ends with a cost report — actual token counts per agent, estimated USD cost, wall time vs sequential time, and parallelism savings. Costs are tracked per task and persisted in the history file.</p>
+
+  <p>Deep dive: <a href="#" data-section="deep-context">Context Theory</a> explains why subagents are the key to efficient token economics.</p>
+</div>
+
+<!-- JUDGE -->
+<div class="section" id="judge">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> The Judge</div>
+  <h1>&#x2696; The Judge</h1>
+  <p>The Judge is a read-only validation agent that evaluates any other agent's output before you act on it. Plans, code, architecture decisions, compliance assessments — a second opinion before the consequence.</p>
+
+  <h3>Six-phase protocol</h3>
+  <table>
+  <tr><th>Phase</th><th>What It Checks</th></tr>
+  <tr><td>1. Identify</td><td>Which agent produced the output</td></tr>
+  <tr><td>2. Correctness</td><td>Are facts technically accurate</td></tr>
+  <tr><td>3. Completeness</td><td>Was anything critical omitted</td></tr>
+  <tr><td>4. Safety</td><td>Production risk, PII, cost</td></tr>
+  <tr><td>5. Boundaries</td><td>Did the agent stay in its lane</td></tr>
+  <tr><td>6. Verdict</td><td>APPROVED / APPROVED WITH WARNINGS / BLOCKED</td></tr>
+  </table>
+
+  <p>The Judge never implements — it describes what needs to change and who should do it.</p>
+</div>
+
+<!-- CONTEXT BUDGET -->
+<div class="section" id="context-budget">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Context Budget</div>
+  <h1>&#x1F4CA; Context Budget</h1>
+  <p>Every token loaded into context displaces space for reasoning. rune treats context as a budget — every token must earn its place.</p>
+
+  <pre><code>make context-budget</code></pre>
+
+  <h3>What loads when</h3>
+  <table>
+  <tr><th>Tier</th><th>What</th><th>When</th></tr>
+  <tr><td>Session start</td><td>Agent frontmatter</td><td>Always</td></tr>
+  <tr><td>Session start</td><td>Rules (per profile)</td><td>Always</td></tr>
+  <tr><td>Session start</td><td>Hooks</td><td>Always</td></tr>
+  <tr><td>On demand</td><td>Skill full text</td><td>When slash command invoked</td></tr>
+  <tr><td>On demand</td><td>Agent full prompt</td><td>When sub-agent dispatched</td></tr>
+  </table>
+
+  <p>The default profile ships lean. Run <code>make context-budget</code> to measure your footprint.</p>
+</div>
+
+<!-- SAFETY -->
+<div class="section" id="safety">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Safety</div>
+  <h1>&#x1F6E1; Safety</h1>
+  <p>The <code>safety-check</code> hook blocks destructive commands before the shell sees them. Configurable via <code>src/hooks/safety-patterns.yaml</code>.</p>
+
+  <table>
+  <tr><th>Category</th><th>What Is Blocked</th></tr>
+  <tr><td>&#x1F4C1; File destruction</td><td><code>rm -rf</code>, all flag orderings</td></tr>
+  <tr><td>&#x1F5C4; SQL destruction</td><td><code>DROP TABLE</code>, <code>DELETE FROM</code>, <code>TRUNCATE</code></td></tr>
+  <tr><td>&#x1F500; Git destruction</td><td>force push, hard reset, clean, discard-all</td></tr>
+  <tr><td>&#x2601; Infrastructure</td><td><code>terraform apply</code> targeting production</td></tr>
+  <tr><td>&#x1F511; Authentication</td><td><code>gcloud auth</code>, <code>gh auth</code></td></tr>
+  </table>
+
+  <p>The hook is a seatbelt — it catches accidental destructive commands from LLM agents. OS permissions, sandboxing, and CI/CD handle the deeper layers.</p>
+  <p>See <a href="#" data-section="deep-safety">Safety Assessment</a> for the full analysis including test evidence, known bypasses, and industry comparison.</p>
+</div>
+
+<!-- DEEP DIVE: EDIT DISTANCE -->
+<!-- Deep dives are loaded from docs/*.md via marked.js -->
+<div class="section" id="deep-edit-distance" data-md="docs/the-edit-distance-of-understanding.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Edit Distance</div>
+  <div class="md-content"><p class="subtitle">Loading...</p></div>
+</div>
+
+<div class="section" id="deep-knowledge-cycle" data-md="docs/the-knowledge-creation-cycle.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Knowledge Cycle</div>
+  <div class="md-content"><p class="subtitle">Loading...</p></div>
+</div>
+
+<div class="section" id="deep-context" data-md="docs/the-context-budget.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Context Theory</div>
+  <div class="md-content"><p class="subtitle">Loading...</p></div>
+</div>
+
+<div class="section" id="deep-safety" data-md="docs/the-safety-architecture.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Safety Assessment</div>
+  <div class="md-content"><p class="subtitle">Loading...</p></div>
+</div>
+
+<!-- DEEP DIVE: KNOWLEDGE MANAGER -->
+<div class="section" id="deep-km" data-md="docs/the-knowledge-manager.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Knowledge Manager</div>
+  <div class="md-content"><p class="subtitle">Loading...</p></div>
+</div>
+
+<!-- REF: SAFETY PATTERNS -->
+<div class="section" id="ref-safety-patterns">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Safety Patterns</div>
+  <h1>&#x1F4CB; Safety Patterns</h1>
+  <p>Configurable in <code>src/hooks/safety-patterns.yaml</code>.</p>
+  <pre><code># Add a new pattern:
+- name: kubectl-delete
+  match: '\bkubectl\s+delete\b'
+  message: "Kubernetes resource deletion blocked"
+  severity: block</code></pre>
+
+  <table>
+  <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>Yes</td><td>Pattern identifier</td></tr>
+  <tr><td><code>match</code></td><td>Yes</td><td>Python regex</td></tr>
+  <tr><td><code>flags</code></td><td>No</td><td><code>i</code> for case-insensitive</td></tr>
+  <tr><td><code>requires</code></td><td>No</td><td>Second regex — both must match</td></tr>
+  <tr><td><code>message</code></td><td>Yes</td><td>Shown when blocked</td></tr>
+  <tr><td><code>severity</code></td><td>Yes</td><td><code>block</code></td></tr>
+  </table>
+</div>
+
+<!-- REF: AUTO-LINT -->
+<div class="section" id="ref-lint-rules">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Auto-Lint Rules</div>
+  <h1>&#x1F9F9; Auto-Lint Rules</h1>
+  <p>Configurable in <code>src/hooks/auto-lint-rules.yaml</code>. Runs after every file write.</p>
+
+  <table>
+  <tr><th>Extension</th><th>Commands</th><th>Condition</th></tr>
+  <tr><td><code>.py</code></td><td><code>ruff check --fix</code>, <code>ruff format</code></td><td>—</td></tr>
+  <tr><td><code>.sql</code> / <code>.sqlx</code></td><td><code>sqlfluff fix --force</code></td><td><code>dbt/dbt_project.yml</code> exists</td></tr>
+  <tr><td><code>.go</code></td><td><code>goimports -w</code></td><td>—</td></tr>
+  <tr><td><code>.tf</code></td><td><code>terraform fmt</code></td><td>—</td></tr>
+  </table>
+
+  <pre><code># Add TypeScript formatting:
+- extension: ts
+  commands:
+    - "prettier --write {file}"
+  timeout: 10</code></pre>
+</div>
+
+<!-- REF: PEON-PING -->
+<div class="section" id="ref-peon-ping">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Peon-Ping</div>
+  <h1>&#x1F50A; Peon-Ping</h1>
+  <p>Audio notifications with themed sound packs. Maps model tiers to sound profiles. Configurable in <code>tools/peon-ping/profiles.yaml</code>.</p>
+
+  <pre><code>make install-tool-peon-ping              # install
+make configure-peon PEON_PROFILES=warcraft,starcraft   # configure
+make list-peon-profiles                  # see available profiles</code></pre>
+
+  <h3>Model-to-tier mapping</h3>
+  <p>Models are matched to tiers (low/mid/high) via substring. <code>haiku</code> → low, <code>sonnet</code> → mid, <code>opus</code> → high. Works with any provider — add model patterns to <code>profiles.yaml</code>.</p>
+</div>
+
+<!-- REF: MAKE TARGETS -->
+<div class="section" id="ref-make-targets">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Make Targets</div>
+  <h1>&#x2699; Make Targets</h1>
+
+  <table>
+  <tr><th>Category</th><th>Command</th><th>What It Does</th></tr>
+  <tr><td>Deploy</td><td><code>make use-profile PROFILE=&lt;name&gt;</code></td><td>Switch active profile and redeploy</td></tr>
+  <tr><td>Deploy</td><td><code>make configure-peon</code></td><td>Configure peon-ping sound packs</td></tr>
+  <tr><td>Inspect</td><td><code>make list-agents</code></td><td>List all agents</td></tr>
+  <tr><td>Inspect</td><td><code>make list-rules</code></td><td>List all rules</td></tr>
+  <tr><td>Inspect</td><td><code>make list-skills</code></td><td>List all skills</td></tr>
+  <tr><td>Inspect</td><td><code>make list-profiles</code></td><td>List available profiles</td></tr>
+  <tr><td>Inspect</td><td><code>make show-profile PROFILE=&lt;name&gt;</code></td><td>Preview profile contents</td></tr>
+  <tr><td>Inspect</td><td><code>make context-budget</code></td><td>Measure token footprint</td></tr>
+  <tr><td>Verify</td><td><code>make validate</code></td><td>Check YAML schemas</td></tr>
+  <tr><td>Verify</td><td><code>make verify</code></td><td>Check deployed state</td></tr>
+  <tr><td>Tools</td><td><code>make list-tools</code></td><td>List available dev tools</td></tr>
+  <tr><td>Tools</td><td><code>make install-tool-&lt;name&gt;</code></td><td>Install a tool</td></tr>
+  <tr><td>Reset</td><td><code>make reset</code></td><td>Remove all deployed resources</td></tr>
+  </table>
+</div>
+
+</main>
+</div>
+
+<!-- ── Theme Toggle ─────────────────────── -->
+<button class="theme-toggle" id="theme-toggle" title="Toggle theme">&#x1F319;</button>
+
+<script>
+// ── Mobile menu ──
+const sidebar = document.getElementById('sidebar');
+document.getElementById('menu-open')?.addEventListener('click', () => sidebar.classList.add('open'));
+document.getElementById('menu-close')?.addEventListener('click', () => sidebar.classList.remove('open'));
+
+// ── Navigation ──
+document.querySelectorAll('[data-section]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    const id = el.dataset.section;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector(`.nav-item[data-section="${id}"]`)?.classList.add('active');
+    document.getElementById('content').scrollTop = 0;
+    window.scrollTo(0, 0);
+    sidebar.classList.remove('open'); // close mobile menu on navigation
+  });
+});
+
+// ── Search ──
+const searchInput = document.getElementById('search');
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) {
+    navItems.forEach(n => n.style.display = '');
+    return;
+  }
+  navItems.forEach(n => {
+    const sectionId = n.dataset.section;
+    const section = document.getElementById(sectionId);
+    const text = (section?.textContent || '').toLowerCase();
+    const label = n.textContent.toLowerCase();
+    n.style.display = (text.includes(q) || label.includes(q)) ? '' : 'none';
+  });
+});
+
+// ── Theme Toggle ──
+const toggle = document.getElementById('theme-toggle');
+let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+function applyTheme() {
+  if (dark) {
+    document.documentElement.style.setProperty('--bg', '#0f0e17');
+    document.documentElement.style.setProperty('--fg', '#e0def4');
+    document.documentElement.style.setProperty('--fg2', '#908caa');
+    document.documentElement.style.setProperty('--card', '#1a1930');
+    document.documentElement.style.setProperty('--border', '#2a2940');
+    document.documentElement.style.setProperty('--nav-bg', '#16152a');
+    document.documentElement.style.setProperty('--nav-active', '#2d2b55');
+    document.documentElement.style.setProperty('--search-bg', '#1a1930');
+    document.documentElement.style.setProperty('--code-bg', '#1e1d35');
+    document.documentElement.style.setProperty('--tag', '#3b3766');
+    document.documentElement.style.setProperty('--tag-fg', '#c4b5fd');
+    document.documentElement.style.setProperty('--accent', '#c4b5fd');
+    document.documentElement.style.setProperty('--accent2', '#a78bfa');
+    toggle.textContent = '\u2600\uFE0F';
+  } else {
+    document.documentElement.style.setProperty('--bg', '#ffffff');
+    document.documentElement.style.setProperty('--fg', '#1a1a2e');
+    document.documentElement.style.setProperty('--fg2', '#555');
+    document.documentElement.style.setProperty('--card', '#f8f7ff');
+    document.documentElement.style.setProperty('--border', '#e5e5f0');
+    document.documentElement.style.setProperty('--nav-bg', '#fafafa');
+    document.documentElement.style.setProperty('--nav-active', '#ede9fe');
+    document.documentElement.style.setProperty('--search-bg', '#fff');
+    document.documentElement.style.setProperty('--code-bg', '#f3f0ff');
+    document.documentElement.style.setProperty('--tag', '#ddd6fe');
+    document.documentElement.style.setProperty('--tag-fg', '#4c1d95');
+    document.documentElement.style.setProperty('--accent', '#5b21b6');
+    document.documentElement.style.setProperty('--accent2', '#7c3aed');
+    toggle.textContent = '\uD83C\uDF19';
+  }
+  const mermaidTheme = dark ? 'dark' : 'base';
+  const themeVars = dark
+    ? { primaryColor: '#2d2b55', primaryTextColor: '#e0def4', primaryBorderColor: '#a78bfa', lineColor: '#908caa', secondaryColor: '#1a1930', tertiaryColor: '#16152a' }
+    : { primaryColor: '#ede9fe', primaryTextColor: '#1a1a2e', primaryBorderColor: '#7c3aed', lineColor: '#5b21b6', secondaryColor: '#f8f7ff', tertiaryColor: '#f3f0ff' };
+  mermaid.initialize({ startOnLoad: false, theme: mermaidTheme, themeVariables: themeVars });
+  mermaid.run();
+}
+
+toggle.addEventListener('click', () => { dark = !dark; applyTheme(); });
+
+// ── Init ──
+const initDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const initTheme = initDark ? 'dark' : 'base';
+const initVars = initDark
+  ? { primaryColor: '#2d2b55', primaryTextColor: '#e0def4', primaryBorderColor: '#a78bfa', lineColor: '#908caa', secondaryColor: '#1a1930', tertiaryColor: '#16152a' }
+  : { primaryColor: '#ede9fe', primaryTextColor: '#1a1a2e', primaryBorderColor: '#7c3aed', lineColor: '#5b21b6', secondaryColor: '#f8f7ff', tertiaryColor: '#f3f0ff' };
+mermaid.initialize({ startOnLoad: true, theme: initTheme, themeVariables: initVars });
+
+// ── Load deep dives from docs/*.md via marked.js ──
+document.querySelectorAll('[data-md]').forEach(el => {
+  fetch(el.dataset.md)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => {
+      // Strip YAML frontmatter (---\n...\n---) and leading # title (already in breadcrumb)
+      md = md.replace(/^---[\s\S]*?---\s*\n/, '');
+      md = md.replace(/^#\s+.*\n+/, '');
+      el.querySelector('.md-content').innerHTML = marked.parse(md);
+      // Re-init mermaid for any diagrams in the markdown
+      el.querySelectorAll('.language-mermaid, pre code.mermaid').forEach(block => {
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = block.textContent;
+        block.closest('pre').replaceWith(div);
+      });
+      mermaid.run();
+      // Add copy buttons to new pre blocks
+      el.querySelectorAll('pre').forEach(pre => {
+        if (pre.closest('.copy-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'copy-wrap';
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', () => {
+          const text = pre.querySelector('code')?.textContent || pre.textContent;
+          navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'Copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+          });
+        });
+        wrap.appendChild(btn);
+      });
+    })
+    .catch(() => {
+      el.querySelector('.md-content').innerHTML = '<p style="color:var(--fg2)">Could not load deep dive. <a href="' + el.dataset.md + '">View on GitHub</a> instead.</p>';
+    });
+});
+
+// ── Copy buttons on all <pre> blocks ──
+document.querySelectorAll('pre').forEach(pre => {
+  const wrap = document.createElement('div');
+  wrap.className = 'copy-wrap';
+  pre.parentNode.insertBefore(wrap, pre);
+  wrap.appendChild(pre);
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.addEventListener('click', () => {
+    const text = pre.querySelector('code')?.textContent || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  });
+  wrap.appendChild(btn);
+});
+</script>
+</body>
+</html>

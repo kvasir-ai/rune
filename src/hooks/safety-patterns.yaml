@@ -89,10 +89,28 @@
   message: "Production apply blocked. CI/CD is the only path to production."
   severity: block
 
+- name: terraform-destroy
+  match: '\b(terragrunt|terraform)\s+destroy\b'
+  flags: i
+  message: "Terraform destroy blocked. This destroys all managed resources."
+  severity: block
+
+# ── Shell indirection ─────────────────────────────────────────────
+
+- name: bash-c-destructive
+  match: '\b(bash|sh|zsh)\s+-c\s+.*\brm\s+-[a-zA-Z]*r[a-zA-Z]*f'
+  message: "Destructive command inside shell -c blocked. Run the command directly."
+  severity: block
+
+- name: eval-destructive
+  match: '\beval\s+.*\brm\s+-[a-zA-Z]*r[a-zA-Z]*f'
+  message: "Destructive command inside eval blocked. Run the command directly."
+  severity: block
+
 # ── Authentication ─────────────────────────────────────────────────
 
 - name: gcloud-auth
-  match: '\bgcloud\s+auth\b'
+  match: '\bgcloud\s+auth\s+(login|application-default)\b'
   flags: i
   message: "Authentication blocked. Ask the user to authenticate manually."
   severity: block

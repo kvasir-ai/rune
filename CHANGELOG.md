@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-03-25
+
+### Added
+- Documentation site — single-page app with dark mode, search, sidebar navigation, mermaid diagrams, and copy-to-clipboard
+- GitHub Pages deployment via artifact workflow
+- CODEOWNERS file for review routing
+- Token economics in `/rune` — per-agent token usage, estimated cost, wall time vs CPU time, and parallelism savings
+- Deep dive: The DAG Dispatch — full user journey from idea to running DAG
+- Deep dives: The Knowledge Manager, The Safety Architecture
+- AGENTS.md — agent roster reference
+- Site deep dives sync from docs/*.md via marked.js
+- Cross-references on all six deep dives
+- Safety-check test suite
+
+### Changed
+- README restructured: 30-second demo first, quick start second, interactions before roster
+- Developer Preview label replaces Incubating
+- Works-with compatibility line added (Claude Code, OpenCode)
+- Site sidebar reorganized into Getting Started, Core, Advanced groups
+- All three EXAMPLES.md scenarios include token economics
+- /rune SKILL.md aligned as single source of truth
+- ai-toolkit-operations rule renamed to toolkit-operations
+- CONTRIBUTING.md, SECURITY.md, CLAUDE.md refreshed
+
 ## [0.2.0] - 2026-03-24
 
 ### Added

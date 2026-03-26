@@ -353,11 +353,11 @@ def inject_mcps(
 
     key = "mcpServers" if platform == "claude" else "mcp"
     # Preserve externally-managed MCP entries (e.g. peon-ping) by tracking which
-    # MCPs ai-toolkit has ever managed in a state file next to the settings file.
+    # MCPs rune has ever managed in a state file next to the settings file.
     # On each run: remove previously-managed MCPs, then add the active profile's MCPs.
     # This ensures stale entries (e.g. old linear/datadog) are cleaned up, while
     # entries written by external tools (e.g. peon-ping) are never touched.
-    state_file = dest_file.parent / ".ai-toolkit-managed-mcps.json"
+    state_file = dest_file.parent / ".rune-managed-mcps.json"
     previously_managed: set[str] = set()
     if state_file.exists():
         try:
@@ -366,7 +366,7 @@ def inject_mcps(
             pass
 
     existing = config.get(key, {})
-    # Keep only entries that were never managed by ai-toolkit
+    # Keep only entries that were never managed by rune
     external = {k: v for k, v in existing.items() if k not in previously_managed}
     merged = {**external, **section}
     if merged:

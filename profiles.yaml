@@ -14,7 +14,7 @@ default:
     collaboration:
       - dag-execution-format
       - knowledge-management
-      - ai-toolkit-operations
+      - toolkit-operations
       - project-planning
       - architectural-decision-records
       - design-patterns

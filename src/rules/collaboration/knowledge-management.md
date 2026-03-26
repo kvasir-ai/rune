@@ -1,9 +1,9 @@
 # Knowledge Management
 
-> How to maintain, audit, and evolve the ai-toolkit rule inventory.
+> How to maintain, audit, and evolve the rule inventory.
 > Covers rule lifecycle, quality criteria, size guidelines, staleness detection, gap analysis, and metrics.
-> Theoretical grounding: GRAI framework (Böhm & Durst, 2025, VINE Journal of Information and Knowledge Management Systems, Vol. 56, No. 1).
-> Companion to `rules/ai-toolkit-operations.md` which covers creation/deployment mechanics.
+> Theoretical grounding: GRAI framework (Bohm & Durst, 2025, *VINE Journal of Information and Knowledge Management Systems*, Vol. 56, No. 1). [DOI: 10.1108/VJIKMS-10-2024-0357](https://doi.org/10.1108/VJIKMS-10-2024-0357)
+> Companion to `rules/toolkit-operations.md` which covers creation/deployment mechanics.
 
 ---
 
@@ -344,7 +344,7 @@ Specific mistakes that degrade knowledge base quality. The Knowledge Manager sho
 
 | Category | Belongs Here |
 |---|---|
-| `collaboration` | Cross-cutting: git, design patterns, operational constraints, ai-toolkit operations, knowledge management |
+| `collaboration` | Cross-cutting: git, design patterns, operational constraints, toolkit operations, knowledge management |
 | `data` | Data modeling, SQL, data pipelines, data sources, analytics |
 | `engineering` | Language-specific conventions, API design, architecture patterns |
 | `infra` | Cloud services, infrastructure as code, CI/CD infrastructure, observability |
@@ -378,4 +378,4 @@ Archived rules are not deployed but remain in the repository for reference. They
 
 ## Cross-References
 
-- See `rules/ai-toolkit-operations.md` for rule creation, deployment, and profile management mechanics
+- See `rules/toolkit-operations.md` for rule creation, deployment, and profile management mechanics

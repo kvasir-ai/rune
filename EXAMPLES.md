@@ -1,14 +1,16 @@
 # DAG Dispatch Examples
 
-Three showcase DAGs demonstrating parallel wave dispatch — from simple to maximum parallelism. Each shows the full lifecycle: dispatch diagram, wave execution, final report, and history persistence.
+Three example plans show how parallel dispatch works. They go from simple to complex. Each one shows the full cycle: plan, execution, final report, and saved history.
 
-Run any example by saying: **"run rune example 1"** (or 2, 3). Dry-run with **"test rune example 1"**.
+A DAG (directed acyclic graph) is a set of tasks with dependencies between them. Tasks that don't depend on each other run at the same time in "waves."
+
+Try any example: **"run rune example 1"** (or 2, 3). Dry-run with **"test rune example 1"**.
 
 ---
 
 ## Example 1: Full-Stack Feature
 
-**Pattern:** Fan-out diamond. 4 independent tasks start together, converge through implementation, single review gate.
+**Pattern:** Fan-out diamond. Four tasks start at the same time. They feed into two implementation tasks. One review task finishes the job.
 
 ### Dispatch Diagram
 
@@ -89,6 +91,23 @@ Run any example by saying: **"run rune example 1"** (or 2, 3). Dry-run with **"t
   Waves:  3 executed     |  2 had parallelism
   Saved:  ~44% vs sequential
 ───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  architect       310K tok   $6.51
+  t2  designer        285K tok   $5.99
+  t3  developer       340K tok   $7.14
+  t4  writer          295K tok   $6.20
+  t5  developer       380K tok   $7.98
+  t6  tester          320K tok   $6.72
+  t7  reviewer        290K tok   $6.09
+───────────────────────────────────────────
+  Total tokens:  2,220K  (2,220,000)
+  Est. cost:     $46.63
+  Avg per agent: $6.66
+  Wall time:     7m 45s  (parallel)
+  CPU time:      13m 52s (sequential sum)
+  Time saved:    44% via parallelism
+───────────────────────────────────────────
   📋 Saved to .rune/2026-03-23T10-00-00-full-stack-feature.yaml
 ───────────────────────────────────────────
 ```
@@ -153,7 +172,7 @@ tasks:
 
 ## Example 2: Microservice Migration
 
-**Pattern:** Wide fan-out. One setup task, then 5 independent migrations in parallel, then validation.
+**Pattern:** Wide fan-out. One setup task runs first. Then five independent migrations run at the same time. Then validation.
 
 ### Dispatch Diagram
 
@@ -215,6 +234,24 @@ tasks:
   Tasks:  8/8 completed  |  0 failed
   Waves:  3 executed     |  2 had parallelism
   Saved:  ~63% vs sequential
+───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  architect       350K tok   $7.35
+  t2  developer       290K tok   $6.09
+  t3  developer       315K tok   $6.62
+  t4  developer       305K tok   $6.41
+  t5  developer       365K tok   $7.67
+  t6  developer       340K tok   $7.14
+  t7  tester          380K tok   $7.98
+  t8  security        310K tok   $6.51
+───────────────────────────────────────────
+  Total tokens:  2,655K  (2,655,000)
+  Est. cost:     $55.77
+  Avg per agent: $6.97
+  Wall time:     9m 20s  (parallel)
+  CPU time:      25m 12s (sequential sum)
+  Time saved:    63% via parallelism
 ───────────────────────────────────────────
   📋 Saved to .rune/2026-03-23T11-00-00-microservice-migration.yaml
 ───────────────────────────────────────────
@@ -287,7 +324,7 @@ tasks:
 
 ## Example 3: Cross-Cloud Deployment (with partial failure)
 
-**Pattern:** Maximum parallelism. Shared IaC modules, then 3 cloud configs + docs + security in parallel, per-cloud validation, single publish. Demonstrates failure handling.
+**Pattern:** Maximum parallelism. One shared setup, then five tasks run at once (three cloud configs plus docs plus security). Per-cloud validation follows. A single publish step finishes the job. This example also shows what happens when a task fails.
 
 ### Dispatch Diagram
 
@@ -332,6 +369,8 @@ tasks:
 
 ### Wave 2: Azure Validation Fails
 
+Azure validation hits a quota limit. The other two validations finish fine. The publish step (t10) is blocked because it depends on t9.
+
 ```
 ═══ Wave 2: Dispatching 3 agents ══════════
   🧪  t7 → tester            Validate AWS
@@ -360,6 +399,8 @@ tasks:
 
 ### Final Report (Partial)
 
+The report shows which tasks passed, which failed, and which were blocked.
+
 ```
 ───────────────────────────────────────────
   DAG EXECUTION COMPLETE
@@ -386,6 +427,23 @@ tasks:
 ───────────────────────────────────────────
   Tasks:  8/10 completed  |  1 failed  |  1 blocked
   Waves:  3 of 4 executed
+───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  architect       340K tok   $7.14
+  t2  developer       310K tok   $6.51
+  t3  developer       325K tok   $6.83
+  t4  developer       315K tok   $6.62
+  t5  devops          290K tok   $6.09
+  t6  devops          285K tok   $5.99
+  t7  tester          350K tok   $7.35
+  t8  tester          330K tok   $6.93
+  t9  tester          ❌       —       —
+  t10 devops          ⛔       —       —
+───────────────────────────────────────────
+  Total tokens:  2,545K  (completed only)
+  Est. cost:     $53.46
+  Wall time:     11m 05s
 ───────────────────────────────────────────
   📋 Saved to .rune/2026-03-23T14-00-00-cross-cloud-deploy.yaml
 ───────────────────────────────────────────
@@ -472,53 +530,10 @@ tasks:
 
 ## Comparison
 
-| Example | Scenario | Tasks | Waves | Speedup | Shows |
+| Example | Scenario | Tasks | Waves | Speedup | What it shows |
 |---|---|---|---|---|---|
-| 1 | Full-Stack Feature | 7 | 3 | **1.8x** | Fan-out diamond, full success |
-| 2 | Microservice Migration | 8 | 3 | **2.7x** | Wide fan-out (5 parallel) |
-| 3 | Cross-Cloud Deployment | 10 | 4 | **3.0x** | Maximum parallelism, partial failure |
+| 1 | Full-Stack Feature | 7 | 3 | **1.8x** | Fan-out diamond, all tasks pass |
+| 2 | Microservice Migration | 8 | 3 | **2.7x** | Wide fan-out (5 tasks at once) |
+| 3 | Cross-Cloud Deployment | 10 | 4 | **3.0x** | Maximum parallelism, one task fails |
 
-The wider the wave, the bigger the savings. Write your own DAGs in the same YAML format — see [DAG Execution Format](src/rules/collaboration/dag-execution-format.md) for the full spec.
-
----
-
-## Formatting Reference
-
-### Frame Styles
-
-| Context | Character | Width | Purpose |
-|---|---|---|---|
-| Planning (dispatch diagram, final report) | `───` (light) | 43 chars | Static — showing structure |
-| Execution (wave banners) | `═══` (double) | 43 chars | Active — action happening now |
-
-### Task Row Formats
-
-| Context | Format |
-|---|---|
-| Pre-dispatch | `{emoji}  {id}  {agent}  {description}` |
-| Execution | `{emoji}  {id} → {agent}  {description}` |
-| Final report | `{emoji}  {id}  {agent}  {status} {summary}` |
-
-The `→` arrow appears ONLY in execution banners — it signals "action happening now."
-
-### Status Indicators
-
-| Emoji | Meaning |
-|---|---|
-| ✅ | Task completed successfully |
-| ❌ | Task failed |
-| ⛔ | Blocked — dependency failed |
-| ⏭️ | Skipped by user |
-
-### History Persistence
-
-Every dispatch writes to `.rune/` in the project root (gitignored by default):
-
-```
-.rune/
-  2026-03-23T10-00-00-full-stack-feature.yaml
-  2026-03-23T11-00-00-microservice-migration.yaml
-  2026-03-23T14-00-00-cross-cloud-deploy.yaml
-```
-
-Summaries only — never raw agent output.
+Wider waves save more time. You can write your own DAGs in the same YAML format. See [DAG Execution Format](src/rules/collaboration/dag-execution-format.md) (internal specification — this is the agent-facing reference for the DAG format) for the full spec.

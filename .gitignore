@@ -33,4 +33,5 @@ __pycache__/
 dist/
 *.egg-info/
 build/
+site/
 .current-profile

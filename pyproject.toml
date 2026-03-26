@@ -1,6 +1,6 @@
 [project]
 name = "rune"
-version = "0.2.0"
+version = "0.3.0"
 description = "Knowledge absorption toolkit for AI coding agents — feed rules, shape profiles, grow your agents."
 requires-python = ">=3.12"
 dependencies = []
@@ -15,6 +15,6 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/rune-agents/rune"
-Repository = "https://github.com/rune-agents/rune"
-Issues = "https://github.com/rune-agents/rune/issues"
+Homepage = "https://github.com/kvasir-ai/rune"
+Repository = "https://github.com/kvasir-ai/rune"
+Issues = "https://github.com/kvasir-ai/rune/issues"

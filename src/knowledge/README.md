@@ -94,5 +94,5 @@ The raw 40-page extract stays in `src/knowledge/` for reference. The distilled 2
 
 ## Cross-References
 
-- See `src/rules/collaboration/ai-toolkit-operations.md` for the full knowledge lifecycle
+- See `src/rules/collaboration/toolkit-operations.md` for the full knowledge lifecycle
 - See `src/rules/collaboration/knowledge-management.md` for rule quality criteria and audit processes

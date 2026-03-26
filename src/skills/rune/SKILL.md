@@ -1,6 +1,6 @@
 ---
-name: rune
 description: Execute DAG-annotated plans OR ad-hoc parallel dispatches with wave-based visualization. Use when dispatching 2+ agents — whether from a formal plan with depends_on fields, or an improvised research/opinion fan-out. Always shows the dispatch diagram before execution. Computes waves via topological sort, dispatches independent tasks in parallel, collects results, and injects context into dependent tasks.
+user_invocable: true
 ---
 
 # Executing DAG Plans
@@ -13,7 +13,7 @@ Execute a DAG-annotated plan by dispatching agents in parallel waves. Each wave 
 
 **Plan source identification:** Determine where the plan came from:
 - If executing a plan from a file (e.g., `PLAN.md`, `docs/plans/feature-x.md`), record the file path as the plan source
-- If executing a plan produced by the `writing-plans` skill in this session, record `writing-plans (session)`
+- If executing a plan produced by the `write-plan` skill in this session, record `write-plan (session)`
 - If constructing an ad-hoc DAG from a user prompt, record `ad-hoc`
 
 Include the plan source in the dispatch header and history file.
@@ -21,7 +21,40 @@ Include the plan source in the dispatch header and history file.
 **Prerequisites:**
 - Plan must have tasks with `id`, `agent`, `depends_on`, `output`, and `files` fields
 - See `rules/dag-execution-format.md` for the canonical format
-- For plans WITHOUT DAG annotations, use `executing-plans` instead
+- For plans WITHOUT DAG annotations, use sequential execution instead
+
+## Ad-Hoc Parallel Dispatch (No Pre-Existing DAG)
+
+When invoked for research, opinion-gathering, or exploratory tasks that don't have a formal DAG plan:
+
+1. **Always show the dispatch diagram** — even for ad-hoc parallel dispatches. The visual plan is mandatory regardless of whether the task is a formal DAG or an improvised parallel fan-out.
+2. **Construct an implicit DAG on the fly** — assign task IDs (t1, t2...), identify agents, determine parallelism, and display the standard dispatch diagram.
+3. **Proceed immediately after showing the diagram** — do NOT ask "proceed? (y/n)" for ad-hoc dispatches. The user invoked the skill; that is the authorization.
+4. **Include a Judge in the final wave** — ad-hoc dispatches should always end with a Judge synthesizing the parallel results.
+
+**Format for ad-hoc dispatch diagram:**
+
+```
+───────────────────────────────────────────
+  AD-HOC PARALLEL DISPATCH
+  Agents: 4  |  Waves: 2  |  Type: research
+  Plan: ad-hoc
+───────────────────────────────────────────
+
+  Wave 0  ─── parallel (fan-out) ─────────
+  ⚙️  t1  developer            Assess from backend perspective
+  🔍  t2  researcher           Assess from documentation perspective
+  🔒  t3  security             Assess from compliance perspective
+  🧪  t4  tester               Run test coverage analysis
+
+  Wave 1  ────────────────────────────────
+  🔍  t5  reviewer             Synthesize all perspectives
+                                 ↳ depends on: t1, t2, t3, t4
+
+───────────────────────────────────────────
+```
+
+This applies to ANY multi-agent dispatch — formal DAG plans, research questions, opinion-gathering, or brainstorming. The diagram is the universal pre-execution artifact.
 
 ## Step 1: Validate the DAG
 
@@ -39,10 +72,21 @@ For each wave (after computing waves):
   6. Do any two tasks in the same wave declare overlapping `files`?
 ```
 
-**If validation fails:**
-- Report the SPECIFIC error (which invariant, which tasks, which IDs)
-- Do NOT proceed
-- Ask the user: "This plan has [error]. Fix and retry, or execute sequentially?"
+**If validation fails**, display a formatted error and stop:
+
+```
+───────────────────────────────────────────
+  ❌ DAG VALIDATION FAILED
+───────────────────────────────────────────
+  Invariant 1: CYCLE DETECTED
+  Tasks involved: t3 → t5 → t3
+
+  Fix the cycle and retry, or execute
+  sequentially.
+───────────────────────────────────────────
+```
+
+Do NOT proceed. Ask the user to fix and retry.
 
 **If validation passes:**
 - Display: "DAG validated. N tasks, M waves, critical path: X tasks (Y%), benefit: Z.Zx"
@@ -70,6 +114,7 @@ Display the wave plan as a **visually formatted dispatch report**. Use the emoji
 | devops | 🚀 | |
 | security | 🔒 | |
 | planner | 🗺️ | |
+| judge | ⚖️ | |
 | knowledge-manager | 📚 | |
 | technical-writer | ✍️ | |
 | *(unknown agent)* | 🤖 | Default |
@@ -115,16 +160,18 @@ For each wave, in order:
 
 ### 3a. Announce the wave
 
-Display a compact dispatch banner with agent emojis:
+Display a compact dispatch banner with agent emojis. Execution banners use `═══` (double line) to visually distinguish live execution from planning (`───` light line). Both are 43 characters wide.
 
 ```
-═══ Wave 0: Dispatching 2 agents ═════════
+═══ Wave 0: Dispatching 2 agents ══════════
   ⚙️  t1 → developer          Define API schemas
   🏗️  t2 → architect          Create database migration
-══════════════════════════════════════════
+═══════════════════════════════════════════
 ```
 
-Use the emoji from the lookup table above. If the agent is not in the table, use 🤖.
+The `→` arrow between task ID and agent name appears ONLY in execution banners — it signals "action happening now." Pre-dispatch and final report omit it.
+
+Use the emoji from the agent's frontmatter `emoji:` field. If the agent is not in the lookup table, check the frontmatter. If no emoji exists, use 🤖.
 
 ### 3b. Construct agent prompts
 
@@ -145,11 +192,14 @@ Agent(prompt="[t1 prompt]", subagent_type="developer")
 Agent(prompt="[t2 prompt]", subagent_type="architect")
 ```
 
-### 3d. Collect results
+### 3d. Collect results and token usage
 
 As each agent returns:
 - Record: task ID, status (SUCCESS/FAILED), summary of output
+- **Extract token usage** from the `<usage>` block returned by the Agent tool. Every agent result includes `total_tokens`, `tool_uses`, and `duration_ms`. Record all three per task.
 - If FAILED: mark task and ALL its dependents as BLOCKED
+
+**Token tracking is mandatory.** Accumulate running totals across all tasks for the final report.
 
 ### 3e. Handle failures
 
@@ -204,6 +254,24 @@ After all waves complete (or execution halts):
   Waves:  4 executed     |  2 had parallelism
   Saved:  ~33% vs sequential
 ───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  developer        394K tok   $8.28
+  t2  architect        322K tok   $6.76
+  t3  developer        331K tok   $6.95
+  t4  tester           316K tok   $6.64
+  t5  security         304K tok   $6.38
+  t6  reviewer         326K tok   $6.85
+───────────────────────────────────────────
+  Total tokens:  1,993K  (1,993,000)
+  Est. cost:     $41.86
+  Avg per agent: $6.98
+  Wall time:     12m 34s (parallel)
+  CPU time:      28m 10s (sequential sum)
+  Time saved:    55% via parallelism
+───────────────────────────────────────────
+  📋 Saved to .rune/2026-03-23T14-32-00-api-feature.yaml
+───────────────────────────────────────────
 ```
 
 Use status indicators per task:
@@ -213,7 +281,51 @@ Use status indicators per task:
 - ⏭️ SKIPPED (user chose to skip)
 - 🤖 Default emoji if agent not in lookup table
 
-Then announce: "DAG execution complete. Using verification-before-completion to verify."
+**Mixed-status example** (when some tasks fail):
+
+```
+───────────────────────────────────────────
+  DAG EXECUTION COMPLETE
+───────────────────────────────────────────
+
+  Wave 0  ─── 2 agents ──────────────────
+  ⚙️  t1  developer          ✅ Created API schemas
+  🏗️  t2  architect          ✅ Created migration
+
+  Wave 1  ────────────────────────────────
+  ⚙️  t3  developer          ❌ Build failed: missing dep
+
+  Wave 2  ─── 2 agents ──────────────────
+  🧪  t4  tester             ⛔ BLOCKED (t3 failed)
+  🔒  t5  security           ⛔ BLOCKED (t3 failed)
+
+  Wave 3  ────────────────────────────────
+  🔍  t6  reviewer           ⛔ BLOCKED (t4, t5 blocked)
+
+───────────────────────────────────────────
+  Tasks:  2/6 completed  |  1 failed  |  3 blocked
+  Waves:  2 of 4 executed
+───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  developer       ✅  394K tok   $8.28
+  t2  architect       ✅  322K tok   $6.76
+  t3  developer       ❌        —       —
+  t4  tester          ⛔        —       —
+  t5  security        ⛔        —       —
+  t6  reviewer        ⛔        —       —
+───────────────────────────────────────────
+  Total tokens:  716K   (completed only)
+  Est. cost:     $15.04
+  Wall time:     6m 12s
+───────────────────────────────────────────
+  📋 Saved to .rune/2026-03-23T14-32-00-api-feature.yaml
+───────────────────────────────────────────
+```
+
+After writing the history file, always show the save confirmation as the last line inside the frame: `📋 Saved to .rune/{filename}`.
+
+Then announce: "DAG execution complete. Using judge-audit to verify."
 
 ## Test Mode (Dry Run)
 
@@ -245,10 +357,10 @@ When the user says "test the DAG", "dry run", or "simulate dispatch", run the fu
 |---|---|---|
 | **Bottleneck wave** | A wave with only 1 task while others have 2+ | "Wave 1 is a bottleneck (1 task). Can any Wave 2 tasks be moved earlier?" |
 | **Over-serialized** | Critical path > 70% of total tasks | "This DAG is heavily serialized (X%). Sequential execution may be simpler." |
-| **Underutilized parallelism** | All waves have only 1 task | "No parallelism in this DAG. Use executing-plans instead." |
+| **Underutilized parallelism** | All waves have only 1 task | "No parallelism in this DAG. Execute sequentially instead." |
 | **Deep DAG** | More than 6 waves | "Deep DAG (N waves). Context injection may degrade in later waves." |
 | **Wide wave** | A wave with 5+ tasks | "Wave N has X tasks. The harness may not dispatch all in one response — consider splitting." |
-| **Single-agent DAG** | All tasks assigned to same agent | "All tasks go to the same agent. No multi-agent benefit — use executing-plans." |
+| **Single-agent DAG** | All tasks assigned to same agent | "All tasks go to the same agent. No multi-agent benefit — execute sequentially." |
 | **Disconnected components** | DAG has multiple roots with no shared dependents | "Tasks [A, B] and [C, D] are independent subgraphs. Consider running as two separate DAGs." |
 
 5. **Summary**:
@@ -272,9 +384,121 @@ Test mode is zero-cost — no agents are invoked, no files are modified, no toke
 
 ---
 
+## Token Economics
+
+### Data Source
+
+Every Agent tool result includes a `<usage>` block:
+```
+<usage>total_tokens: 394351 tool_uses: 29 duration_ms: 194810</usage>
+```
+
+Extract `total_tokens`, `tool_uses`, and `duration_ms` from every agent result. These are actual metered values, not estimates.
+
+### Cost Estimation
+
+Use this pricing table. Since we only get `total_tokens` (not split input/output), use a blended rate:
+
+| Model | Blended Rate (per 1M tokens) | Notes |
+|---|---|---|
+| opus | $21.00 | Weighted ~80% input ($15) + ~20% output ($75) |
+| sonnet | $4.20 | Weighted ~80% input ($3) + ~20% output ($15) |
+| haiku | $1.30 | Weighted ~80% input ($0.80) + ~20% output ($4) |
+
+The 80/20 input/output ratio is a practical approximation for subagent workloads (long context input, moderate output).
+
+**Formula per task:**
+```
+cost_usd = total_tokens × blended_rate / 1_000_000
+```
+
+Use the model from the agent's frontmatter `model:` field. If no model is specified, use the session's default model.
+
+### What to Track Per Task
+
+| Field | Source | Example |
+|---|---|---|
+| `total_tokens` | `<usage>` block | 394,351 |
+| `tool_uses` | `<usage>` block | 29 |
+| `duration_ms` | `<usage>` block | 194,810 |
+| `model` | Agent frontmatter or session default | opus |
+| `est_cost_usd` | Calculated | $8.28 |
+
+### Display Format
+
+**In the final report**, add a `💰 Token Economics` section between the task summary and the save confirmation. See the examples in Step 4 above.
+
+**Formatting rules:**
+- Token counts: use `K` suffix (e.g., `394K`) for readability. Round to nearest K.
+- Cost: 2 decimal places, USD.
+- Wall time: measured from first wave dispatch to last wave completion.
+- CPU time: sum of all `duration_ms` across all tasks (the sequential equivalent).
+- Time saved: `1 - (wall_time / cpu_time)` as percentage. Only show if >0%.
+
+**For the mixed-status report** (when some tasks fail), show costs only for completed tasks. Failed/blocked tasks show `—` for cost.
+
+### History File Economics
+
+Add an `economics` section to the YAML history file:
+
+```yaml
+economics:
+  total_tokens: 1020000
+  total_cost_usd: 21.42
+  model_breakdown:
+    opus: { tasks: 3, tokens: 1020000, cost_usd: 21.42 }
+  wall_time_ms: 252000
+  cpu_time_ms: 574000
+  time_saved_pct: 56
+  per_task:
+    - id: t1
+      tokens: 394351
+      tool_uses: 29
+      duration_ms: 194810
+      model: opus
+      cost_usd: 8.28
+    - id: t2
+      tokens: 322517
+      tool_uses: 25
+      duration_ms: 284405
+      model: opus
+      cost_usd: 6.76
+    - id: t3
+      tokens: 304822
+      tool_uses: 0
+      duration_ms: 98834
+      model: opus
+      cost_usd: 6.38
+```
+
+### Caveat
+
+**These are estimates, not invoices.** The blended rate assumes an 80/20 input/output split. Actual costs depend on the exact input/output token ratio per task, which the Agent tool does not expose. The `total_tokens` value also includes system prompt tokens, tool call overhead, and retry tokens — all of which are billed. Display costs as "Est. cost" (never "Cost") to signal this is approximate.
+
+---
+
+## Proactive Execution Suggestions
+
+**Whenever you produce a plan, remediation list, audit findings, or TODO list with 2+ actionable items, suggest `/rune` execution.** This applies regardless of whether the rune skill was explicitly invoked. Examples:
+
+- After an audit identifies 5 fixes: "Ready to execute these 5 fixes? Run `/rune` to dispatch them in parallel."
+- After a planner produces a WBS: "This plan has 14 items across 3 waves. Execute with `/rune`."
+- After a judge identifies warnings: "Want to fix these 3 warnings? `/rune` can dispatch the fixes in parallel."
+- After exploration identifies tasks: "These 4 tasks are independent — `/rune` can run them simultaneously."
+
+**When NOT to suggest `/rune`:**
+- Single-item tasks (just do it directly)
+- Pure research with no actionable output
+- Tasks that require human judgment before acting
+
+**Phrasing:** Keep it brief. One line at the end of the output:
+- "Execute with `/rune`?" (shortest)
+- "Ready to dispatch? `/rune`"
+- "These N items are parallelizable — `/rune` to execute."
+
 ## Dispatch History
 
-Every dispatch is persisted to `.rune/` in the project root for audit, recall, and session recovery. This directory is gitignored by default — users who want audit trails can remove the gitignore entry.
+Every `/rune` dispatch is persisted to `.rune/` in the project root for audit, recall, and session recovery. This directory is gitignored by default — users who want audit trails can remove the gitignore entry.
 
 ### When to write
 
@@ -301,8 +525,8 @@ started: "2026-03-23T14:32:00Z"
 completed: "2026-03-23T14:47:12Z"
 status: completed               # completed | failed | partial | aborted
 trigger: ad-hoc                 # ad-hoc | slash-command | retry | resume
-plan_source: ad-hoc             # ad-hoc | writing-plans (session) | path/to/PLAN.md
-prompt: "implement gRPC user service with database migration"
+plan_source: ad-hoc             # ad-hoc | write-plan (session) | path/to/PLAN.md
+prompt: "implement user service with database migration"
 
 plan:
   - id: t1
@@ -310,7 +534,7 @@ plan:
     title: "Define API schemas"
     depends_on: []
     files: [api/schemas/]
-    output: "Protobuf schema files for user service"
+    output: "Schema files for user service"
   - id: t2
     agent: architect
     title: "Create database migration"
@@ -322,7 +546,7 @@ plan:
     title: "Implement API handlers"
     depends_on: [t1, t2]
     files: [src/api/]
-    output: "gRPC handlers wired to database"
+    output: "Handlers wired to database"
 
 dispatch:
   waves:
@@ -345,6 +569,34 @@ results:
     status: completed
     summary: "Implemented handlers with input validation"
 
+economics:
+  total_tokens: 1020000
+  total_cost_usd: 21.42
+  model_breakdown:
+    opus: { tasks: 3, tokens: 1020000, cost_usd: 21.42 }
+  wall_time_ms: 252000
+  cpu_time_ms: 574000
+  time_saved_pct: 56
+  per_task:
+    - id: t1
+      tokens: 394351
+      tool_uses: 29
+      duration_ms: 194810
+      model: opus
+      cost_usd: 8.28
+    - id: t2
+      tokens: 322517
+      tool_uses: 25
+      duration_ms: 284405
+      model: opus
+      cost_usd: 6.76
+    - id: t3
+      tokens: 304822
+      tool_uses: 0
+      duration_ms: 98834
+      model: opus
+      cost_usd: 6.38
+
 metrics:
   total_tasks: 3
   completed: 3
@@ -357,8 +609,9 @@ metrics:
 - **`plan`** is the full DAG definition — replayable as input to a future dispatch
 - **`dispatch`** records computed wave assignments and critical path (planning metadata)
 - **`results`** records execution outcomes only — status, summaries, errors
+- **`economics`** records token usage, cost estimates, and timing per task
 - **`schema_version`** enables future format evolution without breaking old files
-- Task `id` is the join key between `plan` and `results` — the only intentional duplication
+- Task `id` is the join key between `plan`, `results`, and `economics.per_task` — the only intentional duplication
 
 ### Rules for history files
 
@@ -376,6 +629,8 @@ If a session is lost mid-dispatch, the user can inspect `.rune/` to see which ta
 3. Re-dispatch failed/missing tasks using the plan definitions
 4. Respect `depends_on` — only re-dispatch if prerequisites are `completed`
 
+To resume: re-run `/rune` with "resume from .rune/{filename}" or re-run with the same prompt — rune reads the history and skips completed tasks.
+
 ## Rules
 
 1. **Never skip validation.** Run all 6 safety checks before any dispatch.
@@ -384,16 +639,17 @@ If a session is lost mid-dispatch, the user can inspect `.rune/` to see which ta
 4. **File scoping is mandatory.** Every agent prompt includes "Do NOT modify files outside [scope]."
 5. **User is the authority.** On any failure or conflict, present options and ask.
 6. **Always persist history.** After every dispatch (including failed/partial), write to `.rune/`.
+7. **Always track token economics.** Extract usage from every agent result. Display in final report and persist in history.
 
 ## Integration
 
-**Produces:** Executed plan with per-task status (persisted to `.rune/`), suitable for `verification-before-completion`.
+**Produces:** Executed plan with per-task status (persisted to `.rune/`), suitable for `judge-audit` and branch finalization.
 
-**Consumes:** DAG-annotated plan from `writing-plans` skill.
+**Consumes:** DAG-annotated plan from `write-plan` skill.
 
-**Fallback:** If the plan has no DAG annotations (no `depends_on` fields), tell the user: "This plan is not DAG-annotated. Use executing-plans for sequential execution, or ask the Planner to add dependency annotations."
+**Fallback:** If the plan has no DAG annotations (no `depends_on` fields), tell the user: "This plan is not DAG-annotated. Execute sequentially, or ask the Planner to add dependency annotations."
 
 **Works with:**
-- `verification-before-completion` — after DAG execution completes
-- `requesting-code-review` — code review can be a task in the DAG itself
-- When all tasks are complete, commit and push work manually or hand off to your human partner for review
+- `judge-audit` — after DAG execution completes
+- branch finalization — when all tasks complete a feature
+- `judge` — code review can be a task in the DAG itself
