@@ -3,7 +3,10 @@ name: Deploy docs to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: [docs/**]
+    paths:
+      - docs/**
+      - .github/workflows/scripts/site-index.html
+      - .github/workflows/pages.yml
 
 permissions:
   contents: read
@@ -23,12 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Assemble site
-        run: |
-          mkdir -p site/docs
-          cp docs/site-index.html site/index.html
-          cp docs/*.md site/docs/
-          cp -r docs/assets site/docs/assets 2>/dev/null || true
+      - name: Build site
+        run: bash .github/workflows/scripts/build-site.sh
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

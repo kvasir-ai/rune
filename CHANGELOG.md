@@ -6,29 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-03-25
+## [0.3.0] - 2026-03-26
 
 ### Added
-- Documentation site — single-page app with dark mode, search, sidebar navigation, mermaid diagrams, and copy-to-clipboard
-- GitHub Pages deployment via artifact workflow
-- CODEOWNERS file for review routing
-- Token economics in `/rune` — per-agent token usage, estimated cost, wall time vs CPU time, and parallelism savings
-- Deep dive: The DAG Dispatch — full user journey from idea to running DAG
-- Deep dives: The Knowledge Manager, The Safety Architecture
-- AGENTS.md — agent roster reference
-- Site deep dives sync from docs/*.md via marked.js
-- Cross-references on all six deep dives
-- Safety-check test suite
+- Prefixed skill system — skills owned by core agents: `/judge`, `/judge-audit`, `/judge-panel`, `/tw-draft-pr`, `/tw-release`, `/km-audit`, `/km-onboard`, `/write-plan`, `/rune-demo`
+- Judge panel (`/judge-panel N`) — summon 2-5 independent judges for multi-perspective review
+- Deep adversarial audit skill (`/judge-audit`)
+- Ephemeral site build — GitHub Pages assembled at CI time from `docs/`, no committed HTML/JS
+- Documentation site with dark mode, search, sidebar navigation, mermaid diagrams
+- Token economics in `/rune` — per-agent token usage, estimated cost, parallelism savings
+- AGENTS.md, CODEOWNERS, safety-check test suite
 
 ### Changed
-- README restructured: 30-second demo first, quick start second, interactions before roster
-- Developer Preview label replaces Incubating
-- Works-with compatibility line added (Claude Code, OpenCode)
-- Site sidebar reorganized into Getting Started, Core, Advanced groups
-- All three EXAMPLES.md scenarios include token economics
-- /rune SKILL.md aligned as single source of truth
-- ai-toolkit-operations rule renamed to toolkit-operations
-- CONTRIBUTING.md, SECURITY.md, CLAUDE.md refreshed
+- Documentation consolidated around the three-phase model as single authoritative doc
+- README rewritten as a sales document — hook, demo, skills table, compressed depth
+- Skills renamed from generic to agent-prefixed (release → tw-release, pr-description → tw-draft-pr, audit-docs → km-audit, codebase-onboarding → km-onboard, rune-examples → rune-demo, writing-plans → write-plan)
+- Agent names in DAG diagrams use single brackets `[ AGENT ]`
+- Core agents updated with skill references and absorbed behaviors
+
+### Removed
+- 14 skills demoted to agent behavior or consolidated (brainstorming, executing-plans, verification-before-completion, writing-clearly-and-concisely, skill-creator, subagent-driven-development, finishing-development-branch, dispatching-parallel-agents, requesting-code-review, receiving-code-review, pr-description, release, release-notes, audit-docs)
+- Redundant deep-dive docs (DAG dispatch, context budget, edit distance, knowledge creation cycle, knowledge manager) — folded into three-phase model
+- Committed `site/` directory — now ephemeral
+- Example agents (architect, designer, developer, devops, reviewer, security, tester, writer) — users build their own
 
 ## [0.2.0] - 2026-03-24
 

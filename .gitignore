@@ -1,5 +1,6 @@
 # Local state — not committed
 .current-profile
+.rune/
 
 # IDE
 .idea/

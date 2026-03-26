@@ -151,33 +151,32 @@ mark { background: var(--tag); color: var(--tag-fg); padding: 0.1rem 0.2rem; bor
     <div class="nav-section-title">Getting Started</div>
     <a class="nav-item active" data-section="home"><span class="emoji">&#x1F3E0;</span> Home</a>
     <a class="nav-item" data-section="quick-start"><span class="emoji">&#x26A1;</span> Quick Start</a>
-    <a class="nav-item" data-section="team"><span class="emoji">&#x1F465;</span> Agent Team</a>
+    <a class="nav-item" data-section="team"><span class="emoji">&#x1F465;</span> Bring Your Agents</a>
     <a class="nav-item" data-section="talk"><span class="emoji">&#x1F4AC;</span> Talk to Your Team</a>
   </div>
 
   <div class="nav-section">
+    <div class="nav-section-title">The Three Phases</div>
+    <a class="nav-item" data-section="phase-explore"><span class="emoji">&#x1F50D;</span> 1. Explore</a>
+    <a class="nav-item" data-section="phase-plan"><span class="emoji">&#x1F5FA;</span> 2. Plan</a>
+    <a class="nav-item" data-section="phase-execute"><span class="emoji">&#x26A1;</span> 3. Execute</a>
+  </div>
+
+  <div class="nav-section">
     <div class="nav-section-title">Core</div>
-    <a class="nav-item" data-section="dag-dispatch"><span class="emoji">&#x1F500;</span> DAG Dispatch</a>
     <a class="nav-item" data-section="rules"><span class="emoji">&#x1F4D6;</span> Rules &amp; Profiles</a>
     <a class="nav-item" data-section="knowledge-inbox"><span class="emoji">&#x1F4E5;</span> Knowledge Pipeline</a>
+    <a class="nav-item" data-section="dag-dispatch"><span class="emoji">&#x1F500;</span> DAG Dispatch</a>
   </div>
 
   <div class="nav-section">
     <div class="nav-section-title">Advanced</div>
     <a class="nav-item" data-section="agents"><span class="emoji">&#x1F916;</span> Agents</a>
     <a class="nav-item" data-section="skills"><span class="emoji">&#x2328;</span> Skills</a>
-    <a class="nav-item" data-section="safety"><span class="emoji">&#x1F6E1;</span> Safety &amp; Hooks</a>
     <a class="nav-item" data-section="judge"><span class="emoji">&#x2696;</span> The Judge</a>
+    <a class="nav-item" data-section="safety"><span class="emoji">&#x1F6E1;</span> Safety &amp; Hooks</a>
+    <a class="nav-item" data-section="token-economics"><span class="emoji">&#x1F4B0;</span> Token Economics</a>
     <a class="nav-item" data-section="context-budget"><span class="emoji">&#x1F4CA;</span> Context Budget</a>
-  </div>
-
-  <div class="nav-section">
-    <div class="nav-section-title">Deep Dives</div>
-    <a class="nav-item" data-section="deep-edit-distance"><span class="emoji">&#x1F4D0;</span> Edit Distance</a>
-    <a class="nav-item" data-section="deep-knowledge-cycle"><span class="emoji">&#x1F504;</span> Knowledge Cycle</a>
-    <a class="nav-item" data-section="deep-context"><span class="emoji">&#x1F9EE;</span> Context Theory</a>
-    <a class="nav-item" data-section="deep-safety"><span class="emoji">&#x1F50D;</span> Safety Assessment</a>
-    <a class="nav-item" data-section="deep-km"><span class="emoji">&#x1F4DA;</span> Knowledge Manager</a>
   </div>
 
   <div class="nav-section">
@@ -219,7 +218,7 @@ make use-profile PROFILE=default</code></pre>
   <div class="card-grid">
     <div class="card" data-section="quick-start"><span class="emoji">&#x26A1;</span><h4>Quick Start</h4><p>Install and deploy in one command</p></div>
     <div class="card" data-section="talk"><span class="emoji">&#x1F4AC;</span><h4>Talk to Your Team</h4><p>Natural language interaction examples</p></div>
-    <div class="card" data-section="team"><span class="emoji">&#x1F465;</span><h4>Agent Team</h4><p>The starter roster and what each agent does</p></div>
+    <div class="card" data-section="team"><span class="emoji">&#x1F465;</span><h4>Bring Your Agents</h4><p>Use community agent collections or build your own</p></div>
     <div class="card" data-section="dag-dispatch"><span class="emoji">&#x1F500;</span><h4>DAG Dispatch</h4><p>Parallel wave execution with /rune</p></div>
     <div class="card" data-section="profiles"><span class="emoji">&#x1F504;</span><h4>Profiles</h4><p>Switch knowledge sets with one command</p></div>
   </div>
@@ -234,14 +233,6 @@ make use-profile PROFILE=default</code></pre>
   </div>
   <p><strong>Ingest</strong> raw material into <code>src/knowledge/</code>. <strong>Distill</strong> into structured rules. <strong>Shape</strong> rules into role-specific profiles. <strong>Grow</strong> through audits, gap detection, and research. The cycle compounds over time.</p>
 
-  <h2>Deep dives</h2>
-  <div class="card-grid">
-    <div class="card" data-section="deep-edit-distance"><span class="emoji">&#x1F4D0;</span><h4>Edit Distance of Understanding</h4><p>How DAG dispatch mirrors Levenshtein Distance</p></div>
-    <div class="card" data-section="deep-knowledge-cycle"><span class="emoji">&#x1F504;</span><h4>Knowledge Creation Cycle</h4><p>SECI model adapted for AI agents</p></div>
-    <div class="card" data-section="deep-context"><span class="emoji">&#x1F9EE;</span><h4>Context Budget</h4><p>Why token management matters and how to measure it</p></div>
-    <div class="card" data-section="deep-safety"><span class="emoji">&#x1F50D;</span><h4>Safety Assessment</h4><p>What the hooks catch, what they can't, and why</p></div>
-    <div class="card" data-section="deep-km"><span class="emoji">&#x1F4DA;</span><h4>Knowledge Manager</h4><p>How one agent feeds and grows your team's knowledge</p></div>
-  </div>
 </div>
 
 <!-- QUICK START -->
@@ -269,48 +260,66 @@ make list-skills     # browse the workflows</code></pre>
 
 <!-- AGENT TEAM -->
 <div class="section" id="team">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Agent Team</div>
-  <h1>&#x1F465; Agent Team</h1>
-  <p>rune ships with a ready-made team. Replace any agent, add your own, delete what you don't need. Each agent is a markdown file in <code>src/agents/core/</code>.</p>
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Bring Your Agents</div>
+  <h1>&#x1F465; Bring Your Agents</h1>
+  <p>rune orchestrates agents — it does not prescribe them. Bring your own specialists or start from a community collection:</p>
 
   <table>
-  <tr><th>Agent</th><th>Role</th></tr>
-  <tr><td>&#x1F3D7; Architect</td><td>System design, API contracts, architectural decisions</td></tr>
-  <tr><td>&#x1F527; Developer</td><td>Implementation, features, bug fixes</td></tr>
-  <tr><td>&#x1F5FA; Planner</td><td>Implementation plans, project breakdown, risk assessment</td></tr>
-  <tr><td>&#x1F50D; Reviewer</td><td>Code review, quality gates, final approval</td></tr>
-  <tr><td>&#x2696; Judge</td><td>Cross-domain validation, correctness, safety verdicts</td></tr>
-  <tr><td>&#x1F9EA; Tester</td><td>Test plans, test suites, coverage</td></tr>
-  <tr><td>&#x1F512; Security</td><td>Vulnerability assessment, threat modeling</td></tr>
-  <tr><td>&#x270D; Technical Writer</td><td>Documentation, ADRs, READMEs, API docs</td></tr>
-  <tr><td>&#x270D; Writer</td><td>Guides, release notes, user-facing content</td></tr>
-  <tr><td>&#x1F3A8; Designer</td><td>UI/UX, component design, interface planning</td></tr>
-  <tr><td>&#x1F680; DevOps</td><td>Deployment, CI/CD, releases, infrastructure</td></tr>
-  <tr><td>&#x1F4DA; Knowledge Manager</td><td>Rule audits, profile optimization, knowledge lifecycle</td></tr>
+  <tr><th>Source</th><th>What You Get</th></tr>
+  <tr><td><a href="https://github.com/msitarzewski/agency-agents">agency-agents</a></td><td>Curated agent library for Claude Code — drop-in specialists for development, testing, security, and more</td></tr>
+  <tr><td><a href="https://github.com/anthropics/claude-code-agents">anthropics/claude-code-agents</a></td><td>Official Anthropic agent examples</td></tr>
+  <tr><td>Build your own</td><td>Create <code>src/agents/core/my-agent.md</code> with YAML frontmatter and a system prompt</td></tr>
   </table>
 
-  <p>Add your own: create <code>src/agents/core/my-agent.md</code> with YAML frontmatter and a system prompt. Agents auto-discover — no registration needed.</p>
+  <p>rune ships with four orchestration agents (Planner, Judge, Technical Writer, Knowledge Manager) that coordinate the three-phase workflow. Domain specialists — developer, tester, security, architect — are yours to choose.</p>
+
+  <h3>What rune adds</h3>
+  <p>Any agent becomes a rune agent when it participates in a DAG. rune handles the coordination: wave computation, parallel dispatch, context injection between tasks, token tracking. The agent just does its job — rune handles the choreography.</p>
+
+  <p>Agents auto-discover from <code>src/agents/</code> — no registration needed. Drop a markdown file, deploy the profile, and the agent is available.</p>
 </div>
 
 <!-- TALK TO YOUR TEAM -->
 <div class="section" id="talk">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Talk to Your Team</div>
   <h1>&#x1F4AC; Talk to Your Team</h1>
-  <p>rune is LLM-native. There are no CLI commands to learn for interacting with agents. You talk to them in natural language inside your coding session.</p>
+  <p>rune is LLM-native. You talk to agents in natural language, or invoke skills as slash commands. The three-phase workflow maps to a natural conversation:</p>
 
+  <h3>Phase 1: Explore</h3>
   <table>
-  <tr><th>Say this</th><th>What happens</th></tr>
-  <tr><td><code>"plan this feature for me"</code></td><td>Planner breaks it into atomic tasks with dependencies</td></tr>
-  <tr><td><code>/rune</code></td><td>DAG dispatcher executes the plan in parallel waves</td></tr>
-  <tr><td><code>"hey judge, review this"</code></td><td>Judge validates correctness, safety, and completeness</td></tr>
-  <tr><td><code>"switch to the security profile"</code></td><td>Knowledge Manager swaps the active rule set</td></tr>
-  <tr><td><code>"audit the knowledge base"</code></td><td>Knowledge Manager checks for stale, oversized, or orphaned rules</td></tr>
-  <tr><td><code>"run rune example 1"</code></td><td>Dispatches a showcase DAG with simulated agents</td></tr>
-  <tr><td><code>"test this DAG"</code></td><td>Zero-cost dry run — validates without dispatching</td></tr>
-  <tr><td><code>"brainstorm this feature"</code></td><td>Brainstorming skill explores requirements before implementation</td></tr>
+  <tr><th>You say</th><th>What happens</th></tr>
+  <tr><td><code>"help me understand this repo"</code></td><td>Agents research the codebase and return a structured walkthrough</td></tr>
+  <tr><td><code>/km-onboard</code></td><td>Knowledge Manager analyzes repo architecture for onboarding</td></tr>
+  <tr><td><code>/rune-demo</code></td><td>Run a showcase DAG with simulated agents — see the system in action</td></tr>
   </table>
 
-  <p>No CLI commands, no API calls. You talk. The agents act. The <code>make</code> targets are for setup only — once installed, rune lives inside your agentic coding session.</p>
+  <h3>Phase 2: Plan</h3>
+  <table>
+  <tr><th>You say</th><th>What happens</th></tr>
+  <tr><td><code>"plan a REST API for user management"</code></td><td>Planner explores requirements and decomposes into tasks with dependencies</td></tr>
+  <tr><td><code>/write-plan</code></td><td>Generate a strict, atomic implementation plan with DAG annotations</td></tr>
+  <tr><td><code>"test this DAG"</code></td><td>Zero-cost dry run — validates the plan without dispatching agents</td></tr>
+  </table>
+
+  <h3>Phase 3: Execute</h3>
+  <table>
+  <tr><th>You say</th><th>What happens</th></tr>
+  <tr><td><code>/rune</code></td><td>Dispatch the plan — agents run in parallel waves with context injection</td></tr>
+  <tr><td><code>/judge</code></td><td>Review the output for quality and correctness</td></tr>
+  <tr><td><code>/judge-audit</code></td><td>Deep adversarial audit of any agent's output</td></tr>
+  <tr><td><code>/judge-panel 3</code></td><td>Summon 3 independent judges for multi-perspective review</td></tr>
+  <tr><td><code>/tw-draft-pr</code></td><td>Draft a PR description from the completed work</td></tr>
+  <tr><td><code>/tw-release</code></td><td>Prepare a release — changelog, notes, version bump, tag</td></tr>
+  </table>
+
+  <h3>Maintain</h3>
+  <table>
+  <tr><th>You say</th><th>What happens</th></tr>
+  <tr><td><code>/km-audit</code></td><td>Audit knowledge base health — stale rules, orphans, context budget</td></tr>
+  <tr><td><code>"switch to the security profile"</code></td><td>Knowledge Manager swaps the active rule set</td></tr>
+  </table>
+
+  <p>No CLI commands, no API calls. You talk. The agents act. The <code>make</code> targets are for setup only — once deployed, rune lives inside your coding session.</p>
 </div>
 
 <!-- AGENTS -->
@@ -469,7 +478,7 @@ make context-budget                    # measure footprint</code></pre>
   <h3>Token economics</h3>
   <p>Every dispatch ends with a cost report — actual token counts per agent, estimated USD cost, wall time vs sequential time, and parallelism savings. Costs are tracked per task and persisted in the history file.</p>
 
-  <p>Deep dive: <a href="#" data-section="deep-context">Context Theory</a> explains why subagents are the key to efficient token economics.</p>
+  <p>Deep dive: <a href="#" data-section="dag-dispatch">DAG Dispatch</a> covers the full execution cycle including context injection and cost tracking.</p>
 </div>
 
 <!-- JUDGE -->
@@ -490,6 +499,50 @@ make context-budget                    # measure footprint</code></pre>
   </table>
 
   <p>The Judge never implements — it describes what needs to change and who should do it.</p>
+</div>
+
+<!-- TOKEN ECONOMICS -->
+<div class="section" id="token-economics">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Advanced <span>›</span> Token Economics</div>
+  <h1>&#x1F4B0; Token Economics</h1>
+  <p>Every <code>/rune</code> dispatch tracks token usage per agent. After execution, the final report shows actual metered values — not estimates.</p>
+
+  <pre><code>───────────────────────────────────────────
+  💰 Token Economics
+───────────────────────────────────────────
+  t1  [ DEVELOPER ]   322K tok   $6.76
+  t2  [ DEVELOPER ]   394K tok   $8.28
+  t3  [ REVIEWER ]    304K tok   $6.38
+───────────────────────────────────────────
+  Total tokens:  1,020K
+  Est. cost:     $21.42
+  Wall time:     6m 12s  (parallel)
+  CPU time:      14m 30s (sequential sum)
+  Time saved:    57% via parallelism
+───────────────────────────────────────────</code></pre>
+
+  <h3>Cost model</h3>
+  <p>Since the Agent tool returns <code>total_tokens</code> (not split input/output), rune uses a blended rate per model tier:</p>
+  <table>
+  <tr><th>Model</th><th>Blended Rate (per 1M tokens)</th></tr>
+  <tr><td>opus</td><td>$21.00</td></tr>
+  <tr><td>sonnet</td><td>$5.40</td></tr>
+  <tr><td>haiku</td><td>$1.30</td></tr>
+  </table>
+  <p>The 80/20 input/output ratio is a practical approximation. Costs are displayed as "Est. cost" — directional, not exact.</p>
+
+  <h3>Up-front cost estimation</h3>
+  <p>Before dispatching, rune estimates cost and assigns a tier badge:</p>
+  <table>
+  <tr><th>Tier</th><th>Badge</th></tr>
+  <tr><td>Low</td><td>🟢 LOW</td></tr>
+  <tr><td>Medium</td><td>🟡 MEDIUM</td></tr>
+  <tr><td>High</td><td>🔴 HIGH</td></tr>
+  </table>
+  <p>The tier appears in the dispatch header before execution begins — giving you a cost signal before committing.</p>
+
+  <h3>History</h3>
+  <p>Token usage, cost estimates, and timing are persisted in <code>.rune/</code> history files alongside the plan and results. Use these for cost tracking across sessions.</p>
 </div>
 
 <!-- CONTEXT BUDGET -->
@@ -529,34 +582,25 @@ make context-budget                    # measure footprint</code></pre>
   </table>
 
   <p>The hook is a seatbelt — it catches accidental destructive commands from LLM agents. OS permissions, sandboxing, and CI/CD handle the deeper layers.</p>
-  <p>See <a href="#" data-section="deep-safety">Safety Assessment</a> for the full analysis including test evidence, known bypasses, and industry comparison.</p>
+  <p>Full analysis: <a href="docs/the-safety-architecture.md">The Safety Architecture</a> covers test evidence, known bypasses, and industry comparison.</p>
 </div>
 
-<!-- DEEP DIVE: EDIT DISTANCE -->
-<!-- Deep dives are loaded from docs/*.md via marked.js -->
-<div class="section" id="deep-edit-distance" data-md="docs/the-edit-distance-of-understanding.md">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Edit Distance</div>
+<!-- THREE-PHASE DEEP DIVES -->
+<div class="section" id="phase-explore" data-md="docs/phase-1-explore.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Three Phases <span>›</span> Explore</div>
+  <h1>&#x1F50D; Phase 1: Explore</h1>
   <div class="md-content"><p class="subtitle">Loading...</p></div>
 </div>
 
-<div class="section" id="deep-knowledge-cycle" data-md="docs/the-knowledge-creation-cycle.md">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Knowledge Cycle</div>
+<div class="section" id="phase-plan" data-md="docs/phase-2-plan.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Three Phases <span>›</span> Plan</div>
+  <h1>&#x1F5FA; Phase 2: Plan</h1>
   <div class="md-content"><p class="subtitle">Loading...</p></div>
 </div>
 
-<div class="section" id="deep-context" data-md="docs/the-context-budget.md">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Context Theory</div>
-  <div class="md-content"><p class="subtitle">Loading...</p></div>
-</div>
-
-<div class="section" id="deep-safety" data-md="docs/the-safety-architecture.md">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Safety Assessment</div>
-  <div class="md-content"><p class="subtitle">Loading...</p></div>
-</div>
-
-<!-- DEEP DIVE: KNOWLEDGE MANAGER -->
-<div class="section" id="deep-km" data-md="docs/the-knowledge-manager.md">
-  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Deep Dives <span>›</span> Knowledge Manager</div>
+<div class="section" id="phase-execute" data-md="docs/phase-3-execute.md">
+  <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Three Phases <span>›</span> Execute</div>
+  <h1>&#x26A1; Phase 3: Execute</h1>
   <div class="md-content"><p class="subtitle">Loading...</p></div>
 </div>
 

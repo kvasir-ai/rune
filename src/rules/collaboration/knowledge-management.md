@@ -11,7 +11,7 @@
 
 rune's knowledge lifecycle is grounded in the SECI model (Nonaka & Takeuchi, 1995) extended with a machine dimension for AI agents. The four phases — Socialization, Externalization, Combination, Internalization — map directly to how knowledge flows through `src/knowledge/` → `src/rules/` → `profiles.yaml` → agent context.
 
-[Read the deep dive →](../../docs/the-knowledge-creation-cycle.md)
+[Read the deep dive →](../../docs/the-knowledge-toolkit.md)
 
 ---
 
