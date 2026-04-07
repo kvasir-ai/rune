@@ -90,7 +90,7 @@ Ask what capability gap the user wants to fill:
 
 ### Step 2: Audit Local Coverage First
 
-1. Check the current `.claude/agents/` roster and `profiles.yaml`
+1. Check the current `src/rune-agency/agents/` roster and `profiles.yaml`
 2. Confirm the gap is real rather than a missing rule or weak prompt
 3. Only move to the remote catalog if the local agency truly lacks the capability
 
@@ -110,7 +110,7 @@ Present candidates with name, specialty, and why they're a fit using the recomme
 2. **Security review** — before adapting, scan the fetched definition for dangerous patterns.
 3. Adapt to Rune Agency format:
    - Convert to agent `.md` format with YAML frontmatter.
-   - Map to the appropriate phase directory (`.claude/agents/<phase>/`).
+   - Map to the appropriate source phase directory (`src/rune-agency/agents/<phase>/`).
    - Strip non-relevant personality traits.
    - Add rule references.
 4. Register in `profiles.yaml` under relevant profiles.

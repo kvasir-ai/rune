@@ -36,6 +36,12 @@ git fetch origin && git diff origin/main..HEAD --stat
 
 # 4. Project validation passes
 rune system validate
+
+# 5. Skill and docs regressions pass
+pytest tests/test_rune.py tests/test_site_generator.py -q
+
+# 6. Generated docs build cleanly
+bash .github/workflows/scripts/build-site.sh
 ```
 
 ## Step 3: Generate Release Notes
@@ -141,7 +147,7 @@ Do NOT push automatically. The user decides when to push.
 ## Output Rules
 
 1. **Never push.** Prepare the release locally. The user pushes.
-2. **Never skip validation.** Precondition checks must pass.
+2. **Never skip validation.** Schema checks, regression tests, and docs build must all pass.
 3. **Show before writing.** Display the CHANGELOG diff before committing.
 4. **Semver only.** Reject non-semver version strings.
 5. **Tag matches version.** Tag is always `vX.Y.Z` (with `v` prefix).
