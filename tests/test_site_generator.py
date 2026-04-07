@@ -107,6 +107,14 @@ def test_sidebar_emphasizes_guided_start(tmp_path: Path) -> None:
     assert "<h1>Start Here</h1>" in html
     assert 'class="sidebar-brand" data-section="home"' in html
     assert 'class="title mobile-brand" data-section="home"' in html
+    assert 'id="menu-open"' in html
+    assert 'aria-controls="sidebar"' in html
+    assert 'aria-expanded="false"' in html
+    assert 'type="button"' in html
+    assert 'id="sidebar-backdrop"' in html
+    assert '<nav class="sidebar" id="sidebar" aria-label="Main navigation" aria-hidden="false">' in html
+    assert 'id="menu-close"' in html
+    assert 'aria-label="Close navigation"' in html
     assert 'class="nav-intro"' not in html
     assert '<button class="nav-item active" data-section="home"><span class="emoji" aria-hidden="true">&#x1F3E0;</span> Start Here</button>' in html
 
@@ -179,8 +187,20 @@ def test_site_generator_emits_valid_search_result_markup() -> None:
 
     assert '+ \'</button>\';' in javascript
     assert '+ </button>\';' not in javascript
+    assert "function setMobileMenuOpen(isOpen)" in javascript
+    assert "const sidebarBackdrop = document.getElementById('sidebar-backdrop');" in javascript
+    assert "const mobileMenuQuery = window.matchMedia('(max-width: 900px)');" in javascript
+    assert "const shouldOpen = mobileMenuQuery.matches && isOpen;" in javascript
+    assert "menuOpenButton?.setAttribute('aria-expanded', String(shouldOpen));" in javascript
+    assert "sidebar.setAttribute('aria-hidden', mobileMenuQuery.matches ? String(!shouldOpen) : 'false');" in javascript
+    assert "sidebarBackdrop?.classList.toggle('open', shouldOpen);" in javascript
+    assert "document.body.classList.toggle('mobile-menu-open', shouldOpen);" in javascript
+    assert "setMobileMenuOpen(false);" in javascript
     assert "searchInput.addEventListener('keydown'" in javascript
     assert "activateSearchSelection();" in javascript
+    assert "body.mobile-menu-open { overflow: hidden; }" in styles
+    assert ".sidebar-backdrop.open {" in styles
+    assert ".sidebar.open {\n    display: flex;" in styles
     assert ".search-result-item.selected" in styles
     assert "--search-panel-bg:" in styles
     assert "background: var(--search-panel-bg);" in styles
@@ -419,10 +439,17 @@ function mkList() {
 
 const listeners = {};
 const nodes = {
-  sidebar: { classList: mkList(), querySelector: () => null },
+  sidebar: { classList: mkList(), querySelector: () => null, setAttribute: () => {} },
+  'sidebar-backdrop': { classList: mkList(), hidden: true, addEventListener: () => {} },
   content: { scrollTop: 0 },
-  'menu-open': { addEventListener: (_, cb) => { listeners.menuOpen = cb; } },
-  'menu-close': { addEventListener: (_, cb) => { listeners.menuClose = cb; } },
+  'menu-open': {
+    addEventListener: (_, cb) => { listeners.menuOpen = cb; },
+    setAttribute: () => {},
+  },
+  'menu-close': {
+    addEventListener: (_, cb) => { listeners.menuClose = cb; },
+    setAttribute: () => {},
+  },
   search: { addEventListener: () => {}, value: '' },
   'search-results': { classList: mkList(), innerHTML: '', querySelectorAll: () => [] },
   'theme-toggle': {
@@ -457,7 +484,7 @@ const storage = new Map(stored === null ? [] : [['theme', stored]]);
 const context = {
   document,
   window: {
-    matchMedia: () => ({ matches: sysDark, addEventListener: () => {} }),
+    matchMedia: (query) => ({ matches: query.includes('prefers-color-scheme') ? sysDark : false, addEventListener: () => {} }),
     addEventListener: () => {},
     scrollTo: () => {},
   },
@@ -518,6 +545,206 @@ process.stdout.write(JSON.stringify(states));
     assert light_states[2]["stored"] == "light"
 
 
+def test_mobile_sidebar_drawer_starts_closed_and_opens_only_on_mobile(tmp_path: Path) -> None:
+    index_path, _ = _generate_html(tmp_path)
+
+    harness = r"""
+const fs = require('fs');
+const vm = require('vm');
+
+const html = fs.readFileSync(process.argv[1], 'utf8');
+const mobile = process.argv[2] === 'true';
+const match = html.match(/<script>([\s\S]*)<\/script>/);
+if (!match) throw new Error('script not found');
+const script = match[1];
+
+function mkList(init = []) {
+  const classes = new Set(init);
+  return {
+    add(name) { classes.add(name); },
+    remove(name) { classes.delete(name); },
+    toggle(name, force) {
+      if (force === undefined) {
+        if (classes.has(name)) {
+          classes.delete(name);
+          return false;
+        }
+        classes.add(name);
+        return true;
+      }
+      if (force) classes.add(name);
+      else classes.delete(name);
+      return force;
+    },
+    contains(name) { return classes.has(name); },
+    value() { return Array.from(classes).sort().join(' '); },
+  };
+}
+
+const listeners = {};
+const sections = {
+  home: { id: 'home', classList: mkList(['section']) },
+  'quick-start': { id: 'quick-start', classList: mkList(['section']) },
+};
+const navLink = {
+  dataset: { section: 'quick-start' },
+  classList: mkList(['nav-item']),
+  style: {},
+  addEventListener: (_, cb) => { listeners.navClick = cb; },
+  closest: () => null,
+};
+const sidebar = {
+  attrs: {},
+  classList: mkList(),
+  querySelector: () => null,
+  setAttribute: (name, value) => { sidebar.attrs[name] = value; },
+};
+const sidebarBackdrop = {
+  hidden: true,
+  classList: mkList(),
+  addEventListener: (_, cb) => { listeners.backdropClick = cb; },
+};
+const menuOpenButton = {
+  attrs: {},
+  addEventListener: (_, cb) => { listeners.menuOpen = cb; },
+  setAttribute: (name, value) => { menuOpenButton.attrs[name] = value; },
+};
+const menuCloseButton = {
+  addEventListener: (_, cb) => { listeners.menuClose = cb; },
+  setAttribute: () => {},
+};
+const themeBtn = {
+  textContent: '',
+  attrs: {},
+  addEventListener: () => {},
+  setAttribute: (name, value) => { themeBtn.attrs[name] = value; },
+};
+
+const document = {
+  body: { classList: mkList() },
+  documentElement: { classList: mkList(), style: {} },
+  getElementById(id) {
+    if (id === 'sidebar') return sidebar;
+    if (id === 'sidebar-backdrop') return sidebarBackdrop;
+    if (id === 'menu-open') return menuOpenButton;
+    if (id === 'menu-close') return menuCloseButton;
+    if (id === 'content') return { scrollTop: 0 };
+    if (id === 'search') return { addEventListener: () => {}, value: '' };
+    if (id === 'search-results') return { classList: mkList(), innerHTML: '', querySelectorAll: () => [] };
+    if (id === 'theme-toggle') return themeBtn;
+    return sections[id] || null;
+  },
+  querySelectorAll(selector) {
+    if (selector === '.section') return Object.values(sections);
+    if (selector === '.section[id]') {
+      return Object.values(sections).map(section => ({
+        ...section,
+        querySelector: () => null,
+        textContent: section.id,
+      }));
+    }
+    if (selector === '[data-section]') return [navLink];
+    if (selector === '.nav-item, .nav-sub-item') return [navLink];
+    if (selector === '[data-scroll-to]') return [];
+    if (selector === '.nav-section-title[data-toggle]') return [];
+    if (selector === '.nav-sub-group-title[data-subtoggle]') return [];
+    if (selector === '.stage-progress-step[data-stage-nav]') return [];
+    if (selector === 'pre') return [];
+    if (selector === 'code.copyable') return [];
+    return [];
+  },
+  querySelector(selector) {
+    if (selector === '.nav-item[data-section="quick-start"], .nav-sub-item[data-section="quick-start"]') return navLink;
+    return null;
+  },
+  addEventListener() {},
+  createElement() {
+    return {
+      className: '',
+      textContent: '',
+      setAttribute() {},
+      addEventListener() {},
+      appendChild() {},
+      classList: mkList(),
+    };
+  },
+};
+
+const mediaQuery = {
+  matches: mobile,
+  addEventListener: (_, cb) => { listeners.mediaChange = cb; },
+};
+
+const context = {
+  document,
+  window: {
+    matchMedia: (query) => ({ matches: query.includes('prefers-color-scheme') ? false : mediaQuery.matches, addEventListener: mediaQuery.addEventListener }),
+    addEventListener: () => {},
+    scrollTo: () => {},
+  },
+  history: { pushState: () => {} },
+  location: { hash: '', pathname: '/index.html' },
+  localStorage: {
+    getItem: () => null,
+    setItem: () => {},
+  },
+  navigator: { clipboard: { writeText: () => Promise.resolve() } },
+  console,
+  setTimeout: (cb) => cb(),
+  clearTimeout: () => {},
+};
+
+vm.createContext(context);
+vm.runInContext(script, context);
+
+function snapshot(label) {
+  return {
+    label,
+    sidebarOpen: sidebar.classList.contains('open'),
+    ariaHidden: sidebar.attrs['aria-hidden'],
+    menuExpanded: menuOpenButton.attrs['aria-expanded'],
+    backdropOpen: sidebarBackdrop.classList.contains('open'),
+    backdropHidden: sidebarBackdrop.hidden,
+    bodyLocked: document.body.classList.contains('mobile-menu-open'),
+  };
+}
+
+const states = [snapshot('initial')];
+listeners.menuOpen();
+states.push(snapshot('after-open'));
+listeners.menuClose();
+states.push(snapshot('after-close'));
+process.stdout.write(JSON.stringify(states));
+"""
+
+    mobile_states = _run_node_harness([str(index_path), "true"], harness)
+    assert mobile_states[0]["sidebarOpen"] is False
+    assert mobile_states[0]["ariaHidden"] == "true"
+    assert mobile_states[0]["menuExpanded"] == "false"
+    assert mobile_states[0]["backdropOpen"] is False
+    assert mobile_states[0]["backdropHidden"] is True
+    assert mobile_states[0]["bodyLocked"] is False
+    assert mobile_states[1]["sidebarOpen"] is True
+    assert mobile_states[1]["ariaHidden"] == "false"
+    assert mobile_states[1]["menuExpanded"] == "true"
+    assert mobile_states[1]["backdropOpen"] is True
+    assert mobile_states[1]["backdropHidden"] is False
+    assert mobile_states[1]["bodyLocked"] is True
+    assert mobile_states[2]["sidebarOpen"] is False
+    assert mobile_states[2]["ariaHidden"] == "true"
+    assert mobile_states[2]["menuExpanded"] == "false"
+    assert mobile_states[2]["backdropHidden"] is True
+    assert mobile_states[2]["bodyLocked"] is False
+
+    desktop_states = _run_node_harness([str(index_path), "false"], harness)
+    assert desktop_states[0]["sidebarOpen"] is False
+    assert desktop_states[0]["ariaHidden"] == "false"
+    assert desktop_states[1]["sidebarOpen"] is False
+    assert desktop_states[1]["menuExpanded"] == "false"
+    assert desktop_states[1]["backdropHidden"] is True
+    assert desktop_states[1]["bodyLocked"] is False
+
+
 def test_hard_refresh_with_hash_does_not_break_navigation(tmp_path: Path) -> None:
     index_path, _ = _generate_html(tmp_path)
 
@@ -575,7 +802,8 @@ const stageStep = {
   dataset: { stageNav: '2' },
   addEventListener: (_, cb) => { listeners.stageClick = cb; },
 };
-const sidebar = { classList: mkList(), querySelector: () => null };
+const sidebar = { classList: mkList(), querySelector: () => null, setAttribute: () => {} };
+const sidebarBackdrop = { classList: mkList(), hidden: true, addEventListener: () => {} };
 const content = { scrollTop: 0 };
 
 const document = {
@@ -584,8 +812,14 @@ const document = {
   getElementById(id) {
     if (id === 'theme-toggle') return themeBtn;
     if (id === 'sidebar') return sidebar;
+    if (id === 'sidebar-backdrop') return sidebarBackdrop;
     if (id === 'content') return content;
-    if (id === 'menu-open' || id === 'menu-close') return { addEventListener: () => {} };
+    if (id === 'menu-open' || id === 'menu-close') {
+      return {
+        addEventListener: () => {},
+        setAttribute: () => {},
+      };
+    }
     if (id === 'search') return { addEventListener: () => {}, value: '' };
     if (id === 'search-results') return { classList: mkList(), innerHTML: '', querySelectorAll: () => [] };
     return sections[id] || null;

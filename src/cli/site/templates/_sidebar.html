@@ -1,13 +1,14 @@
 <header class="mobile-nav">
-  <button class="hamburger" id="menu-open" aria-label="Open menu">&#x2630;</button>
+  <button class="hamburger" id="menu-open" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">&#x2630;</button>
   <button class="title mobile-brand" data-section="home" aria-label="Go to Home">Rune</button>
 </header>
 
 <div class="layout">
 
 <!-- -- Sidebar ----------------------------------- -->
-<nav class="sidebar" id="sidebar" aria-label="Main navigation">
-  <div class="close-btn"><button id="menu-close" aria-label="Close menu">&#x2715;</button></div>
+<div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+<nav class="sidebar" id="sidebar" aria-label="Main navigation" aria-hidden="false">
+  <div class="close-btn"><button id="menu-close" type="button" aria-label="Close navigation">&#x2715;</button></div>
   <button class="sidebar-brand" data-section="home" aria-label="Go to Home">Rune</button>
   <div class="search">
     <span class="search-icon" aria-hidden="true">&#x1F50D;</span>

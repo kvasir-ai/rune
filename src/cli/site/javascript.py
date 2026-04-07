@@ -8,8 +8,27 @@ def get_javascript() -> str:
 <script>
 // -- Mobile menu --
 const sidebar = document.getElementById('sidebar');
-document.getElementById('menu-open')?.addEventListener('click', () => sidebar.classList.add('open'));
-document.getElementById('menu-close')?.addEventListener('click', () => sidebar.classList.remove('open'));
+const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+const menuOpenButton = document.getElementById('menu-open');
+const menuCloseButton = document.getElementById('menu-close');
+const mobileMenuQuery = window.matchMedia('(max-width: 900px)');
+
+function setMobileMenuOpen(isOpen) {
+  if (!sidebar) return;
+  const shouldOpen = mobileMenuQuery.matches && isOpen;
+  sidebar.classList.toggle('open', shouldOpen);
+  sidebar.setAttribute('aria-hidden', mobileMenuQuery.matches ? String(!shouldOpen) : 'false');
+  menuOpenButton?.setAttribute('aria-expanded', String(shouldOpen));
+  sidebarBackdrop?.classList.toggle('open', shouldOpen);
+  if (sidebarBackdrop) sidebarBackdrop.hidden = !shouldOpen;
+  document.body.classList.toggle('mobile-menu-open', shouldOpen);
+}
+
+menuOpenButton?.addEventListener('click', () => setMobileMenuOpen(true));
+menuCloseButton?.addEventListener('click', () => setMobileMenuOpen(false));
+sidebarBackdrop?.addEventListener('click', () => setMobileMenuOpen(false));
+mobileMenuQuery.addEventListener?.('change', () => setMobileMenuOpen(false));
+setMobileMenuOpen(false);
 
 // -- Collapsible sidebar sections --
 document.querySelectorAll('.nav-section-title[data-toggle]').forEach(title => {
@@ -54,7 +73,7 @@ function showSection(id, pushState) {
   }
   document.getElementById('content').scrollTop = 0;
   window.scrollTo(0, 0);
-  sidebar.classList.remove('open');
+  setMobileMenuOpen(false);
   if (pushState !== false) {
     history.pushState({ section: id }, '', id === 'home' ? location.pathname : '#' + id);
   }
@@ -217,6 +236,12 @@ searchInput.addEventListener('keydown', (e) => {
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.search')) {
     clearSearchResults();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    setMobileMenuOpen(false);
   }
 });
 
