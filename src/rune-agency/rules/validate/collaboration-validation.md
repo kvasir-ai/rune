@@ -33,7 +33,7 @@ instead of guessing.
 | `BLOCKED` | do not advance | name failed contract, owner, return phase, and unblock condition |
 
 Use the canonical enums from
-`src/rune-agency/rules/core/agent-collaboration.md`.
+`.claude/rules/core/agent-collaboration.md`.
 
 ## Loopback Matrix
 
@@ -73,6 +73,6 @@ If the target changed hooks or runtime guardrails, validation also requires:
 
 ## Cross-References
 
-- See `src/rune-agency/rules/core/agent-collaboration.md` for the shared
+- See `.claude/rules/core/agent-collaboration.md` for the shared
   handoff contract
-- See `src/rune-agency/agents/validate/judge.md` for verdict requirements
+- See `.claude/agents/validate/judge.md` for verdict requirements

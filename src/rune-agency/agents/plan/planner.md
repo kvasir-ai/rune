@@ -79,4 +79,4 @@ Return work instead of forcing a plan when:
 - the **Judge** has blocked a prior plan and named missing evidence or a new return phase
 
 ### Output Format
-Plans must use the DAG-annotated format for autonomous execution. See `src/rune-agency/rules/plan/dag-execution-format.md`.
+Plans must use the DAG-annotated format for autonomous execution. See `.claude/rules/plan/dag-execution-format.md`.

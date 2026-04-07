@@ -7,7 +7,7 @@ user_invocable: true
 
 # rune examples
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 Run one of three showcase DAGs that demonstrate parallel wave dispatch. Pick the example based on `$ARGUMENTS`.

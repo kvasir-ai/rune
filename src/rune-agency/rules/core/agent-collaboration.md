@@ -5,7 +5,7 @@ Phase: Core
 > Canonical orchestration source for all agents in the collective.
 > Covers routing, escalation, ownership, HITL gates, handoff payloads, and
 > decision document triggers.
-> See `src/rune-agency/rules/plan/architectural-decision-records.md` for ADR
+> See `.claude/rules/plan/architectural-decision-records.md` for ADR
 > format and workflow triggers.
 
 ---
@@ -32,17 +32,16 @@ when runtime automation changed.
 
 Use these names in all new plans, rules, and skills.
 
-| Canonical name | Legacy aliases accepted while migrating | Role |
-|---|---|---|
-| `planner` | — | planning and DAG decomposition |
-| `researcher` | — | evidence gathering and uncertainty reduction |
-| `knowledge-manager` | `km` | rule promotion, taxonomy, profile hygiene |
-| `engineer` | `developer`, `specialist` | implementation and technical verification |
-| `technical-writer` | `writer` | durable artifacts and documentation traceability |
-| `judge` | `reviewer`, `code-reviewer` | validation verdicts and remediation routing |
+| Canonical name | Role |
+|---|---|
+| `planner` | planning and DAG decomposition |
+| `researcher` | evidence gathering and uncertainty reduction |
+| `knowledge-manager` | rule promotion, taxonomy, profile hygiene |
+| `engineer` | implementation and technical verification |
+| `technical-writer` | durable artifacts and documentation traceability |
+| `judge` | validation verdicts and remediation routing |
 
-Legacy aliases may be translated by workflows during migration. New plans must
-emit canonical names.
+Plans, rules, and skills must emit canonical names.
 
 ## Canonical Artifact Interfaces
 
@@ -242,7 +241,7 @@ more than missing context.
 
 ## Cross-References
 
-- See `src/rune-agency/rules/plan/architectural-decision-records.md` for ADR
+- See `.claude/rules/plan/architectural-decision-records.md` for ADR
   format, naming, and directory structure
-- See `src/rune-agency/rules/plan/dag-execution-format.md` for execution-plan
+- See `.claude/rules/plan/dag-execution-format.md` for execution-plan
   fields and wave semantics

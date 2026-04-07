@@ -107,7 +107,7 @@ def validate_schemas(root_dir: Path) -> bool:
         if skill_phase_pat.search(body_no_fences):
             print(f'  ✗ {f.relative_to(root_dir)}: leaked phase marker in body')
             ok = False
-        if category != 'core' and 'src/rune-agency/skills/core/skill-contract/SKILL.md' not in body_no_fences:
+        if category != 'core' and '.claude/skills/core/skill-contract/SKILL.md' not in body_no_fences:
             print(f'  ✗ {f.relative_to(root_dir)}: missing shared skill contract reference')
             ok = False
 

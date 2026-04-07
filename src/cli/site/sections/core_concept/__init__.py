@@ -323,7 +323,7 @@ def section_knowledge_pipeline(total_rules: int) -> str:
     </thead>
     <tbody>
       <tr><td><strong>1. Collect</strong></td><td>Place raw notes, docs, logs, or examples in <code>src/rune-agency/knowledge/</code>.</td></tr>
-      <tr><td><strong>2. Distill</strong></td><td>Ask the Knowledge Manager to turn that material into a small set of rules in <code>src/rune-agency/rules/</code>.</td></tr>
+      <tr><td><strong>2. Distill</strong></td><td>Ask the Knowledge Manager to turn that material into a small set of rules in <code>.claude/rules/</code>.</td></tr>
       <tr><td><strong>3. Refine</strong></td><td>Prefer short tables, checklists, and examples over long prose.</td></tr>
       <tr><td><strong>4. Apply</strong></td><td>Add the rule to the profiles that need it, then use it in real sessions.</td></tr>
     </tbody>

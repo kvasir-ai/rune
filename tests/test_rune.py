@@ -440,7 +440,62 @@ def test_skill_files_have_clean_frontmatter_and_phase_alignment() -> None:
         body_no_fences = import_module("cli.logic.validation")._strip_fenced_code_blocks(body)
         assert not phase_pat.search(body_no_fences), skill_file
         if category != "core":
-            assert "src/rune-agency/skills/core/skill-contract/SKILL.md" in body_no_fences, skill_file
+            assert ".claude/skills/core/skill-contract/SKILL.md" in body_no_fences, skill_file
+
+
+def test_write_plan_skill_includes_dag_and_sequential_templates() -> None:
+    skill = (SKILLS_DIR / "plan" / "write-plan" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "## Plan Template" in skill
+    assert "### DAG Template" in skill
+    assert "### Sequential Template" in skill
+    assert "### Join Task" in skill
+    assert "### Governance Task" in skill
+    assert "## Critical Path" in skill
+    assert "## Parallelism Benefit" in skill
+
+
+def test_template_driven_skills_include_output_scaffolds() -> None:
+    expectations = {
+        SKILLS_DIR / "plan" / "write-product-spec" / "SKILL.md": [
+            "## Spec Template",
+            "## Output Rules",
+        ],
+        SKILLS_DIR / "plan" / "write-rfc" / "SKILL.md": [
+            "## RFC Template",
+            "## Output Rules",
+        ],
+        SKILLS_DIR / "plan" / "write-adr" / "SKILL.md": [
+            "## ADR Template",
+            "## Output Rules",
+        ],
+        SKILLS_DIR / "explore" / "km-explore" / "SKILL.md": [
+            "## Output Templates",
+            "### Research Brief Template",
+        ],
+        SKILLS_DIR / "explore" / "km-recruit" / "SKILL.md": [
+            "## Output Templates",
+            "### Recommendation Template",
+        ],
+        SKILLS_DIR / "validate" / "judge" / "SKILL.md": [
+            "### Review Template",
+            "### Feedback Response Template",
+        ],
+        SKILLS_DIR / "validate" / "tw-release" / "SKILL.md": [
+            "### Release Notes Template",
+            "## Output Rules",
+        ],
+        SKILLS_DIR / "build" / "rune" / "SKILL.md": [
+            "### Pre-Dispatch Report Template",
+            "### Final Execution Report Template",
+            "### Build -> Validate Handoff Template",
+        ],
+    }
+
+    for path, markers in expectations.items():
+        text = path.read_text(encoding="utf-8")
+        for marker in markers:
+            assert marker in text, (path, marker)
 
 
 def test_demo_no_animate_guides_the_user() -> None:

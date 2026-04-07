@@ -4,7 +4,7 @@ Phase: Plan
 
 > Canonical format for dependency-annotated plans that enable parallel agent dispatch.
 > Use when the Planner outputs a plan with 5+ tasks involving 3+ agents.
-> See `src/rune-agency/rules/plan/architectural-decision-records.md` for ADR conventions.
+> See `.claude/rules/plan/architectural-decision-records.md` for ADR conventions.
 > ADR: `docs/decisions/0001-dag-dispatch-for-agent-orchestration.md`
 
 ---
@@ -46,18 +46,18 @@ Execution-ready plans should also preserve these fields per task:
 | `assumptions` | Strongly recommended | Prevents hidden uncertainty from disappearing during decomposition. |
 | `ambiguity` | Strongly recommended | Classifies unresolved risk so the next agent knows whether to return to Explore, Engineer, or HITL. |
 
-### Canonical Agent Alias Map
+### Canonical Agent Names
 
-Legacy aliases may still appear in older plans. Translate them to canonical names
-when rewriting or validating a plan.
+Use canonical agent names in every execution plan.
 
-| Legacy alias | Canonical name |
+| Canonical name | Primary role |
 |---|---|
-| `developer` | `engineer` |
-| `specialist` | `engineer` |
-| `reviewer` | `judge` |
-| `code-reviewer` | `judge` |
-| `writer` | `technical-writer` |
+| `planner` | planning and DAG decomposition |
+| `researcher` | evidence gathering and uncertainty reduction |
+| `knowledge-manager` | rule promotion, taxonomy, profile hygiene |
+| `engineer` | implementation and technical verification |
+| `technical-writer` | durable artifacts and documentation traceability |
+| `judge` | validation verdicts and remediation routing |
 
 ---
 

@@ -13,7 +13,7 @@ The **Rune Agency** team operates as an orchestrated group of experts within the
 | **Technical Writer** | Writes docs, ADRs, READMEs, agent definitions | `"document this"`, `"write a README"` |
 | **Knowledge Manager** | Audits rules, optimizes profiles, manages knowledge | `"audit the knowledge base"`, `"teach the team about X"` |
 
-All agents are defined in `src/rune-agency/agents/<phase>/` as Markdown files with YAML frontmatter.
+All runtime agents are available in `.claude/agents/<phase>/` as Markdown files with YAML frontmatter.
 
 ## The Four-Phase Model
 
@@ -30,7 +30,7 @@ See [README.md](/mnt/e/development/ai/kvasir/foss/README.md) and [site/index.htm
 
 **Profiles** pick which rules agents load. Switch with `"switch to the security profile"` or `rune profile use <name>`.
 
-**Rules** are structured knowledge files in `src/rune-agency/rules/`. They contain conventions, standards, and patterns.
+**Rules** are structured knowledge files in `.claude/rules/`. They contain conventions, standards, and patterns.
 
 **Skills** are slash commands that start workflows:
 
@@ -64,5 +64,5 @@ See [README.md](/mnt/e/development/ai/kvasir/foss/README.md) and [site/index.htm
 
 - [README.md](/mnt/e/development/ai/kvasir/foss/README.md) — quick start and project positioning.
 - [site/index.html](/mnt/e/development/ai/kvasir/foss/site/index.html) — generated public docs.
-- `src/rune-agency/agents/<phase>/` — agent definitions and role boundaries.
-- `src/rune-agency/rules/<phase>/` — collaboration, planning, and validation doctrine.
+- `.claude/agents/<phase>/` — agent definitions and role boundaries.
+- `.claude/rules/<phase>/` — collaboration, planning, and validation doctrine.

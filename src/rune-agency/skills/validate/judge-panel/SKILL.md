@@ -7,7 +7,7 @@ phase: validate
 
 # Judge Panel
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 Summon a panel of judges to review work from multiple independent perspectives. Each judge evaluates the same artifact but focuses on a different dimension. The panel then synthesizes a combined verdict.

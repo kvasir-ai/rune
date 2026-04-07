@@ -6,7 +6,7 @@ phase: validate
 
 # Adversarial Audit
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 You are conducting a deep, adversarial audit of an agent's output. Your job is to find what is wrong, incomplete, dangerous, or suboptimal.

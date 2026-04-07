@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-04-07
+
+### Added
+- Concrete output templates across core skills for product specs, RFCs, ADRs, research briefs, context packets, recruitment recommendations, review outputs, and release notes
+- Regression coverage that locks in shared skill-contract references and template-driven skill scaffolds
+
+### Changed
+- `/write-plan` now teaches execution-ready DAG and sequential plan templates, including root, fan-out, join, and governance task patterns
+- Runtime contracts and user-facing docs now point agents, rules, and skills at the `.claude/` surfaces instead of teaching repo-source paths as the active runtime
+- Documentation site mobile UX improved with a collapsed drawer nav, fluid typography/layout, tighter breadcrumbs, shorter stage labels, and a simpler home onboarding flow
+- README banner now links directly to the published docs site
+
+### Removed
+- Legacy alias and backward-compatibility wording from shared agent, rule, and skill contracts
+
 ## [0.4.0] - 2026-04-07
 
 ### Added

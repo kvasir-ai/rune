@@ -343,7 +343,7 @@ def section_glossary() -> str:
       <tr class="gloss-row gloss-kit"><td><strong>Hook</strong></td><td>A script that intercepts lifecycle events before or after tool execution. Rune uses hooks for safety checks, workflow discipline, and automatic formatting.</td></tr>
       <tr class="gloss-row gloss-kit"><td><strong>Knowledge Manager (KM)</strong></td><td>The core agent responsible for ingesting raw material and distilling it into reusable rules, profiles, and guidance.</td></tr>
       <tr class="gloss-row gloss-kit"><td><strong>Profile</strong></td><td>A named set of rules and resources that load into context together. Switching profiles changes what the team knows without changing the agents themselves.</td></tr>
-      <tr class="gloss-row gloss-kit"><td><strong>Rule</strong></td><td>A structured markdown file in <code>src/rune-agency/rules/</code> containing conventions, patterns, and architectural guidance that agents are expected to follow.</td></tr>
+      <tr class="gloss-row gloss-kit"><td><strong>Rule</strong></td><td>A structured markdown file in <code>.claude/rules/</code> containing conventions, patterns, and architectural guidance that agents are expected to follow.</td></tr>
       <tr class="gloss-row gloss-kit"><td><strong>Skill</strong></td><td>A slash-command workflow that launches a structured task pattern on demand. Skills cost zero context until you invoke them.</td></tr>
     </tbody>
   </table>

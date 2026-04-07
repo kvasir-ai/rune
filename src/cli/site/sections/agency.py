@@ -72,7 +72,7 @@ def section_agent_onboarding() -> str:
       <tr><td><strong>Write from scratch</strong></td><td>Your domain is specific and no catalog match exists</td><td>Create a <code>.md</code> file</td></tr>
     </tbody>
   </table>
-  <p>The built-in catalog lives at <code>src/rune-agency/agents/</code> in the rune repository. Additional specialists are available in the <a href='https://github.com/msitarzewski/agency-agents' target='_blank' rel='noopener'>agency-agents catalog</a>.</p>
+  <p>The built-in catalog ships from <code>src/rune-agency/agents/</code> and is deployed into <code>.claude/agents/</code> at runtime. Additional specialists are available in the <a href='https://github.com/msitarzewski/agency-agents' target='_blank' rel='noopener'>agency-agents catalog</a>.</p>
 
   <h2>Step 1 &mdash; Create the file</h2>
   <p>Put the new agent in the phase folder that matches its primary job. Use the naming pattern <code>role.md</code>.</p>
@@ -132,7 +132,7 @@ def section_skills(skills_html: str) -> str:
   <p><strong>Read this when:</strong> you know the job you want done and need the fastest command-level entrypoint instead of browsing the team member by member.</p>
   <p><strong>What you get:</strong> the live slash-command catalog and the distinction between an on-demand workflow surface and the agents or rules it pulls in.</p>
 
-  <p>Skills are slash commands that trigger structured workflows. They live in <code>src/rune-agency/skills/</code> as directories containing a <code>SKILL.md</code> and optional supporting files.</p>
+  <p>Skills are slash commands that trigger structured workflows. They live in <code>.claude/skills/</code> as directories containing a <code>SKILL.md</code> and optional supporting files.</p>
   <p>A useful shortcut: if your request starts with a verb like <em>plan</em>, <em>audit</em>, <em>draft</em>, or <em>release</em>, start with a skill. If it starts with a role like <em>researcher</em> or <em>judge</em>, start with an agent.</p>
 
   <h2>Skill catalog</h2>
