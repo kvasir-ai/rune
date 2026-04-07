@@ -208,6 +208,8 @@ def test_site_generator_emits_valid_search_result_markup() -> None:
     assert 'h1 { font-size: clamp(1.85rem, 2vw + 1.15rem, 2.6rem);' in styles
     assert '.subtitle { font-size: clamp(1rem, 0.35vw + 0.95rem, 1.12rem); color: var(--fg2); margin-bottom: 2rem; max-width: 62ch; }' in styles
     assert "@media (max-width: 480px) {" in styles
+    assert ".breadcrumb { font-size: 0.72rem; margin-bottom: 1.1rem; }" in styles
+    assert ".breadcrumb span { margin: 0 0.22rem; }" in styles
     assert ".stage-progress {\n    display: grid;" in styles
     assert ".card-grid,\n  .agent-grid,\n  .stat-grid { grid-template-columns: 1fr !important; }" in styles
     assert ".content { width: min(100%, var(--content-max-mobile)); padding: calc(var(--mobile-nav-height) + 1rem) clamp(1rem, 3.5vw, 1.25rem) 3rem; }" in styles

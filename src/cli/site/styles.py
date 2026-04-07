@@ -240,6 +240,8 @@ img, svg, video { max-width: 100%; height: auto; }
   .close-btn button { font-size: 1.05rem; padding: 0.25rem 0.55rem; }
   .mobile-brand { margin-left: 0.6rem; font-size: 1.1rem; }
   .content { width: 100%; max-width: none; padding: calc(var(--mobile-nav-height) + 0.85rem) 0.95rem 2.5rem; }
+  .breadcrumb { font-size: 0.72rem; margin-bottom: 1.1rem; }
+  .breadcrumb span { margin: 0 0.22rem; }
   .stage-progress {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
