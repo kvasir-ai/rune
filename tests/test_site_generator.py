@@ -201,9 +201,14 @@ def test_site_generator_emits_valid_search_result_markup() -> None:
     assert "body.mobile-menu-open { overflow: hidden; }" in styles
     assert ".sidebar-backdrop.open {" in styles
     assert ".sidebar.open {\n    display: flex;" in styles
+    assert 'font-size: clamp(0.96rem, 0.12vw + 0.93rem, 1.02rem);' in styles
+    assert '.content { width: min(100%, 78ch); max-width: none; min-width: 0; margin-inline: auto; padding: clamp(1.5rem, 1vw + 1.2rem, 2rem) clamp(1rem, 4vw, 3rem) 4rem; }' in styles
+    assert 'h1 { font-size: clamp(1.85rem, 2vw + 1.15rem, 2.6rem);' in styles
+    assert '.subtitle { font-size: clamp(1rem, 0.35vw + 0.95rem, 1.12rem); color: var(--fg2); margin-bottom: 2rem; max-width: 62ch; }' in styles
     assert "@media (max-width: 480px) {" in styles
     assert ".stage-progress {\n    display: grid;" in styles
     assert ".card-grid,\n  .agent-grid,\n  .stat-grid { grid-template-columns: 1fr !important; }" in styles
+    assert ".content { width: min(100%, 72ch); padding: calc(var(--mobile-nav-height) + 1rem) clamp(1rem, 3.5vw, 1.25rem) 3rem; }" in styles
     assert ".content { width: 100%; max-width: none; padding: calc(var(--mobile-nav-height) + 0.85rem) 0.95rem 2.5rem; }" in styles
     assert ".search-result-item.selected" in styles
     assert "--search-panel-bg:" in styles

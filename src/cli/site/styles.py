@@ -58,6 +58,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: "Inter", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(0.96rem, 0.12vw + 0.93rem, 1.02rem);
   font-optical-sizing: auto;
   line-height: 1.7;
   overflow-x: hidden;
@@ -166,7 +167,7 @@ button {
 .sidebar-footer { padding: 1rem 1.25rem; font-size: 0.7rem; color: var(--fg2); border-top: 1px solid var(--border); margin-top: auto; text-align: center; }
 
 /* -- Content ----------------------------------------------- */
-.content { max-width: 820px; padding: 2rem 3rem 4rem; }
+.content { width: min(100%, 78ch); max-width: none; min-width: 0; margin-inline: auto; padding: clamp(1.5rem, 1vw + 1.2rem, 2rem) clamp(1rem, 4vw, 3rem) 4rem; }
 .breadcrumb { font-size: 0.8rem; color: var(--fg2); margin-bottom: 1.5rem; }
 .breadcrumb button { display: inline; color: var(--fg2); cursor: pointer; background: none; border: none; padding: 0; font-size: inherit; font-family: inherit; width: auto; }
 .breadcrumb button:hover { color: var(--accent); text-decoration: underline; }
@@ -177,14 +178,15 @@ h1, h2, h3, h4 {
   font-weight: 400;
   font-style: normal;
 }
-h1 { font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: 0.01em; }
-h2 { font-size: 1.6rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); letter-spacing: 0.01em; }
-h3 { font-size: 1.15rem; margin: 1.75rem 0 0.5rem; letter-spacing: 0.01em; }
-h4 { font-size: 1rem; margin: 1.25rem 0 0.4rem; letter-spacing: 0.01em; }
-p { margin-bottom: 1rem; color: var(--fg); }
-.subtitle { font-size: 1.05rem; color: var(--fg2); margin-bottom: 2rem; }
+h1 { font-size: clamp(1.85rem, 2vw + 1.15rem, 2.6rem); line-height: 1.06; margin-bottom: 0.5rem; letter-spacing: 0.01em; }
+h2 { font-size: clamp(1.32rem, 1vw + 1rem, 1.82rem); margin: clamp(2rem, 2vw + 1.5rem, 2.5rem) 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); letter-spacing: 0.01em; }
+h3 { font-size: clamp(1.04rem, 0.45vw + 0.95rem, 1.22rem); margin: clamp(1.45rem, 1vw + 1.15rem, 1.75rem) 0 0.5rem; letter-spacing: 0.01em; }
+h4 { font-size: clamp(0.98rem, 0.2vw + 0.93rem, 1.05rem); margin: 1.25rem 0 0.4rem; letter-spacing: 0.01em; }
+p { margin-bottom: 1rem; color: var(--fg); max-width: 68ch; text-wrap: pretty; }
+.subtitle { font-size: clamp(1rem, 0.35vw + 0.95rem, 1.12rem); color: var(--fg2); margin-bottom: 2rem; max-width: 62ch; }
 ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
-li { margin-bottom: 0.3rem; color: var(--fg); }
+li { margin-bottom: 0.3rem; color: var(--fg); max-width: 66ch; }
+img, svg, video { max-width: 100%; height: auto; }
 
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
@@ -214,8 +216,7 @@ li { margin-bottom: 0.3rem; color: var(--fg); }
     backdrop-filter: blur(2px);
   }
   .sidebar.open .close-btn { display: block; }
-  .content { padding: calc(var(--mobile-nav-height) + 1rem) 1.25rem 3rem; }
-  h1 { font-size: 1.6rem; }
+  .content { width: min(100%, 72ch); padding: calc(var(--mobile-nav-height) + 1rem) clamp(1rem, 3.5vw, 1.25rem) 3rem; }
   .nav-item { display: block; width: 100%; padding: 0.6rem 1.25rem 0.6rem 1.5rem; }
   .copy-btn { opacity: 1; }
   table { font-size: 0.78rem; display: block; overflow-x: auto; white-space: nowrap; }
@@ -234,10 +235,6 @@ li { margin-bottom: 0.3rem; color: var(--fg); }
   .close-btn button { font-size: 1.05rem; padding: 0.25rem 0.55rem; }
   .mobile-brand { margin-left: 0.6rem; font-size: 1.1rem; }
   .content { width: 100%; max-width: none; padding: calc(var(--mobile-nav-height) + 0.85rem) 0.95rem 2.5rem; }
-  h1 { font-size: 1.42rem; line-height: 1.15; }
-  h2 { font-size: 1.28rem; }
-  h3 { font-size: 1.02rem; }
-  .subtitle { font-size: 0.98rem; }
   .stage-progress {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
