@@ -4,9 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - docs/**
-      - .github/workflows/scripts/site-index.html
+      - site/assets/**
+      - src/rune-agency/**
+      - src/cli/**
+      - src/cli/site/**
       - .github/workflows/pages.yml
+      - pyproject.toml
 
 permissions:
   contents: read
@@ -26,8 +29,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install rune
+        run: python -m pip install .
+
       - name: Build site
-        run: bash .github/workflows/scripts/build-site.sh
+        run: rune --source-dir . system site
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

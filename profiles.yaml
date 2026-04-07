@@ -1,40 +1,165 @@
 # yaml-language-server: $schema=schemas/profiles.schema.json
 
-# Agents and skills are auto-discovered — ALL deploy to every profile regardless of what is listed here.
-# This file controls which RULES deploy to each profile.
 # Rules under global_rules deploy to every profile. Profile-specific rules add on top.
-
 global_rules:
-  licensing:
-    - open-source-license-compliance
+  core:
+    - core/agent-collaboration
+    - core/hook-runtime-contract
+    - core/operational-constraints
+    - core/rune-operations
+
 
 default:
-  description: Default profile with DAG execution and project management support
+  description: 'Default profile: all agents and shared rules'
+  agents:
+    build:
+      - build/engineer
+    explore:
+      - explore/knowledge-manager
+      - explore/researcher
+    plan:
+      - plan/planner
+      - plan/technical-writer
+    validate:
+      - validate/judge
   rules:
-    collaboration:
-      - dag-execution-format
-      - knowledge-management
-      - toolkit-operations
-      - project-planning
-      - architectural-decision-records
-      - design-patterns
+    build:
+      - build/execution-contract
+    explore:
+      - explore/knowledge-management
+    plan:
+      - plan/dag-execution-format
+      - plan/project-planning
+      - plan/architectural-decision-records
+    validate:
+      - validate/collaboration-validation
+  skills:
+    - core/skill-contract
+    - build/rune
+    - core/rune-demo
+    - plan/write-plan
+    - validate/judge
+    - validate/judge-audit
+    - validate/judge-panel
+    - validate/tw-draft-pr
+    - validate/tw-release
+    - explore/km-audit
+    - explore/km-explore
+    - explore/km-recruit
+    - plan/write-adr
+    - plan/write-product-spec
+    - plan/write-rfc
   hooks:
-    - safety-check
+    - core/safety-check
+    - build/auto-lint
+    - core/on-stage-complete
 
-# Example: a more complete profile showing all supported sections.
-# Copy, rename, and customize.
-#
-# my-profile:
-#   description: What this profile is for — shown in make list-profiles
-#   rules:
-#     collaboration:
-#       - operational-constraints
-#       - git-conventions
-#     my-domain:
-#       - my-rule-one
-#       - my-rule-two
-#   hooks:
-#     - safety-check
-#     - auto-lint
-#   mcps:
-#     - context7
+
+explore:
+  description: 'Phase 1 — Explore. Research focus.'
+  agents:
+    explore:
+      - explore/knowledge-manager
+      - explore/researcher
+    plan:
+      - plan/technical-writer
+      - plan/planner
+    validate:
+      - validate/judge
+  rules:
+    explore:
+      - explore/knowledge-management
+    validate:
+      - validate/collaboration-validation
+  skills:
+    - core/skill-contract
+    - explore/km-explore
+    - explore/km-audit
+  hooks:
+    - core/safety-check
+    - core/session-discipline
+
+
+plan:
+  description: 'Phase 2 — Plan. Decomposition and architecture.'
+  agents:
+    plan:
+      - plan/planner
+      - plan/technical-writer
+    validate:
+      - validate/judge
+    explore:
+      - explore/knowledge-manager
+  rules:
+    plan:
+      - plan/dag-execution-format
+      - plan/project-planning
+      - plan/architectural-decision-records
+    validate:
+      - validate/collaboration-validation
+  skills:
+    - core/skill-contract
+    - plan/write-plan
+    - plan/write-adr
+    - plan/write-rfc
+    - plan/write-product-spec
+    - build/rune
+  hooks:
+    - core/safety-check
+    - core/on-stage-complete
+    - plan/plan-mode-rules
+
+
+build:
+  description: 'Phase 3 — Build. Implementation focus.'
+  agents:
+    build:
+      - build/engineer
+    validate:
+      - validate/judge
+    plan:
+      - plan/technical-writer
+      - plan/planner
+    explore:
+      - explore/knowledge-manager
+  rules:
+    build:
+      - build/execution-contract
+    plan:
+      - plan/dag-execution-format
+    validate:
+      - validate/collaboration-validation
+  skills:
+    - core/skill-contract
+    - build/rune
+  hooks:
+    - core/safety-check
+    - build/auto-lint
+    - core/on-stage-complete
+
+
+validate:
+  description: 'Phase 4 — Validate. Quality gate.'
+  agents:
+    validate:
+      - validate/judge
+    build:
+      - build/engineer
+    plan:
+      - plan/technical-writer
+      - plan/planner
+    explore:
+      - explore/knowledge-manager
+  rules:
+    validate:
+      - validate/collaboration-validation
+  skills:
+    - core/skill-contract
+    - validate/judge
+    - validate/judge-audit
+    - validate/judge-panel
+    - validate/tw-draft-pr
+  hooks:
+    - core/safety-check
+    - core/on-stage-complete
+    - validate/done-criteria

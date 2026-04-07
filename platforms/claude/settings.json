@@ -4,7 +4,7 @@
   "permissions": {
     "allow": [
       "Bash($HOME/.claude/hooks/*)",
-      "Bash(make *)",
+      "Bash(rune *)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",

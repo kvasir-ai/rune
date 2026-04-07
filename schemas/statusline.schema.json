@@ -60,6 +60,26 @@
       "type": "boolean",
       "default": true,
       "description": "Show active worktree name/branch."
+    },
+    "workflow": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active workflow name."
+    },
+    "stage": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active workflow stage."
+    },
+    "wave": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show active wave index."
+    },
+    "task_summary": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show summary of current tasks."
     }
   }
 }

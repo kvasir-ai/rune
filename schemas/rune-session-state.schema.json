@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rune-session-state.schema.json",
+  "title": "rune Claude Workflow Session State",
+  "description": "Runtime workflow state persisted under .rune/session-state.json for Claude-only workflow context.",
+  "type": "object",
+  "required": [
+    "version",
+    "workflow",
+    "current_stage",
+    "current_wave",
+    "ticket",
+    "autonomy_mode",
+    "tasks",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow": {
+      "type": "string",
+      "minLength": 1
+    },
+    "current_stage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "current_wave": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ticket": {
+      "type": "string",
+      "minLength": 1
+    },
+    "autonomy_mode": {
+      "type": "string",
+      "enum": ["interactive", "semi-autonomous", "autonomous"]
+    },
+    "next_agent": {
+      "type": "string"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/task"
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "required": ["id", "title", "agent", "status", "wave", "depends_on"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "blocked", "skipped"]
+        },
+        "wave": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

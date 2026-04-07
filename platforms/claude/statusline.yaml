@@ -19,3 +19,7 @@ session_id: false
 vim_mode: true
 agent_name: true
 worktree: true
+workflow: true
+stage: true
+wave: true
+task_summary: true

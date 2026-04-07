@@ -205,7 +205,7 @@ mark { background: var(--tag); color: var(--tag-fg); padding: 0.1rem 0.2rem; bor
   <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
 
   <h2>Use rune</h2>
-  <pre><code>git clone https://github.com/kvasir-ai/rune.git
+  <pre><code>git clone https://github.com/rune-ai/rune.git
 cd rune
 make use-profile PROFILE=default</code></pre>
   <p>Then start a coding session. Talk to your team:</p>
@@ -231,7 +231,7 @@ make use-profile PROFILE=default</code></pre>
     C --> D["&#x1F331; Grow"]
     D --> A
   </div>
-  <p><strong>Ingest</strong> raw material into <code>src/knowledge/</code>. <strong>Distill</strong> into structured rules. <strong>Shape</strong> rules into role-specific profiles. <strong>Grow</strong> through audits, gap detection, and research. The cycle compounds over time.</p>
+  <p><strong>Ingest</strong> raw material into <code>src/rune-agency/knowledge/</code>. <strong>Distill</strong> into structured rules. <strong>Shape</strong> rules into role-specific profiles. <strong>Grow</strong> through audits, gap detection, and research. The cycle compounds over time.</p>
 
 </div>
 
@@ -247,7 +247,7 @@ make use-profile PROFILE=default</code></pre>
   <tr><td>Linux / WSL</td><td><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></td></tr>
   </table>
 
-  <pre><code>git clone https://github.com/kvasir-ai/rune.git && cd rune && make use-profile PROFILE=default</code></pre>
+  <pre><code>git clone https://github.com/rune-ai/rune.git && cd rune && make use-profile PROFILE=default</code></pre>
 
   <p>Verify the installation:</p>
   <pre><code>make verify          # check deployed state
@@ -268,7 +268,7 @@ make list-skills     # browse the workflows</code></pre>
   <tr><th>Source</th><th>What You Get</th></tr>
   <tr><td><a href="https://github.com/msitarzewski/agency-agents">agency-agents</a></td><td>Curated agent library for Claude Code — drop-in specialists for development, testing, security, and more</td></tr>
   <tr><td><a href="https://github.com/anthropics/claude-code-agents">anthropics/claude-code-agents</a></td><td>Official Anthropic agent examples</td></tr>
-  <tr><td>Build your own</td><td>Create <code>src/agents/core/my-agent.md</code> with YAML frontmatter and a system prompt</td></tr>
+  <tr><td>Build your own</td><td>Create <code>src/rune-agency/agents/core/my-agent.md</code> with YAML frontmatter and a system prompt</td></tr>
   </table>
 
   <p>rune ships with four orchestration agents (Planner, Judge, Technical Writer, Knowledge Manager) that coordinate the three-phase workflow. Domain specialists — developer, tester, security, architect — are yours to choose.</p>
@@ -276,7 +276,7 @@ make list-skills     # browse the workflows</code></pre>
   <h3>What rune adds</h3>
   <p>Any agent becomes a rune agent when it participates in a DAG. rune handles the coordination: wave computation, parallel dispatch, context injection between tasks, token tracking. The agent just does its job — rune handles the choreography.</p>
 
-  <p>Agents auto-discover from <code>src/agents/</code> — no registration needed. Drop a markdown file, deploy the profile, and the agent is available.</p>
+  <p>Agents auto-discover from <code>src/rune-agency/agents/</code> — no registration needed. Drop a markdown file, deploy the profile, and the agent is available.</p>
 </div>
 
 <!-- TALK TO YOUR TEAM -->
@@ -289,7 +289,7 @@ make list-skills     # browse the workflows</code></pre>
   <table>
   <tr><th>You say</th><th>What happens</th></tr>
   <tr><td><code>"help me understand this repo"</code></td><td>Agents research the codebase and return a structured walkthrough</td></tr>
-  <tr><td><code>/km-onboard</code></td><td>Knowledge Manager analyzes repo architecture for onboarding</td></tr>
+  <tr><td><code>/km-explore</code></td><td>Knowledge Manager analyzes repo architecture for onboarding</td></tr>
   <tr><td><code>/rune-demo</code></td><td>Run a showcase DAG with simulated agents — see the system in action</td></tr>
   </table>
 
@@ -344,7 +344,7 @@ make list-skills     # browse the workflows</code></pre>
 <div class="section" id="rules">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Rules</div>
   <h1>&#x1F4D6; Rules</h1>
-  <p>Rules are plain markdown files in <code>src/rules/</code> that agents load as context. They encode conventions, standards, patterns, and domain knowledge. A rule about SQL formatting shapes how every agent writes SQL. A rule about git conventions shapes how every agent commits.</p>
+  <p>Rules are plain markdown files in <code>src/rune-agency/rules/</code> that agents load as context. They encode conventions, standards, patterns, and domain knowledge. A rule about SQL formatting shapes how every agent writes SQL. A rule about git conventions shapes how every agent commits.</p>
   <p>Rules are not code. They are structured knowledge — tables, checklists, code blocks — that agents read and follow.</p>
 
   <h3>Quality criteria</h3>
@@ -398,7 +398,7 @@ make context-budget                    # measure footprint</code></pre>
   <tr><td><code>/tw-draft-pr</code></td><td>Technical Writer</td><td>Draft a PR description</td></tr>
   <tr><td><code>/tw-release</code></td><td>Technical Writer</td><td>Prepare a release (changelog, notes, version, tag)</td></tr>
   <tr><td><code>/km-audit</code></td><td>Knowledge Manager</td><td>Audit knowledge base health</td></tr>
-  <tr><td><code>/km-onboard</code></td><td>Knowledge Manager</td><td>Analyze repo architecture for onboarding</td></tr>
+  <tr><td><code>/km-explore</code></td><td>Knowledge Manager</td><td>Analyze repo architecture for onboarding</td></tr>
   </table>
 
   <h3>SSDLC cycle</h3>
@@ -408,7 +408,7 @@ make context-budget                    # measure footprint</code></pre>
   <tr><td>&#x2699; Execute</td><td>/rune</td></tr>
   <tr><td>&#x2696; Review</td><td>/judge, /judge-audit, /judge-panel</td></tr>
   <tr><td>&#x1F680; Ship</td><td>/tw-draft-pr, /tw-release</td></tr>
-  <tr><td>&#x1F4DA; Maintain</td><td>/km-audit, /km-onboard</td></tr>
+  <tr><td>&#x1F4DA; Maintain</td><td>/km-audit, /km-explore</td></tr>
   </table>
 </div>
 
@@ -416,7 +416,7 @@ make context-budget                    # measure footprint</code></pre>
 <div class="section" id="hooks">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Hooks</div>
   <h1>&#x1F6A7; Hooks</h1>
-  <p>Hooks are Python scripts that fire on Claude Code/OpenCode lifecycle events. They run automatically — no opt-in required.</p>
+  <p>Hooks are Python scripts that fire on Claude Code lifecycle events. They run automatically — no opt-in required.</p>
 
   <table>
   <tr><th>Hook</th><th>Event</th><th>What It Does</th></tr>
@@ -432,14 +432,14 @@ make context-budget                    # measure footprint</code></pre>
 <div class="section" id="knowledge-inbox">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Knowledge Inbox</div>
   <h1>&#x1F4E5; Knowledge Inbox</h1>
-  <p><code>src/knowledge/</code> is the staging area. Raw material goes in — PDFs, research summaries, extracted docs. The Knowledge Manager distills it into structured rules in <code>src/rules/</code>.</p>
+  <p><code>src/rune-agency/knowledge/</code> is the staging area. Raw material goes in — PDFs, research summaries, extracted docs. The Knowledge Manager distills it into structured rules in <code>src/rune-agency/rules/</code>.</p>
   <p>Never skip the inbox by writing directly to rules. Raw material stays in the inbox after distillation — it serves as the source reference.</p>
 
   <div class="mermaid">
   graph LR
-    R["Raw material"] --> I["src/knowledge/"]
+    R["Raw material"] --> I["src/rune-agency/knowledge/"]
     I --> D["Knowledge Manager distills"]
-    D --> S["src/rules/"]
+    D --> S["src/rune-agency/rules/"]
     S --> P["profiles.yaml"]
     P --> C["Agent context"]
   </div>
@@ -570,7 +570,7 @@ make context-budget                    # measure footprint</code></pre>
 <div class="section" id="safety">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Concepts <span>›</span> Safety</div>
   <h1>&#x1F6E1; Safety</h1>
-  <p>The <code>safety-check</code> hook blocks destructive commands before the shell sees them. Configurable via <code>src/hooks/safety-patterns.yaml</code>.</p>
+  <p>The <code>safety-check</code> hook blocks destructive commands before the shell sees them. Configurable via <code>src/rune-agency/hooks/safety-patterns.yaml</code>.</p>
 
   <table>
   <tr><th>Category</th><th>What Is Blocked</th></tr>
@@ -608,7 +608,7 @@ make context-budget                    # measure footprint</code></pre>
 <div class="section" id="ref-safety-patterns">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Safety Patterns</div>
   <h1>&#x1F4CB; Safety Patterns</h1>
-  <p>Configurable in <code>src/hooks/safety-patterns.yaml</code>.</p>
+  <p>Configurable in <code>src/rune-agency/hooks/safety-patterns.yaml</code>.</p>
   <pre><code># Add a new pattern:
 - name: kubectl-delete
   match: '\bkubectl\s+delete\b'
@@ -630,7 +630,7 @@ make context-budget                    # measure footprint</code></pre>
 <div class="section" id="ref-lint-rules">
   <div class="breadcrumb"><a href="#" data-section="home">Home</a> <span>›</span> Reference <span>›</span> Auto-Lint Rules</div>
   <h1>&#x1F9F9; Auto-Lint Rules</h1>
-  <p>Configurable in <code>src/hooks/auto-lint-rules.yaml</code>. Runs after every file write.</p>
+  <p>Configurable in <code>src/rune-agency/hooks/auto-lint-rules.yaml</code>. Runs after every file write.</p>
 
   <table>
   <tr><th>Extension</th><th>Commands</th><th>Condition</th></tr>

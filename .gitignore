@@ -1,6 +1,9 @@
 # Local state — not committed
 .current-profile
 .rune/
+.agents/
+.codex/
+.gemini/
 
 # IDE
 .idea/
@@ -11,6 +14,8 @@
 # Temporary files
 *.tmp
 *.bak
+*.cast
+claude-replay-emoji.gif
 
 # Python bytecode
 __pycache__/
@@ -28,11 +33,13 @@ __pycache__/
 # Claude
 .claude/
 .DS_Store
-.ai-toolkit-managed-mcps.json
+.rune-managed-mcps.json
 
 # Build artifacts
 dist/
 *.egg-info/
 build/
-site/
+site/*
+!site/assets/
+!site/assets/**
 .current-profile

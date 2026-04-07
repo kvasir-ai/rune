@@ -1,0 +1,144 @@
+{% import "_macros.html" as ui %}
+<section class="section" id="rune-cheatsheet">
+  {{ ui.manual_breadcrumb("Quick Reference") }}
+  <h1>RUNE-QUICKREF(7)</h1>
+  <p class="subtitle">Fast lookup companion to <code class="copyable">RUNE(1)</code>.</p>
+
+  <h2 class="man-section">NAME</h2>
+  <p><strong>rune-quickref</strong> &mdash; common rune commands grouped by task</p>
+
+  <h2 class="man-section">DESCRIPTION</h2>
+  <p>Use this page when you already know the job you need to do and want the shortest command lookup. For full command semantics, flags, and command-family structure, use <button data-section="rune-man-1"><code class="copyable">RUNE(1)</code></button>.</p>
+
+  <h2 class="man-section">COMMON OPERATIONS</h2>
+  <div class="card-grid">
+    {% for card in cheatsheet_cards %}
+    <button class="card" data-section="{{ card.section_id }}">
+      <span class="emoji" aria-hidden="true">{{ card.emoji | safe }}</span>
+      <h4>{{ card.title }}</h4>
+      <p>{{ card.command | safe }}</p>
+      <p>{{ card.purpose }}</p>
+    </button>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="rune-man-1">
+  {{ ui.manual_breadcrumb("RUNE(1)") }}
+  <h1>RUNE(1)</h1>
+
+  <h2 class="man-section">NAME</h2>
+  <p><strong>rune</strong> &mdash; profile, resource, and orchestration manager for AI coding assistants</p>
+
+  <h2 class="man-section">SYNOPSIS</h2>
+  <pre><code><strong>rune</strong> [<em>GLOBAL_OPTIONS</em>] <em>COMMAND</em> [<em>ARGS</em>]...</code></pre>
+
+  <h2 class="man-section">DESCRIPTION</h2>
+  <p><strong>rune</strong> installs, inspects, and manages the knowledge, workflow, and guardrail surface used by the Rune CLI. Use it to set up profiles, inspect deployed resources, validate configuration, and manage MCP integrations.</p>
+
+  <h2 class="man-section">GLOBAL OPTIONS</h2>
+  {{ ui.cli_table(("Option", "Description"), man_options_rows) }}
+
+  <h2 class="man-section">COMMAND GROUPS</h2>
+  {{ ui.cli_table(("Command Family", "Purpose"), command_summary_rows) }}
+
+  <h2 class="man-section">EXAMPLES</h2>
+  {{ ui.cli_table(("Command", "Purpose"), man_example_rows) }}
+</section>
+
+{% for group in command_groups %}
+<section class="section" id="{{ group.section_id }}">
+  {{ ui.manual_breadcrumb(group.label) }}
+  <h1>RUNE(1) &mdash; {{ group.page_title }}</h1>
+  <h2 class="man-section">NAME</h2>
+  <p><strong>{{ group.command_name }}</strong> &mdash; {{ (group.description or (group.label ~ " command reference.")) | lower }}</p>
+
+  <h2 class="man-section">SYNOPSIS</h2>
+  <pre><code>{{ group.synopsis }}</code></pre>
+
+  <h2 class="man-section">DESCRIPTION</h2>
+  {% if group.description %}
+  <p>{{ group.description }}</p>
+  {% endif %}
+
+  <h2 class="man-section">COMMANDS</h2>
+  {{ ui.cli_table(("Command", "Description"), group.rows) }}
+</section>
+{% endfor %}
+
+<section class="section" id="rune-man-env">
+  {{ ui.manual_breadcrumb("Environment & Files") }}
+  <h1>RUNE(1) &mdash; Environment &amp; Files</h1>
+  <h2 class="man-section">EXIT STATUS</h2>
+  {{ ui.cli_table(("Code", "Meaning"), exit_status_rows) }}
+
+  <h2 class="man-section">ENVIRONMENT</h2>
+  {{ ui.cli_table(("Variable", "Description"), environment_rows) }}
+</section>
+
+<section class="section" id="rune-man-profiles">
+  {{ ui.manual_breadcrumb("RUNE-PROFILES(5)") }}
+  <h1>RUNE-PROFILES(5)</h1>
+
+  <h2 class="man-section">NAME</h2>
+  <p><strong>rune-profiles</strong> &mdash; file format and operational reference for Rune profiles</p>
+
+  <h2 class="man-section">DESCRIPTION</h2>
+  <p>A profile is a named set of agents, rules, skills, hooks, and MCP integrations that Rune loads for one kind of work. Keep each profile focused on one operating context.</p>
+
+  <h2 class="man-section">FILES</h2>
+  {{ ui.cli_table(("Path", "Purpose"), profile_file_rows) }}
+
+  <h2 class="man-section">PROFILE FIELDS</h2>
+  {{ ui.cli_table(("Field", "Use"), profile_field_rows) }}
+
+  <h2 class="man-section">AVAILABLE PROFILES</h2>
+  {{ ui.cli_table(("Profile", "Description"), available_profile_rows) }}
+
+  <h2 class="man-section">EXAMPLE PROFILE</h2>
+  <p>This example comes from <code class="copyable">profiles.yaml</code>:</p>
+  <pre><code>{{ example_profile_block | e }}</code></pre>
+
+  <h2 class="man-section">WORKFLOW</h2>
+  <ol>
+    {% for step in profile_create_steps %}
+    <li>{{ step | safe }}</li>
+    {% endfor %}
+  </ol>
+
+  <p>If you are not sure where to start, ask the assistant to draft a small YAML block for the work you want to support. Then review it, trim it, and validate it. You can also use <code class="copyable">rune setup</code> if you want a guided flow.</p>
+</section>
+
+<section class="section" id="rune-man-tools">
+  {{ ui.manual_breadcrumb("RUNE-TOOLS(7)") }}
+  <h1>RUNE-TOOLS(7)</h1>
+
+  <h2 class="man-section">NAME</h2>
+  <p><strong>rune-tools</strong> &mdash; registry reference for external tools used by Rune</p>
+
+  <h2 class="man-section">DESCRIPTION</h2>
+  <p>The Rune tool registry defines which external binaries Rune knows about, how it verifies them, and where operators should look for upstream installation guidance.</p>
+
+  <h2 class="man-section">FILES</h2>
+  {{ ui.cli_table(("Path", "Purpose"), tools_file_rows) }}
+
+  <h2 class="man-section">REGISTRY FIELDS</h2>
+  {{ ui.cli_table(("Field", "Use"), registry_field_rows) }}
+
+  <h2 class="man-section">FORMAT</h2>
+  <pre><code>&lt;tool-key&gt;:
+  binary: command-name
+  description: short summary
+  url: https://project.example
+  check: optional custom verification command</code></pre>
+
+  <h2 class="man-section">AVAILABLE TOOLS</h2>
+  {{ ui.cli_table(("Registry key", "Binary", "Description", "Check", "URL"), available_tool_rows) }}
+
+  <h2 class="man-section">WORKFLOW</h2>
+  <ol>
+    {% for step in tool_add_steps %}
+    <li>{{ step | safe }}</li>
+    {% endfor %}
+  </ol>
+</section>

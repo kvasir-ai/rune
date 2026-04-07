@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "agent.schema.json",
   "title": "Agent Frontmatter",
-  "description": "YAML frontmatter for agent .md files. Claude Code native format with optional opencode_description for OpenCode transformation.",
+  "description": "YAML frontmatter for agent .md files.",
   "type": "object",
   "required": ["name", "description"],
   "additionalProperties": false,
@@ -27,7 +27,7 @@
     },
     "color": {
       "type": "string",
-      "enum": ["red", "orange", "yellow", "green", "teal", "cyan", "blue", "indigo", "violet", "purple", "pink", "gray", "white"],
+      "enum": ["red", "orange", "yellow", "gold", "green", "teal", "cyan", "blue", "indigo", "violet", "purple", "pink", "gray", "white"],
       "description": "Display color (named CSS color)."
     },
     "emoji": {
@@ -39,9 +39,10 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+$",
       "description": "Semantic version."
     },
-    "opencode_description": {
+    "phase": {
       "type": "string",
-      "description": "Shorter description used for OpenCode. Falls back to description if absent."
+      "enum": ["explore", "plan", "build", "validate"],
+      "description": "Three-phase model placement: explore (research/context), plan (decompose/design), build (implement), validate (review/verify)."
     }
   }
 }

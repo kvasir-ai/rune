@@ -1,0 +1,130 @@
+<header class="mobile-nav">
+  <button class="hamburger" id="menu-open" aria-label="Open menu">&#x2630;</button>
+  <button class="title mobile-brand" data-section="home" aria-label="Go to Home">Rune</button>
+</header>
+
+<div class="layout">
+
+<!-- -- Sidebar ----------------------------------- -->
+<nav class="sidebar" id="sidebar" aria-label="Main navigation">
+  <div class="close-btn"><button id="menu-close" aria-label="Close menu">&#x2715;</button></div>
+  <button class="sidebar-brand" data-section="home" aria-label="Go to Home">Rune</button>
+  <div class="search">
+    <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
+    <input type="text" id="search" placeholder="Search docs, agents, skills..." autocomplete="off" aria-label="Search documentation" aria-controls="search-results">
+    <div class="search-results" id="search-results" role="listbox"></div>
+  </div>
+
+  <div class="nav-section" id="nav-getting-started">
+    <button class="nav-section-title" data-toggle="nav-getting-started" aria-expanded="true">Getting Started <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item active" data-section="home"><span class="emoji" aria-hidden="true">&#x1F3E0;</span> Start Here</button>
+      <button class="nav-item" data-section="quick-start"><span class="emoji" aria-hidden="true">&#x26A1;&#xFE0F;</span> Quick Start</button>
+      <button class="nav-item" data-section="talk"><span class="emoji" aria-hidden="true">&#x1F4AC;</span> Talk to Your Team</button>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-core-concept">
+    <button class="nav-section-title" data-toggle="nav-core-concept" aria-expanded="false">The Core Concept <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <div class="nav-sub-group collapsed" id="nav-sub-fourphase">
+        <button class="nav-sub-group-title" data-subtoggle="nav-sub-fourphase" aria-expanded="false"><span class="emoji" aria-hidden="true">&#x1F3AF;</span> Four-Phase Model <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+        <div class="nav-sub-items">
+          <button class="nav-sub-item" data-section="four-phase-model"><span class="emoji" aria-hidden="true">&#x1F4CB;</span> Overview</button>
+          <button class="nav-sub-item" data-section="phase-1-explore"><span class="emoji" aria-hidden="true">&#x1F50D;</span> Phase 1: Explore</button>
+          <button class="nav-sub-item" data-section="phase-2-plan"><span class="emoji" aria-hidden="true">&#x1F5FA;&#xFE0F;</span> Phase 2: Plan</button>
+          <button class="nav-sub-item" data-section="phase-3-build"><span class="emoji" aria-hidden="true">&#x1F3D7;&#xFE0F;</span> Phase 3: Build</button>
+          <button class="nav-sub-item" data-section="phase-4-validate"><span class="emoji" aria-hidden="true">&#x2705;</span> Phase 4: Validate</button>
+        </div>
+      </div>
+      <button class="nav-item" data-section="profiles"><span class="emoji" aria-hidden="true">&#x1F504;</span> Profiles</button>
+      <button class="nav-item" data-section="dag-dispatch"><span class="emoji" aria-hidden="true">&#x1F500;</span> DAG Dispatch</button>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-rune-cli">
+    <button class="nav-section-title gold" data-toggle="nav-rune-cli" aria-expanded="false">Manual Pages <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item" data-section="rune-cheatsheet"><span class="emoji" aria-hidden="true">&#x26A1;&#xFE0F;</span> Quick Reference</button>
+      <button class="nav-item" data-section="rune-man-1"><span class="emoji" aria-hidden="true">&#x1F4D6;</span> RUNE(1)</button>
+      <div class="nav-sub-group collapsed" id="nav-sub-rune1">
+        <button class="nav-sub-group-title" data-subtoggle="nav-sub-rune1" aria-expanded="false"><span class="emoji" aria-hidden="true">&#x1F4CB;</span> Command Sections <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+        <div class="nav-sub-items">
+          <button class="nav-sub-item" data-section="rune-cli-top"><span class="emoji" aria-hidden="true">&#x26A1;&#xFE0F;</span> Top-Level Commands</button>
+          <button class="nav-sub-item" data-section="rune-cli-profile"><span class="emoji" aria-hidden="true">&#x1F464;</span> Profile Commands</button>
+          <button class="nav-sub-item" data-section="rune-cli-resource"><span class="emoji" aria-hidden="true">&#x1F4E6;</span> Resource Commands</button>
+          <button class="nav-sub-item" data-section="rune-cli-system"><span class="emoji" aria-hidden="true">&#x2699;&#xFE0F;</span> System Commands</button>
+          <button class="nav-sub-item" data-section="rune-cli-mcp"><span class="emoji" aria-hidden="true">&#x1F50C;</span> MCP Commands</button>
+          <button class="nav-sub-item" data-section="rune-man-env"><span class="emoji" aria-hidden="true">&#x1F4C1;</span> Environment &amp; Files</button>
+        </div>
+      </div>
+      <button class="nav-item" data-section="rune-man-profiles"><span class="emoji" aria-hidden="true">&#x1F464;</span> RUNE-PROFILES(5)</button>
+      <button class="nav-item" data-section="rune-man-tools"><span class="emoji" aria-hidden="true">&#x1F527;</span> RUNE-TOOLS(7)</button>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-rune-agency">
+    <button class="nav-section-title gold" data-toggle="nav-rune-agency" aria-expanded="false">Rune Agency <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item" data-section="agents"><span class="emoji" aria-hidden="true">&#x1F916;</span> Agents</button>
+      <button class="nav-item" data-section="skills"><span class="emoji" aria-hidden="true">&#x1F4DD;</span> Skills</button>
+      <button class="nav-item" data-section="rules-catalog"><span class="emoji" aria-hidden="true">&#x1F4DA;</span> Rules</button>
+      <button class="nav-item" data-section="agent-onboarding"><span class="emoji" aria-hidden="true">&#x2795;</span> Onboarding an Agent</button>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-operating-guides">
+    <button class="nav-section-title" data-toggle="nav-operating-guides" aria-expanded="false">Operating Guides <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item" data-section="operating-guides"><span class="emoji" aria-hidden="true">&#x1F9ED;</span> Overview</button>
+      <button class="nav-item" data-section="knowledge-pipeline"><span class="emoji" aria-hidden="true">&#x1F4E5;</span> Knowledge Pipeline</button>
+      <button class="nav-item" data-section="prompting"><span class="emoji" aria-hidden="true">&#x1F9ED;</span> Knowledge Distance</button>
+      <button class="nav-item" data-section="token-economics"><span class="emoji" aria-hidden="true">&#x1F4B0;</span> Token Economics</button>
+      <button class="nav-item" data-section="markdown-management"><span class="emoji" aria-hidden="true">&#x1F4C4;</span> Documentation Structure</button>
+      <button class="nav-item" data-section="project-management"><span class="emoji" aria-hidden="true">&#x1F4CB;</span> Planning for DAGs</button>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-hooks">
+    <button class="nav-section-title" data-toggle="nav-hooks" aria-expanded="false">Hooks <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item" data-section="hooks-overview"><span class="emoji" aria-hidden="true">&#x1F9F7;</span> Overview</button>
+      <div class="nav-sub-group collapsed" id="nav-sub-hooks-safety">
+        <button class="nav-sub-group-title" data-subtoggle="nav-sub-hooks-safety" aria-expanded="false"><span class="emoji" aria-hidden="true">&#x1F6E1;&#xFE0F;</span> Safety <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+        <div class="nav-sub-items">
+          <button class="nav-sub-item" data-section="hook-safety-check"><span class="emoji" aria-hidden="true">&#x1F6AB;</span> Safety Check</button>
+          <button class="nav-sub-item" data-section="hook-done-criteria"><span class="emoji" aria-hidden="true">&#x2705;</span> Done Criteria</button>
+        </div>
+      </div>
+      <div class="nav-sub-group collapsed" id="nav-sub-hooks-workflow">
+        <button class="nav-sub-group-title" data-subtoggle="nav-sub-hooks-workflow" aria-expanded="false"><span class="emoji" aria-hidden="true">&#x2699;&#xFE0F;</span> Workflow <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+        <div class="nav-sub-items">
+          <button class="nav-sub-item" data-section="hook-stage-complete"><span class="emoji" aria-hidden="true">&#x1F3C1;</span> Stage Complete</button>
+          <button class="nav-sub-item" data-section="hook-plan-mode-rules"><span class="emoji" aria-hidden="true">&#x1F4D0;</span> Plan Mode Rules</button>
+          <button class="nav-sub-item" data-section="hook-session-discipline"><span class="emoji" aria-hidden="true">&#x1F9ED;</span> Session Discipline</button>
+        </div>
+      </div>
+      <div class="nav-sub-group collapsed" id="nav-sub-hooks-quality">
+        <button class="nav-sub-group-title" data-subtoggle="nav-sub-hooks-quality" aria-expanded="false"><span class="emoji" aria-hidden="true">&#x2728;&#xFE0F;</span> Quality <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+        <div class="nav-sub-items">
+          <button class="nav-sub-item" data-section="hook-auto-lint"><span class="emoji" aria-hidden="true">&#x2728;&#xFE0F;</span> Auto-Lint</button>
+          <button class="nav-sub-item" data-section="hook-context-awareness"><span class="emoji" aria-hidden="true">&#x26A0;&#xFE0F;</span> Context Awareness</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-section collapsed" id="nav-reference">
+    <button class="nav-section-title" data-toggle="nav-reference" aria-expanded="false">Reference <span class="chevron" aria-hidden="true">&#x25BC;</span></button>
+    <div class="nav-items">
+      <button class="nav-item" data-section="reference-overview"><span class="emoji" aria-hidden="true">&#x1F4DA;</span> Overview</button>
+      <button class="nav-item" data-section="references"><span class="emoji" aria-hidden="true">&#x1F517;</span> References</button>
+      <button class="nav-item" data-section="glossary"><span class="emoji" aria-hidden="true">&#x1F4D6;</span> Glossary</button>
+      <button class="nav-item" data-section="sitemap"><span class="emoji" aria-hidden="true">&#x1F30D;</span> Sitemap</button>
+    </div>
+  </div>
+  <div class="sidebar-footer">{% if version %}<span style="font-weight:600;margin-right:0.5rem;">{{ version }}</span>&nbsp;&middot;&nbsp;{% endif %}Last updated: {{ build_date }}</div>
+</nav>
+
+<!-- -- Content ----------------------------------- -->
+<main class="content" id="content">
