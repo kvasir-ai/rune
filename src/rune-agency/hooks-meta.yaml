@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../schemas/hooks-meta.schema.json
+# Hook event bindings — wires each hook to platform events.
+
+core/safety-check:
+  description: Block dangerous commands before execution
+  events:
+    PreToolUse:
+      matcher: Bash
+      timeout: 10
+
+build/auto-lint:
+  description: Auto-format files after writes
+  events:
+    PostToolUse:
+      matcher: "Write|Edit"
+      timeout: 30
+
+core/on-stage-complete:
+  description: Pipeline stage guidance on agent stop
+  events:
+    SubagentStop:
+      timeout: 30
+    Stop:
+      timeout: 30
+
+core/session-discipline:
+  description: Inject Claude workflow discipline when a workflow is active
+  events:
+    Notification:
+      timeout: 10
+
+plan/plan-mode-rules:
+  description: Reinforce planning rules during active workflow planning
+  events:
+    Notification:
+      timeout: 10
+
+validate/done-criteria:
+  description: Remind Claude to verify completion evidence before stopping
+  events:
+    SubagentStop:
+      timeout: 10
+    Stop:
+      timeout: 10
+
+core/context-awareness:
+  description: Warn when context pressure is high during active workflows
+  events:
+    Notification:
+      timeout: 10

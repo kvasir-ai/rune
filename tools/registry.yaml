@@ -22,11 +22,6 @@ peon-ping:
   description: model pack rotation
   url: https://github.com/PeonPing/peon-ping
 
-uv:
-  binary: uv
-  description: Python package manager (required)
-  url: https://github.com/astral-sh/uv
-
 yq:
   binary: yq
   description: YAML processor (used by Makefile)

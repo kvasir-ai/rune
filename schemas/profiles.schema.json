@@ -1,16 +1,19 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "profiles.schema.json",
-  "title": "AI Toolkit Profiles",
+  "title": "Rune Profiles",
   "description": "Role-based profiles that select agents, rules, skills, hooks, and MCPs.",
   "type": "object",
   "properties": {
     "global_rules": {
       "type": "object",
-      "description": "Rules deployed to every profile automatically. Same structure as profile-level rules: grouped by arbitrary label.",
+      "description": "Rules deployed to every profile automatically. Same structure as profile-level rules: grouped by arbitrary label. Values use category/short-name format.",
       "additionalProperties": {
         "type": "array",
-        "items": { "type": "string" },
+        "items": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+        },
         "uniqueItems": true
       }
     }
@@ -28,26 +31,50 @@
           "type": "string",
           "description": "Human-readable profile description."
         },
+        "agents": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+            },
+            "uniqueItems": true
+          },
+          "description": "Agents grouped by logical label. Keys are arbitrary display labels. Values use category/short-name format (e.g. 'core/judge', 'in-training/go-developer')."
+        },
         "rules": {
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+            },
             "uniqueItems": true
           },
-          "description": "Rules grouped by logical label (e.g. 'data', 'collaboration'). Keys are arbitrary — they do not need to match src/rules/ subdirectory names. Rule filenames must be unique repo-wide; the deploy script resolves them by recursive search regardless of the key used."
+          "description": "Rules grouped by logical label. Keys are arbitrary display labels. Values use category/short-name format (e.g. 'data/sql-conventions', 'eng/go-versioning')."
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true,
+          "description": "Skill references in category/short-name format (e.g. 'core/judge', 'data/investigate')."
         },
         "hooks": {
           "type": "array",
           "items": { "type": "string" },
           "uniqueItems": true,
-          "description": "Hook names (match filenames in src/hooks/ without extension)."
+          "description": "Hook names (match filenames in src/rune-agency/hooks/ without extension)."
         },
         "mcps": {
           "type": "array",
           "items": { "type": "string" },
           "uniqueItems": true,
-          "description": "MCP names (match top-level keys in src/mcps.yaml)."
+          "description": "MCP names (match top-level keys in src/rune-agency/mcps.yaml)."
         }
       }
     }

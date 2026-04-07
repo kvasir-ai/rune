@@ -81,6 +81,10 @@ DEFAULT_CONFIG = {
     "vim_mode": True,
     "agent_name": True,
     "worktree": True,
+    "workflow": True,
+    "stage": True,
+    "wave": True,
+    "task_summary": True,
 }
 
 
@@ -143,6 +147,40 @@ def format_duration(ms: int) -> str:
     return f"{mins}m {secs}s"
 
 
+def load_workflow_state(cwd: str) -> dict:
+    """Load `.rune/session-state.json` for the current workspace."""
+    if not cwd:
+        return {}
+    try:
+        state_file = Path(cwd) / ".rune" / "session-state.json"
+        if not state_file.exists():
+            return {}
+        return json.loads(state_file.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def build_task_summary(tasks: list[dict]) -> str:
+    """Summarize task state counts for the statusline."""
+    counts = {"running": 0, "pending": 0, "completed": 0, "failed": 0, "blocked": 0}
+    for task in tasks:
+        status = task.get("status", "")
+        if status in counts:
+            counts[status] += 1
+    parts: list[str] = []
+    if counts["running"]:
+        parts.append(f"run:{counts['running']}")
+    if counts["pending"]:
+        parts.append(f"todo:{counts['pending']}")
+    if counts["completed"]:
+        parts.append(f"done:{counts['completed']}")
+    if counts["failed"]:
+        parts.append(f"fail:{counts['failed']}")
+    if counts["blocked"]:
+        parts.append(f"blocked:{counts['blocked']}")
+    return " ".join(parts)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 
@@ -151,6 +189,7 @@ def build_status_lines(data: dict, cfg: dict) -> list[str]:
     cwd = data.get("workspace", {}).get("current_dir") or data.get("cwd", "")
     cw = data.get("context_window") or {}
     cost = data.get("cost") or {}
+    workflow_state = load_workflow_state(cwd)
 
     # ── Line 1: location and identity ────────────────────────────────────
 
@@ -205,7 +244,24 @@ def build_status_lines(data: dict, cfg: dict) -> list[str]:
         elif vim == "INSERT":
             parts.append(f"{BOLD}{GREEN}[I]{RESET}")
 
+    workflow_parts: list[str] = []
+    if workflow_state:
+        if cfg["workflow"]:
+            workflow = workflow_state.get("workflow", "")
+            if workflow:
+                workflow_parts.append(f"{MAGENTA}{workflow}{RESET}")
+        if cfg["stage"]:
+            stage = workflow_state.get("current_stage", "")
+            if stage:
+                workflow_parts.append(f"{DIM}stage:{RESET}{MAGENTA}{stage}{RESET}")
+        if cfg["wave"]:
+            wave = workflow_state.get("current_wave")
+            if wave is not None:
+                workflow_parts.append(f"{DIM}wave:{RESET}{MAGENTA}{wave}{RESET}")
+
     lines = [SEP.join(parts)] if parts else []
+    if workflow_parts:
+        lines[0] = SEP.join([lines[0], *workflow_parts]) if lines else SEP.join(workflow_parts)
 
     # ── Line 2: metrics (only if any metric feature is enabled) ──────────
 
@@ -225,6 +281,11 @@ def build_status_lines(data: dict, cfg: dict) -> list[str]:
         ms = cost.get("total_duration_ms")
         if ms is not None:
             metrics.append(f"⏱ {format_duration(int(ms))}")
+
+    if cfg["task_summary"] and workflow_state:
+        summary = build_task_summary(workflow_state.get("tasks", []))
+        if summary:
+            metrics.append(f"{BLUE}{summary}{RESET}")
 
     if metrics:
         lines.append(SEP.join(metrics))

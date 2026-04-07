@@ -1,33 +1,36 @@
-# rune — Agent System
+# Rune Agency — Phase Agents
 
-This file describes the agent team, the key concepts, and how to help the user. You operate everything through natural language.
+The **Rune Agency** team operates as an orchestrated group of experts within the Four-Phase Model. Agents never work in isolation; they are deployed within **Profiles** to provide specialized logic for the current task.
 
-## Your team
+## The Team
 
-| Agent | What they do | How to call them |
+| Agent | Role in the Agency | Activation Phrase |
 |---|---|---|
-| Planner | Break work into tasks with dependencies | `"plan this feature"`, `"break this down"` |
-| Judge | Validate correctness and safety across domains | `"hey judge"`, `"validate this"`, `"second opinion"` |
-| Technical Writer | Write docs, ADRs, READMEs, agent definitions | `"document this"`, `"write a README"` |
-| Knowledge Manager | Audit rules, optimize profiles, manage knowledge | `"audit the knowledge base"`, `"teach the team about X"` |
+| **Planner** | Decomposes work into atomic DAG tasks | `"plan this feature"`, `"break this down"` |
+| **Judge** | Validates correctness and safety across domains | `"hey judge"`, `"validate this"`, `"second opinion"` |
+| **Engineer** | End-to-end implementation (Dev + Security + QA) | `"implement this"`, `"fix the bug"`, `"refactor this"` |
+| **Researcher** | Lightweight context gathering and synthesis | `"research this"`, `"where is X defined"`, `"find patterns"` |
+| **Technical Writer** | Writes docs, ADRs, READMEs, agent definitions | `"document this"`, `"write a README"` |
+| **Knowledge Manager** | Audits rules, optimizes profiles, manages knowledge | `"audit the knowledge base"`, `"teach the team about X"` |
 
-These are the orchestration machinery. Add domain specialists (developer, tester, security, reviewer, architect) by duplicating an agent file and loading domain-specific rules.
+All agents are defined in `src/rune-agency/agents/<phase>/` as Markdown files with YAML frontmatter.
 
-Agent files live in `src/agents/core/`. Each one is a markdown file with YAML frontmatter and a system prompt.
+## The Four-Phase Model
 
-## The three-phase model
+Every non-trivial task follows the **Four-Phase Model**: **Explore** (gather context) → **Plan** (decompose into a DAG) → **Build** (dispatch in parallel waves) → **Validate** (verify output before shipping).
 
-Every non-trivial task follows: **Explore** (gather context) → **Plan** (decompose into a DAG) → **Execute** (dispatch in parallel waves).
+- **Phase 1: Explore** — Dispatch read-only agents to research in parallel. They return summaries.
+- **Phase 2: Plan** — The Planner decomposes work into tasks with dependencies.
+- **Phase 3: Build** — The dispatcher runs independent tasks simultaneously, wave by wave.
+- **Phase 4: Validate** — The Judge and validation workflows verify output before it ships.
 
-- Phase 1: Dispatch read-only agents to research in parallel. They return summaries.
-- Phase 2: The Planner decomposes work into tasks with dependencies.
-- Phase 3: The dispatcher runs independent tasks simultaneously, wave by wave.
+See [README.md](/mnt/e/development/ai/kvasir/foss/README.md) and [site/index.html](/mnt/e/development/ai/kvasir/foss/site/index.html) for the rendered lifecycle and onboarding flow.
 
-## Key concepts
+## Key Concepts
 
-**Profiles** pick which rules agents load. Switch with `"switch to the security profile"` or `make use-profile PROFILE=<name>`. Help the user pick the right profile for their task.
+**Profiles** pick which rules agents load. Switch with `"switch to the security profile"` or `rune profile use <name>`.
 
-**Rules** are structured knowledge files in `src/rules/`. They contain conventions, standards, and patterns. Agents read them and follow them. Rules are listed in `profiles.yaml`.
+**Rules** are structured knowledge files in `src/rune-agency/rules/`. They contain conventions, standards, and patterns.
 
 **Skills** are slash commands that start workflows:
 
@@ -42,35 +45,24 @@ Every non-trivial task follows: **Explore** (gather context) → **Plan** (decom
 | `/tw-draft-pr` | Draft a PR description |
 | `/tw-release` | Prepare a release — changelog, notes, version, tag |
 | `/km-audit` | Audit knowledge base health |
-| `/km-onboard` | Analyze repo architecture for onboarding |
+| `/km-explore` | Analyze repo architecture for onboarding |
 
-**Knowledge inbox** (`src/knowledge/`) holds raw material. The Knowledge Manager turns it into rules. Never write directly to `src/rules/`. Always go through the inbox first.
+**Knowledge Inbox** (`src/rune-agency/knowledge/`) holds durable raw material. `.rune/` holds ephemeral workflow memory; the Knowledge Manager turns durable findings into rules.
 
-**Safety hooks** block dangerous commands before they run. Edit patterns in `src/hooks/safety-patterns.yaml`. Auto-lint runs formatters after file writes. Edit its config in `src/hooks/auto-lint-rules.yaml`.
+**Hooks** are phase-scoped runtime guardrails and helpers. Treat the hook script, `src/rune-agency/hooks-meta.yaml`, profile wiring, and any companion config as one change surface. Safety patterns live in `src/rune-agency/hooks/core/safety-patterns.yaml`.
 
-## How to help the user
+**Claude Workflow Layer** uses `.rune/session-state.json` when a workflow is active. The schema lives in [schemas/rune-session-state.schema.json](/mnt/e/development/ai/kvasir/foss/schemas/rune-session-state.schema.json).
 
-- **Add knowledge**: Tell them to drop files in `src/knowledge/`, then say `"hey knowledge manager, distill this"`.
-- **Switch context**: Show them profiles with `make list-profiles` or `"switch to the <name> profile"`.
-- **Plan work**: Use the Planner to break it down, then `/rune` to run it.
-- **Check work**: Send it to the Judge for review.
-- **Measure token usage**: Run `make context-budget`.
-- **Learn more**: Point them to the deep dives in `docs/`.
+## How to Help the User
 
-## Deep dives (in docs/)
+- **Add Knowledge**: Drop files in `src/rune-agency/knowledge/`, then say `"hey knowledge manager, distill this"`.
+- **Switch Context**: Show profiles with `rune profile list` or `"switch to the <name> profile"`.
+- **Plan Work**: Use the Planner to break it down, then `/rune` to run it.
+- **Check Work**: Send it to the Judge for review.
 
-- [The Three-Phase Model](docs/the-three-phase-model.md) — The core idea: explore, plan, execute, DAG dispatch, context management, cost economics
-- [The Knowledge Toolkit](docs/the-knowledge-toolkit.md) — Rules, profiles, Knowledge Manager, context budget
-- [The Safety Architecture](docs/the-safety-architecture.md) — How hooks block dangerous commands
+## Further Reading
 
-## Setup reference
-
-```bash
-make use-profile PROFILE=<name>    # deploy a profile
-make context-budget                # measure token footprint
-make validate                      # check all YAML + frontmatter
-make verify                        # confirm deployed state
-make list-agents                   # browse agents
-make list-rules                    # browse rules
-make list-profiles                 # browse profiles
-```
+- [README.md](/mnt/e/development/ai/kvasir/foss/README.md) — quick start and project positioning.
+- [site/index.html](/mnt/e/development/ai/kvasir/foss/site/index.html) — generated public docs.
+- `src/rune-agency/agents/<phase>/` — agent definitions and role boundaries.
+- `src/rune-agency/rules/<phase>/` — collaboration, planning, and validation doctrine.

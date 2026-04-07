@@ -1,125 +1,75 @@
-# rune
+<div align="center"><img src="site/assets/rune-banner.jpg" alt="Rune Agency Banner" width="100%"></div>
 
-**Agent orchestration for AI coding tools.**
+# Rune
 
-AI coding agents are powerful but chaotic. Without coordination, they duplicate work, lose context, trash each other's files, and run destructive commands. rune fixes this: **explore** the problem, **plan** the work, **execute** in parallel.
+**Rune** (`rune`) - A command-line toolkit that turns AI coding assistants into an orchestrated team of experts.
 
-> *The wisest of all shared his knowledge through runes.*
+# DESCRIPTION
 
-Works with [Claude Code](https://claude.ai/code), [OpenCode](https://github.com/opencode-ai/opencode), and any AI coding tool that reads agent files from a config directory.
+AI coding agents are powerful but chaotic. Left to their own devices, they duplicate work, lose context, overwrite each other's files, and run destructive commands.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-kvasir--ai.github.io%2Frune-blue)](https://kvasir-ai.github.io/rune/)
+**Rune** aims to help with this. It is a CLI that manages the "knowledge layer" and "orchestration layer" for tools like [Claude Code](https://claude.ai/code). It doesn't wrap the AI; it configures the AI's environment so that when you ask it to work, it operates as a disciplined team: exploring the problem, planning the work, building in parallel, and validating before shipping.
 
-> **Developer Preview.** Feedback welcome — [open an issue](https://github.com/kvasir-ai/rune/issues).
+For the guided walkthrough, concepts, manual pages, and deep dives, start with the **[documentation site](https://kvasir-ai.github.io/rune/#quick-start)**.
 
----
+<p align="center">
+  <img
+    src="site/assets/rune-demo-recording.gif"
+    alt="Built-in Rune CLI demo showing the explore, plan, build, and validate workflow"
+    width="960"
+  />
+  <br />
+  <em>Built-in Rune demo: the Four-Phase Model in one guided flow.</em>
+</p>
 
-## Quick start
+# QUICK START
 
-> Requires: [uv](https://docs.astral.sh/uv/), make, Python 3.12+
+**OS Requirements:** macOS or Linux/WSL2.
+
+First, install [uv](https://docs.astral.sh/uv/) if you don't already have it:
+
+**macOS:** `brew install uv`
+**Linux / WSL2:** `curl -LsSf https://astral.sh/uv/install.sh | sh`
+
+Install Rune and set it up:
 
 ```bash
-git clone https://github.com/kvasir-ai/rune.git && cd rune && make use-profile PROFILE=default
+git clone https://github.com/kvasir-ai/rune.git && cd rune
+uv tool install .
+rune setup
+rune profile use explore
+rune system verify
 ```
 
-Open your AI coding tool in any project. Try:
+If you want Rune scoped to one repository instead of your home AI tool directory, run `rune profile use explore --project` from that repository after setup.
 
-```
-You:      "plan a REST API for user management"
-Planner:  [decomposes into tasks with dependencies]
-You:      /rune
-rune:     Wave 0 — developer + tester in parallel
-          Wave 1 — developer wires components
-          Wave 2 — reviewer checks everything
-          Done. 57% time saved via parallelism.
-```
-
-Describe the work. Approve the plan. Type `/rune`.
-
----
-
-## How it works
-
-Every non-trivial task follows three phases:
-
-```
-EXPLORE          →    PLAN             →    EXECUTE
-read-only agents      Planner decomposes    independent tasks
-gather context        into a dependency     run in parallel waves
-in parallel           graph                 with cost tracking
-```
-
-**Explore.** Dispatch read-only agents to gather context from different angles. They return summaries — they never write code yet.
-
-**Plan.** The Planner decomposes work into tasks with explicit dependencies. The graph reveals what can run in parallel.
-
-**Execute.** Independent tasks dispatch simultaneously in waves. Each wave's results are summarized into the next wave's prompts. A Judge verifies at the end.
-
-What makes agents "knowledgeable" is not conversation history — it is **pre-loaded rule files**. Each agent starts with domain-specific conventions in its context window. The label alone does nothing; the rules do everything.
-
-Deep dive: **[The Three-Phase Model](docs/the-three-phase-model.md)**
-
----
-
-## Skills
-
-Slash commands — the primary way you interact with rune.
+After setup, the most useful commands are:
 
 | Command | What it does |
 |---|---|
-| `/rune` | Dispatch agents in parallel waves |
-| `/rune-demo` | Run showcase DAG examples |
-| `/write-plan` | Generate an implementation plan |
-| `/judge` | Code review workflow |
-| `/judge-audit` | Deep adversarial audit of any output |
-| `/judge-panel N` | Multi-perspective review panel |
-| `/tw-draft-pr` | Draft a PR description |
-| `/tw-release` | Prepare a release — changelog, notes, version, tag |
-| `/km-audit` | Audit knowledge base health |
-| `/km-onboard` | Analyze repo architecture for onboarding |
+| `rune demo` | See the workflow in action |
+| `rune profile use <name>` | Apply a profile |
+| `rune system verify` | Confirm deployed state matches configuration |
+| `rune profile list` | Browse available profiles |
+| `rune resource list` | Browse deployed agents, rules, and skills |
+
+## Rune Inside Claude
+
+The built-in `rune demo` explains the model. This is what the workflow looks like when invoked from a real Claude CLI session with `/rune-demo`.
+
+<p align="center">
+  <img
+    src="site/assets/claude-replay.gif"
+    alt="Real Claude CLI session running /rune-demo"
+    width="960"
+  />
+  <br />
+  <em>Real Claude execution: <code>/rune-demo</code> running inside the assistant.</em>
+</p>
+
+Open your coding tool in a project, then start with a simple request like `explore this repo`.
 
 ---
 
-## The team
-
-rune ships with orchestration agents. You build domain specialists on top.
-
-| Agent | Role |
-|---|---|
-| **Planner** | Decomposes tasks into dependency graphs |
-| **Judge** | Validates correctness and safety across domains |
-| **Technical Writer** | Writes docs, ADRs, release notes, agent definitions |
-| **Knowledge Manager** | Feeds, shapes, and grows the rule base |
-
-Add your own specialists — developer, tester, security, architect — by duplicating an agent file and loading domain-specific rules. See [AGENTS.md](AGENTS.md).
-
----
-
-## How it fits together
-
-**Rules** are domain knowledge files that load into agent context windows — coding conventions, infrastructure patterns, compliance requirements. Agents reference the rules relevant to their specialty.
-
-**Profiles** bundle rules for a workflow. `make use-profile PROFILE=security-review` loads compliance rules. Switch profiles in seconds. Deep dive: [The Knowledge Toolkit](docs/the-knowledge-toolkit.md)
-
-**Safety hooks** intercept destructive commands (`rm -rf`, `DROP TABLE`, `git push --force`) before they reach the shell. Configurable via YAML. Deep dive: [The Safety Architecture](docs/the-safety-architecture.md)
-
----
-
-## Going deeper
-
-| Topic | What you will learn |
-|---|---|
-| [The Three-Phase Model](docs/the-three-phase-model.md) | Collaboration patterns, DAG format, context management, cost economics |
-| [The Knowledge Toolkit](docs/the-knowledge-toolkit.md) | Rules, profiles, the Knowledge Manager, context budget |
-| [The Safety Architecture](docs/the-safety-architecture.md) | How hooks block destructive commands |
-| [Examples](EXAMPLES.md) | Worked examples with dispatch output |
-| [Contributing](CONTRIBUTING.md) | How to add agents, rules, skills, and hooks |
-
-## License
-
-MIT — see [LICENSE](LICENSE).
-
----
-
-*The team is yours. Teach it everything you know.*
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-rune-blue)](https://kvasir-ai.github.io/rune/)

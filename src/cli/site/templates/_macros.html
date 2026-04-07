@@ -1,0 +1,26 @@
+{% macro manual_breadcrumb(label) -%}
+<nav class="breadcrumb" aria-label="Breadcrumb"><button data-section="home">Home</button> <span>&#x203A;</span> <button data-section="rune-cheatsheet">Manual Pages</button> <span>&#x203A;</span> {{ label }}</nav>
+{{ mastery_stage_progress() }}
+{%- endmacro %}
+
+{% macro mastery_stage_progress() -%}
+<nav class="stage-progress" data-current-stage="4" aria-label="Stage progress">
+  <button class="stage-progress-step stage-1" type="button" data-stage-nav="1" aria-expanded="false">1 &middot; Orientation</button>
+  <button class="stage-progress-step stage-2" type="button" data-stage-nav="2" aria-expanded="false">2 &middot; First Run</button>
+  <button class="stage-progress-step stage-3" type="button" data-stage-nav="3" aria-expanded="false">3 &middot; Customize</button>
+  <button class="stage-progress-step stage-4 active" type="button" data-stage-nav="4" aria-expanded="true">4 &middot; Mastery</button>
+</nav>
+{%- endmacro %}
+
+{% macro cli_table(headers, rows) -%}
+<table class="cli-table">
+  <thead>
+    <tr>{% for header in headers %}<th>{{ header }}</th>{% endfor %}</tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>{% for cell in row %}<td>{{ cell | safe }}</td>{% endfor %}</tr>
+    {% endfor %}
+  </tbody>
+</table>
+{%- endmacro %}

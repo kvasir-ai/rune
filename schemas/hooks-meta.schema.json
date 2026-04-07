@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "hooks-meta.schema.json",
   "title": "Hook Event Bindings",
-  "description": "Maps hook names to the Claude Code / OpenCode events they bind to.",
+  "description": "Maps hook names to the Claude Code events they bind to.",
   "type": "object",
   "additionalProperties": {
     "$ref": "#/$defs/hook"
