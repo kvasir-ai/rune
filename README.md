@@ -1,4 +1,4 @@
-<div align="center"><img src="site/assets/rune-banner.jpg" alt="Rune Agency Banner" width="100%"></div>
+<div align="center"><a href="https://kvasir-ai.github.io/rune/"><img src="site/assets/rune-banner.jpg" alt="Rune Agency Banner" width="100%"></a></div>
 
 # Rune
 
