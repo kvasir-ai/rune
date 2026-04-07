@@ -19,6 +19,11 @@ def get_styles() -> str:
   --gloss-exec: #424661; --gloss-exec-bg: rgba(66, 70, 97, 0.08);
   --gloss-know: #b04a29; --gloss-know-bg: rgba(176, 74, 41, 0.08);
   --mobile-nav-height: 4rem;
+  --content-max: clamp(20rem, 74vw, 78ch);
+  --content-max-mobile: clamp(18rem, 100vw, 72ch);
+  --content-pad-x: clamp(1rem, 4vw, 3rem);
+  --content-pad-y: clamp(1.5rem, 1vw + 1.2rem, 2rem);
+  --content-pad-bottom: clamp(3rem, 3vw + 2.2rem, 4rem);
 }
 
 /* Dark mode overrides */
@@ -108,7 +113,7 @@ button {
   width: auto;
 }
 .sidebar-brand {
-  font-size: 1.45rem;
+  font-size: clamp(1.28rem, 0.9rem + 0.8vw, 1.45rem);
   padding: 0 1.25rem;
   margin: 0 0 1rem;
 }
@@ -167,7 +172,7 @@ button {
 .sidebar-footer { padding: 1rem 1.25rem; font-size: 0.7rem; color: var(--fg2); border-top: 1px solid var(--border); margin-top: auto; text-align: center; }
 
 /* -- Content ----------------------------------------------- */
-.content { width: min(100%, 78ch); max-width: none; min-width: 0; margin-inline: auto; padding: clamp(1.5rem, 1vw + 1.2rem, 2rem) clamp(1rem, 4vw, 3rem) 4rem; }
+.content { width: min(100%, var(--content-max)); max-width: none; min-width: 0; margin-inline: auto; padding: var(--content-pad-y) var(--content-pad-x) var(--content-pad-bottom); }
 .breadcrumb { font-size: 0.8rem; color: var(--fg2); margin-bottom: 1.5rem; }
 .breadcrumb button { display: inline; color: var(--fg2); cursor: pointer; background: none; border: none; padding: 0; font-size: inherit; font-family: inherit; width: auto; }
 .breadcrumb button:hover { color: var(--accent); text-decoration: underline; }
@@ -216,13 +221,13 @@ img, svg, video { max-width: 100%; height: auto; }
     backdrop-filter: blur(2px);
   }
   .sidebar.open .close-btn { display: block; }
-  .content { width: min(100%, 72ch); padding: calc(var(--mobile-nav-height) + 1rem) clamp(1rem, 3.5vw, 1.25rem) 3rem; }
+  .content { width: min(100%, var(--content-max-mobile)); padding: calc(var(--mobile-nav-height) + 1rem) clamp(1rem, 3.5vw, 1.25rem) 3rem; }
   .nav-item { display: block; width: 100%; padding: 0.6rem 1.25rem 0.6rem 1.5rem; }
   .copy-btn { opacity: 1; }
   table { font-size: 0.78rem; display: block; overflow-x: auto; white-space: nowrap; }
   td, th { padding: 0.4rem 0.5rem; }
   pre { max-width: calc(100vw - 2.5rem); }
-  code { word-break: break-all; }
+  code { overflow-wrap: anywhere; word-break: normal; }
   .card-grid { grid-template-columns: 1fr; }
   .agent-grid { grid-template-columns: 1fr !important; }
   .theme-toggle { bottom: 1rem; right: 1rem; width: 36px; height: 36px; }
