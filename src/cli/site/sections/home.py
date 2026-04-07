@@ -22,13 +22,6 @@ def section_home(
 
   <p>AI coding agents work best with structure. Without coordination, they tend to duplicate work, lose context, and occasionally run destructive commands.</p>
 
-  <div class="stat-grid">
-    <button class="stat-card" data-section="agents"><div class="number">{total_agents}</div><div class="label">Agents</div></button>
-    <button class="stat-card" data-section="rules-catalog"><div class="number">{total_rules}</div><div class="label">Rules</div></button>
-    <button class="stat-card" data-section="skills"><div class="number">{total_skills}</div><div class="label">Skills</div></button>
-    <button class="stat-card" data-section="four-phase-model"><div class="number">4</div><div class="label">Phases</div></button>
-  </div>
-
   <h2>Your first three stops</h2>
   <p>Follow this order: install Rune, run one small session, then learn how that conversation maps to the four-phase workflow.</p>
   <div class="card-grid">
@@ -36,18 +29,6 @@ def section_home(
     <button class="card" data-section="talk"><span class="emoji" aria-hidden="true">&#x1F4AC;</span><h4>Talk to Your Team</h4><p>Natural language interaction</p></button>
     <button class="card" data-section="four-phase-model"><span class="emoji" aria-hidden="true">&#x1F50D;</span><h4>Learn the Phases</h4><p>Explore, Plan, Build, Validate</p></button>
   </div>
-
-  <h2>Use the Getting Started pages this way</h2>
-  <table>
-    <thead>
-      <tr><th>Page</th><th>Question it answers</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><strong>Start Here</strong></td><td>What path should I follow first?</td></tr>
-      <tr><td><button data-section="quick-start">Quick Start</button></td><td>How do I install Rune and confirm it works?</td></tr>
-      <tr><td><button data-section="talk">Talk to Your Team</button></td><td>What do I actually say once it is installed?</td></tr>
-    </tbody>
-  </table>
 
   <h2>Suggested path</h2>
   <p>After the first two pages, keep going only as far as you need:</p>
@@ -67,6 +48,12 @@ def section_home(
   </table>
 
   <h2>The four-phase model</h2>
+  <div class="stat-grid">
+    <button class="stat-card" data-section="agents"><div class="number">{total_agents}</div><div class="label">Agents</div></button>
+    <button class="stat-card" data-section="rules-catalog"><div class="number">{total_rules}</div><div class="label">Rules</div></button>
+    <button class="stat-card" data-section="skills"><div class="number">{total_skills}</div><div class="label">Skills</div></button>
+    <button class="stat-card" data-section="four-phase-model"><div class="number">4</div><div class="label">Phases</div></button>
+  </div>
   <div class="agent-grid">
     <button class="agent-card" data-section="phase-1-explore" style="border-top-color:var(--accent);">
       <span class="agent-emoji" aria-hidden="true">&#x1F50D;</span>

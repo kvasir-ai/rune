@@ -350,9 +350,11 @@ def test_getting_started_section_is_more_actionable_and_uses_live_skill_names(
 
     assert "<h1>Start Here</h1>" in home_html
     assert "Your first three stops" in home_html
-    assert "Use the Getting Started pages this way" in home_html
+    assert "Use the Getting Started pages this way" not in home_html
     assert "After the basics" in home_html
     assert "Knowledge Pipeline" not in home_html
+    assert home_html.index("Your first three stops") < home_html.index("Suggested path") < home_html.index("The four-phase model")
+    assert home_html.index('class="stat-grid"') > home_html.index("The four-phase model")
 
     assert "Choose your install scope" in quick_start_html
     assert "Pick one path. You do not need both." in quick_start_html
