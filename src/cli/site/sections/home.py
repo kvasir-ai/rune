@@ -20,9 +20,6 @@ def section_home(
   <h1>Start Here</h1>
   <p class="subtitle">Install Rune, prove it works, and learn the smallest useful workflow before you branch into the deeper material.</p>
 
-  <p><strong>Read this when:</strong> you are new to Rune and want the shortest path from install to a first successful session.</p>
-  <p><strong>What you get:</strong> the setup path, the basic conversation model, and a clear handoff into the core workflow and the wider docs.</p>
-
   <p>AI coding agents work best with structure. Without coordination, they tend to duplicate work, lose context, and occasionally run destructive commands.</p>
 
   <div class="stat-grid">
@@ -49,6 +46,23 @@ def section_home(
       <tr><td><strong>Start Here</strong></td><td>What path should I follow first?</td></tr>
       <tr><td><button data-section="quick-start">Quick Start</button></td><td>How do I install Rune and confirm it works?</td></tr>
       <tr><td><button data-section="talk">Talk to Your Team</button></td><td>What do I actually say once it is installed?</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Suggested path</h2>
+  <p>After the first two pages, keep going only as far as you need:</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Step</th><th>What You Learn</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><button data-section="quick-start">Quick Start</button></td><td>Install, deploy a profile, verify it works</td></tr>
+      <tr><td>2</td><td><button data-section="talk">Talk to Your Team</button></td><td>How to interact with agents in natural language</td></tr>
+      <tr><td>3</td><td><button data-section="four-phase-model">Four-Phase Model</button></td><td>The core workflow: explore, plan, build, validate</td></tr>
+      <tr><td>4</td><td><button data-section="agents">Agents</button></td><td>Who does what and how they coordinate</td></tr>
+      <tr><td>5</td><td><button data-section="profiles">Profiles</button></td><td>Load the right rules and resources for the task</td></tr>
+      <tr><td>6</td><td><button data-section="dag-dispatch">DAG Dispatch</button></td><td>Run work in dependency waves</td></tr>
+      <tr><td>7</td><td><button data-section="operating-guides">Operating Guides</button></td><td>See the advanced operating model behind Rune</td></tr>
     </tbody>
   </table>
 
@@ -83,23 +97,6 @@ def section_home(
       </div>
     </button>
   </div>
-
-  <h2>Suggested path</h2>
-  <p>After the first two pages, keep going only as far as you need:</p>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Step</th><th>What You Learn</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>1</td><td><button data-section="quick-start">Quick Start</button></td><td>Install, deploy a profile, verify it works</td></tr>
-      <tr><td>2</td><td><button data-section="talk">Talk to Your Team</button></td><td>How to interact with agents in natural language</td></tr>
-      <tr><td>3</td><td><button data-section="four-phase-model">Four-Phase Model</button></td><td>The core workflow: explore, plan, build, validate</td></tr>
-      <tr><td>4</td><td><button data-section="agents">Agents</button></td><td>Who does what and how they coordinate</td></tr>
-      <tr><td>5</td><td><button data-section="profiles">Profiles</button></td><td>Load the right rules and resources for the task</td></tr>
-      <tr><td>6</td><td><button data-section="dag-dispatch">DAG Dispatch</button></td><td>Run work in dependency waves</td></tr>
-      <tr><td>7</td><td><button data-section="operating-guides">Operating Guides</button></td><td>See the advanced operating model behind Rune</td></tr>
-    </tbody>
-  </table>
 
   <h2>After the basics</h2>
   <p>Once the first-session flow feels solid, either learn the specialist team or move into the deeper operating model.</p>
