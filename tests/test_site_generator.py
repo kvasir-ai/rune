@@ -201,6 +201,10 @@ def test_site_generator_emits_valid_search_result_markup() -> None:
     assert "body.mobile-menu-open { overflow: hidden; }" in styles
     assert ".sidebar-backdrop.open {" in styles
     assert ".sidebar.open {\n    display: flex;" in styles
+    assert "@media (max-width: 480px) {" in styles
+    assert ".stage-progress {\n    display: grid;" in styles
+    assert ".card-grid,\n  .agent-grid,\n  .stat-grid { grid-template-columns: 1fr !important; }" in styles
+    assert ".content { width: 100%; max-width: none; padding: calc(var(--mobile-nav-height) + 0.85rem) 0.95rem 2.5rem; }" in styles
     assert ".search-result-item.selected" in styles
     assert "--search-panel-bg:" in styles
     assert "background: var(--search-panel-bg);" in styles

@@ -227,6 +227,45 @@ li { margin-bottom: 0.3rem; color: var(--fg); }
   .theme-toggle { bottom: 1rem; right: 1rem; width: 36px; height: 36px; }
 }
 
+@media (max-width: 480px) {
+  :root { --mobile-nav-height: 3.5rem; }
+  .mobile-nav { padding: 0.6rem 0.85rem; }
+  .hamburger,
+  .close-btn button { font-size: 1.05rem; padding: 0.25rem 0.55rem; }
+  .mobile-brand { margin-left: 0.6rem; font-size: 1.1rem; }
+  .content { width: 100%; max-width: none; padding: calc(var(--mobile-nav-height) + 0.85rem) 0.95rem 2.5rem; }
+  h1 { font-size: 1.42rem; line-height: 1.15; }
+  h2 { font-size: 1.28rem; }
+  h3 { font-size: 1.02rem; }
+  .subtitle { font-size: 0.98rem; }
+  .stage-progress {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .stage-progress-step {
+    min-width: 0;
+    padding: 0.55rem 0.3rem;
+    font-size: 0.62rem;
+    line-height: 1.25;
+    white-space: normal;
+  }
+  .stage-progress-step:nth-child(2n) { border-right: none; }
+  .stage-progress-step:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+  .card-grid,
+  .agent-grid,
+  .stat-grid { grid-template-columns: 1fr !important; }
+  .stat-grid { gap: 0.6rem; }
+  .stat-card { padding: 0.9rem; }
+  table { font-size: 0.74rem; }
+  th, td { padding: 0.38rem 0.45rem; }
+  pre { padding: 0.85rem 0.9rem; max-width: calc(100vw - 1.9rem); }
+  .gloss-legend { gap: 0.4rem; }
+  .gloss-badge { font-size: 0.72rem; padding: 0.25rem 0.7rem; }
+  .theme-toggle { bottom: 0.85rem; right: 0.85rem; width: 34px; height: 34px; }
+}
+
 /* -- Cards ------------------------------------------------- */
 .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1.5rem 0; }
 @media (max-width: 768px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
