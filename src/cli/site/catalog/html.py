@@ -28,7 +28,7 @@ def breadcrumb_html(items: list[str | tuple[str, str]]) -> str:
 
 def stage_progress_html(current: int) -> str:
     """Render the shared four-stage progress control."""
-    labels = {1: "Orientation", 2: "First Run", 3: "Customize", 4: "Mastery"}
+    labels = {1: "Start", 2: "First Run", 3: "Customize", 4: "Mastery"}
     steps = []
     for step, label in labels.items():
         active = " active" if step == current else ""
