@@ -20,9 +20,6 @@ Use these names in new skill examples, plans, and handoffs:
 - `technical-writer`
 - `judge`
 
-Legacy aliases such as `developer`, `writer`, `reviewer`, and `specialist` may
-be recognized while migrating, but new examples should not emit them.
-
 ## Canonical Artifact Paths
 
 | Surface | Use |

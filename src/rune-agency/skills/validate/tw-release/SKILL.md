@@ -7,7 +7,7 @@ user_invocable: true
 
 # Release
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 Prepare and cut a release. Validates the repo is clean, generates release notes, updates version references, and creates a tag.
@@ -34,8 +34,8 @@ git branch --show-current
 # 3. Up to date with remote
 git fetch origin && git diff origin/main..HEAD --stat
 
-# 4. Project validation passes (if Makefile exists)
-[ -f Makefile ] && rune system validate 2>/dev/null || true
+# 4. Project validation passes
+rune system validate
 ```
 
 ## Step 3: Generate Release Notes
@@ -66,7 +66,9 @@ Read `CHANGELOG.md`. Find the `## [Unreleased]` section.
 - If there is content under `[Unreleased]`, move it into a new version section with today's date
 - If `[Unreleased]` is empty, use the generated release notes from Step 3
 
-**Format:**
+### Release Notes Template
+
+Use this section shape when generating or moving release notes:
 
 ```markdown
 ## [Unreleased]
@@ -74,13 +76,13 @@ Read `CHANGELOG.md`. Find the `## [Unreleased]` section.
 ## [X.Y.Z] - YYYY-MM-DD
 
 ### Added
-- New feature or file
+- "<new capability>"
 
 ### Changed
-- Modified behavior or config
+- "<behavior or process change>"
 
 ### Removed
-- Deleted feature or file
+- "<removal>"
 ```
 
 Show the proposed CHANGELOG diff to the user before writing.
@@ -115,7 +117,9 @@ If GPG signing is configured, use signed tag (`git tag -s`).
 
 ## Step 7: Summary
 
-```
+Use this exact release summary frame:
+
+```text
 -------------------------------------------
   RELEASE PREPARED
 -------------------------------------------
@@ -134,10 +138,12 @@ If GPG signing is configured, use signed tag (`git tag -s`).
 
 Do NOT push automatically. The user decides when to push.
 
-## Rules
+## Output Rules
 
 1. **Never push.** Prepare the release locally. The user pushes.
 2. **Never skip validation.** Precondition checks must pass.
 3. **Show before writing.** Display the CHANGELOG diff before committing.
 4. **Semver only.** Reject non-semver version strings.
 5. **Tag matches version.** Tag is always `vX.Y.Z` (with `v` prefix).
+6. **List bumped files.** The final summary must say which files had version updates.
+7. **Stop on failed preconditions.** Do not continue optimistically after a failing check.

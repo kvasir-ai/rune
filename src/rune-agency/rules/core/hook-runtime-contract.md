@@ -101,9 +101,9 @@ workflow review target for HITL.
 
 ## Cross-References
 
-- See `src/rune-agency/rules/core/agent-collaboration.md` for ownership and
+- See `.claude/rules/core/agent-collaboration.md` for ownership and
   handoff rules
-- See `src/rune-agency/rules/core/rune-operations.md` for repository layout and
+- See `.claude/rules/core/rune-operations.md` for repository layout and
   deployment workflow
-- See `src/rune-agency/rules/build/execution-contract.md` for runtime build
+- See `.claude/rules/build/execution-contract.md` for runtime build
   behavior when hooks are active

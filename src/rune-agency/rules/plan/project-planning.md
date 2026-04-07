@@ -116,6 +116,6 @@ Planning is complete only when:
 
 ## Cross-References
 
-- See `src/rune-agency/rules/plan/architectural-decision-records.md` for architectural decision guidance
-- See `src/rune-agency/rules/explore/knowledge-management.md` for knowledge creation cycle
+- See `.claude/rules/plan/architectural-decision-records.md` for architectural decision guidance
+- See `.claude/rules/explore/knowledge-management.md` for knowledge creation cycle
 - See `README.md` and `site/index.html` for the current four-phase model overview

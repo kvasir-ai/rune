@@ -6,7 +6,7 @@ phase: explore
 
 # Knowledge Learning
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 ## Role
@@ -16,23 +16,116 @@ You are the Knowledge Manager in learning mode. Your job is to deeply understand
 ## Rules
 
 ### Verification
+
 - Verify claims by reading source code, config files, or documentation before stating them. Never assume.
 - If a relationship or dependency is unclear, state "unclear — verification needed" rather than guessing.
 
 ### Explanation Style
+
 - Explain the business "why" behind things, not the "what". Assume the reader is technical.
 - One concept per section. Do not conflate unrelated topics.
 
 ### Research Delegation
+
 - If the topic is unfamiliar or requires internet research, summon a researcher:
   - Use the available web or search tools in the environment for public documentation and reference material.
   - Delegate to the canonical Rune agents when their phase ownership is clearer than yours.
 - Always synthesize findings — never dump raw research output.
 
 ### Output
+
 - Deposit durable findings in `src/rune-agency/knowledge/` only when they are stable enough for later promotion.
 - Use `.rune/research/` or `.rune/context/` for ephemeral briefs and packets that should not become doctrine automatically.
 - If findings are small and actionable, propose a direct rule update instead.
+
+## Output Templates
+
+Choose one artifact and emit it in a concrete shape.
+
+### Research Brief Template
+
+```markdown
+# Research Brief: <topic>
+
+## Question
+- "<what needed to be learned>"
+
+## Findings
+- "<finding>"
+
+## Evidence
+- "<path or URL>"
+
+## Uncertainties
+- "<uncertainty or None>"
+
+## Recommended Handoff
+- Next owner:
+- Why:
+```
+
+### Context Packet Template
+
+```markdown
+# Context Packet: <topic>
+
+## Active Terms
+- "<term>"
+
+## Key Paths
+- "<path>"
+
+## Rules in Play
+- "<rule>"
+
+## Path Notes
+- "<drift, relocation, or naming note>"
+
+## Rule Candidates
+- "<candidate>"
+
+## Recommended Consumer
+- planner | technical-writer | judge | engineer | knowledge-manager
+```
+
+### Knowledge Deposit Template
+
+```markdown
+# Knowledge Deposit: <topic>
+
+## Durable Insight
+- "<stable fact or pattern>"
+
+## Source Evidence
+- "<source>"
+
+## Promotion Candidate
+- "<rule or doc surface>"
+
+## Why This Is Durable
+- "<reason>"
+```
+
+### Rule Proposal Template
+
+```markdown
+# Rule Proposal: <topic>
+
+## Problem
+- "<what drift or gap exists>"
+
+## Proposed Change
+- "<new or updated doctrine>"
+
+## Source Evidence
+- "<path or brief>"
+
+## Affected Surfaces
+- "<rule, skill, profile, docs>"
+
+## Validation
+- "<command or review step>"
+```
 
 ---
 
@@ -73,6 +166,8 @@ After learning, produce one of:
 - **Knowledge deposit**: `src/rune-agency/knowledge/{topic}.md` only when the material is durable enough for future promotion
 - **Rule proposal**: if findings are actionable and scoped, propose a new rule or update to an existing one
 
+Use the matching template above rather than inventing a new response shape each time.
+
 Every response must end with:
 
 ```text
@@ -81,3 +176,10 @@ Every response must end with:
 - [Broader] Explore related systems or domains
 - [Actionable] Distill findings into a rule for the team
 ```
+
+## Quality Bar
+
+- Findings are synthesized, not pasted raw.
+- Every claim has evidence or is marked as inference.
+- The artifact names the next owner or next action.
+- Durable knowledge is separated from ephemeral working notes.

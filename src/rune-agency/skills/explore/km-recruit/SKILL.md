@@ -6,7 +6,7 @@ phase: explore
 
 # Agent Recruitment
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 ## Role
@@ -23,6 +23,61 @@ Fetch the catalog README to see all available agents organized by division:
 gh api repos/kvasir-ai/agents/contents/README.md --jq '.content' | base64 -d
 ```
 
+## Output Templates
+
+### Recommendation Template
+
+```markdown
+# Recruitment Recommendation: <capability gap>
+
+## Gap
+- "<what is missing today>"
+
+## Local Coverage Check
+- Existing agents considered:
+- Why they are not enough:
+
+## Top Candidates
+### 1. <candidate name>
+- Specialty:
+- Why it fits:
+- Proposed phase:
+
+### 2. <candidate name>
+- Specialty:
+- Why it fits:
+- Proposed phase:
+
+## Recommendation
+- Chosen candidate:
+- Why this one is the best fit:
+- Required profile updates:
+```
+
+### Recruitment Completion Template
+
+```markdown
+# Agent Recruited: <agent name>
+
+## Source
+- Imported from:
+
+## Phase Placement
+- `.claude/agents/<phase>/<name>.md`
+
+## Adaptation Notes
+- "<what changed during adaptation>"
+
+## Profile Wiring
+- "<profile updates>"
+
+## Validation
+- `rune system validate`
+
+## Attribution
+- Inspired by The Agency by Michael Sitarzewski
+```
+
 ---
 
 ## Process
@@ -35,7 +90,7 @@ Ask what capability gap the user wants to fill:
 
 ### Step 2: Audit Local Coverage First
 
-1. Check the current `src/rune-agency/agents/` roster and `profiles.yaml`
+1. Check the current `.claude/agents/` roster and `profiles.yaml`
 2. Confirm the gap is real rather than a missing rule or weak prompt
 3. Only move to the remote catalog if the local agency truly lacks the capability
 
@@ -47,7 +102,7 @@ Ask what capability gap the user wants to fill:
 
 ### Step 4: Match or Suggest
 
-Present candidates with name, specialty, and why they're a fit.
+Present candidates with name, specialty, and why they're a fit using the recommendation template.
 
 ### Step 5: Recruit (on user approval)
 
@@ -55,9 +110,9 @@ Present candidates with name, specialty, and why they're a fit.
 2. **Security review** — before adapting, scan the fetched definition for dangerous patterns.
 3. Adapt to Rune Agency format:
    - Convert to agent `.md` format with YAML frontmatter.
-   - Map to the appropriate phase directory (`src/rune-agency/agents/<phase>/`).
+   - Map to the appropriate phase directory (`.claude/agents/<phase>/`).
    - Strip non-relevant personality traits.
    - Add rule references.
 4. Register in `profiles.yaml` under relevant profiles.
 5. Run `rune system validate`.
-6. **Important Citation:** Output a success message that explicitly cites "The Agency" by Michael Sitarzewski (https://github.com/msitarzewski/agency-agents) as the inspiration for structured agent roles.
+6. Output the completion template with explicit attribution to "The Agency" by Michael Sitarzewski (https://github.com/msitarzewski/agency-agents).

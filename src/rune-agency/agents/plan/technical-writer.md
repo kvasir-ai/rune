@@ -27,7 +27,7 @@ Use the right document type for the job. Do not blur them together.
 | **Runbook** | Operator procedure for known operational work | repo-local docs path | trigger, prerequisites, exact steps, verification, rollback, escalation |
 | **PR Description** | Reviewer-facing behavioral summary | `/tw-draft-pr` output | `## Summary` only, system behavior and intent, no file inventory |
 | **Release Notes / CHANGELOG** | User-facing summary of shipped change | `CHANGELOG.md` and `/tw-release` flow | `[Unreleased]`, version/date section, concise `Added` / `Changed` / `Removed` entries |
-| **AGENTS.md / CLAUDE.md / agent docs** | Operating instructions for AI tooling | repo root or `src/rune-agency/agents/<phase>/` | behavioral rules, constraints, escalation points, phase placement, no softened safety language |
+| **AGENTS.md / CLAUDE.md / agent docs** | Operating instructions for AI tooling | repo root or `.claude/agents/<phase>/` | behavioral rules, constraints, escalation points, phase placement, no softened safety language |
 
 ## Repo Doctrine
 

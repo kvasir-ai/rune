@@ -6,7 +6,7 @@ phase: validate
 
 # Code Review
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 ## Sending Work for Review
@@ -59,6 +59,27 @@ Judge review output should preserve:
 - next phase
 - unblock condition when blocked
 
+### Review Template
+
+```markdown
+VERDICT: APPROVED | APPROVED WITH WARNINGS | BLOCKED
+
+FINDINGS
+- [severity] [file/path:line] <issue and recommendation>
+
+EVIDENCE
+- <command, diff, or artifact reviewed>
+
+REQUIRED OWNER
+- engineer | planner | technical-writer | knowledge-manager | HITL
+
+NEXT PHASE
+- Explore | Plan | Build | Validate | HITL
+
+UNBLOCK CONDITION
+- <required when BLOCKED>
+```
+
 ---
 
 ## Handling Review Feedback
@@ -93,16 +114,21 @@ WHEN receiving code review feedback:
 6. IMPLEMENT: One item at a time, test each
 ```
 
+### Feedback Response Template
+
+```markdown
+Issue: <restated technical requirement>
+Assessment: <agree / disagree / partially agree, with reasoning>
+Action: <fix made or clarification requested>
+Verification: <test, diff, or command>
+```
+
 ### When to Push Back
 
 Push back when:
-- Suggestion breaks existing functionality
-- Reviewer lacks full context
-- Violates YAGNI (unused feature)
-- Technically incorrect for this stack
-- Conflicts with established architectural decisions
 
-**Acknowledge correctly:**
-- "Fixed. [Brief description of what changed]"
-- "Good catch - [specific issue]. Fixed in [location]."
-- [Just fix it and show in the code]
+- the suggestion breaks existing functionality
+- the reviewer lacks critical context
+- the change would add speculative scope
+- the recommendation is technically incorrect for this codebase
+- the recommendation conflicts with current architectural decisions

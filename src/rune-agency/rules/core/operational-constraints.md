@@ -59,6 +59,6 @@ this rule.
 
 ## Cross-References
 
-- See `src/rune-agency/rules/core/agent-collaboration.md` for handoff and ownership rules
-- See `src/rune-agency/rules/build/execution-contract.md` for build-time runtime behavior
-- See `src/rune-agency/rules/core/hook-runtime-contract.md` for hook safety and deployment doctrine
+- See `.claude/rules/core/agent-collaboration.md` for handoff and ownership rules
+- See `.claude/rules/build/execution-contract.md` for build-time runtime behavior
+- See `.claude/rules/core/hook-runtime-contract.md` for hook safety and deployment doctrine

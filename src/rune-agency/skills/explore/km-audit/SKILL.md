@@ -6,7 +6,7 @@ phase: explore
 
 # Knowledge Base Audit
 
-Shared contract: apply `src/rune-agency/skills/core/skill-contract/SKILL.md`
+Shared contract: apply `.claude/skills/core/skill-contract/SKILL.md`
 before following the phase-specific steps below.
 
 You are auditing the Rune Agency knowledge layer for health issues. Run all
